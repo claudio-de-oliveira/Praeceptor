@@ -1,0 +1,94 @@
+@PEA [F113719]
+
+  @Ementa
+    [Carga Elétrica e Campo elétrico. Lei de Gauss. Potencial Elétrico. Capacitância e Dielétricos. Corrente, Resistência e Força Eletromotriz. Circuitos de Corrente Contínua. Campo Magnético e Forças Magnéticas. Indução eletromagnética. Ondas: Movimentos Periódicos.]
+
+  @OBJETIVO
+    [Proporcionar ao discente, através de atividades teóricas e práticas uma formação básica em eletricidade e ondas direcionada à sua área de formação, relacionando-a através de problemas aplicados e interligando com a geometria analítica e o cálculo diferencial e integral.]
+
+  @Competencias
+    [Capacidade de utilizar as leis do eletromagnetismo para explicar e resolver situações cotidianas em fenômenos, equipamentos, dispositivos, circuitos e instalações elétricas.]
+    [Capacidade de escolher e utilizar corretamente os instrumentos utilizados na medição de grandezas eletromagnéticas.]
+    [Capacidade de fundamentar um movimento periódico em máquinas, pêndulos, objetos e outros tipos de osciladores reais e compreender como uma força pode levar um oscilador a ter sua oscilação amortecida, forçada e em algumas situações levar à ressonância.]
+
+  @UNIDADE1
+    @Chave[UNIDADE I: Introdução à Eletricidade]
+        [Carga elétrica.]
+        [Carga elétrica e estrutura da matéria.]
+        [Condutores, isolantes e cargas induzidas.]
+        [Lei de Coulomb; Campo elétrico e forças elétricas.]
+        [Determinação do campo elétrico.]
+        [Linhas de força de um campo elétrico.]
+        [Carga elétrica e fluxo elétrico.]
+        [Determinação do fluxo elétrico.]
+        [Lei de Gauss e aplicações.]
+        [Potencial elétrico.]
+        [Energia potencial elétrica.]
+        [Potencial elétrico e diferença de potencial.]
+        [Determinação do potencial elétrico.]
+        [Capacitância e capacitores.]
+        [Corrente, resistência, força eletromotriz e circuitos.]
+        [Corrente.]
+        [Resistividade.]
+        [Resistência.]
+        [Força eletromotriz e circuitos.]
+        [Energia e potência em circuitos elétricos.]
+        [Circuitos de corrente contínua.]
+        [Resistores em série e em paralelo.]
+        [Leis de Kirchhoff; Circuito R-C.]
+        [Práticas experimentais e projeto.]
+
+  @UNIDADE2
+    @Chave[UNIDADE II: Introdução ao Eletromagnetismo e Ondas]
+        [Campo magnético e força magnética.]
+        [Magnetismo.]
+        [Campo magnético.]
+        [Linhas de campo magnético e fluxo magnético.]
+        [Movimento de partículas carregadas em um campo magnético e aplicações.]
+        [Força magnética sobre um condutor transportando uma corrente.]
+        [Indução Eletromagnética.]
+        [Experiências de indução.]
+        [Lei de Faraday.]
+        [Lei de Lenz.]
+        [Força eletromotriz produzida pelo movimento.]
+        [Campos elétricos induzidos.]
+        [Práticas experimentais e projeto.]
+        [Movimentos periódicos.]
+        [Definição de oscilação.]
+        [Movimento harmônico simples (MHS).]
+        [Energia no MHS.]
+        [Pêndulo simples.]
+        [Pêndulo físico.]
+        [Oscilações amortecidas.]
+        [Oscilações forçadas e ressonância.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. A disciplina será trabalhada de forma a possibilitar a participação ativa e crítica do aluno, proporcionando sempre a intervenção, debates, no qual o professor atue como mediador da aprendizagem. Trabalhar-se-á numa perspectiva crítica utilizando-se de metodologias ativas de ensino, na busca e construção do conhecimento, aproximando a teoria com a prática, para que os alunos desenvolvam uma formação profunda e sólida.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O Processo Avaliativo será mediante aplicação de uma Prova Contextualizada - PC (individual) e de Medida de Eficiência – ME, em cada uma das unidades.  A medida de Eficiência tem como princípio o acompanhamento do aluno em pelo menos duas atividades previstas no plano da disciplina.]
+
+  @BASICA
+    @Autor[CRUZ][Eduardo] @Titulo[Eletricidade aplicada em corrente contínua] @Edicao[2] @Editora[Érica][São Paulo: SP] @Ano[2013]
+  @BASICA
+    @Autor[HALLIDAY][D.] @Autor[RESNICK][R.] @Autor[WALKER][J.] @Titulo[Fundamentos de Física: Eletromagnetismo] @Edicao[9] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2013]
+  @BASICA
+    @Autor[NUSSENZVEIG][H. M.] @Titulo[Curso de física básica eletromagnetistmo] @Edicao[2] @Editora[Editora Edgard Blücher LTDA][São Paulo: SP] @Ano[2015]
+  @COMPLEMENTAR
+    @Autor[YOUNG][H. D.] @Autor[FREEDMAN][R. A.] @Titulo[Física II: Termodinâmica e ondas] @Edicao[12] @Editora[Addison Wesley][São Paulo: SP] @Ano[2013]
+  @COMPLEMENTAR
+    @Autor[BAUER][W.] @Autor[WESTFALL][G. D.] @Autor[DIAS][H.] @Titulo[Física para universitários: Eletricidade e Magnetismo] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[RAMOS][A.] @Titulo[Eletromagnetismo] @Editora[Editora Edgard Blücher LTDA][São Paulo: SP] @Ano[2016]
+  @COMPLEMENTAR
+    @Autor[SERWAY][Raymond A.] @Titulo[Princípios de física: mecânica clássica] @Editora[Cengage Learning][São Paulo: SP] @Ano[2009]
+  @COMPLEMENTAR
+    @Autor[HALLIDAY][D.] @Autor[RESNICK][R.] @Autor[WALKER][J.] @Titulo[Fundamentos de Física: Gravitação, ondas e termodinâmica] @Edicao[9] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[JEWETT JR.][J. W.] @Autor[SERWAY][R. A.] @Titulo[Princípios de Física: Eletromagnetismo] @Editora[Cengage Learning][São Paulo: SP] @Ano[2008]
+  @COMPLEMENTAR
+    @Autor[TIPLER][P. A.] @Titulo[Física para Cientistas e Engenheiros: Eletricidade e Magnetismo, Ótica] @Edicao[6] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[TREFIL][J.] @Autor[HAZEN][R.] @Titulo[Física Viva 3: Uma introdução à Física Conceitual] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2006]
+  @COMPLEMENTAR
+    @Autor[YOUNG][H. D.] @Autor[FREEDMAN][R. A.] @Titulo[Física III: Eletromagnetismo] @Edicao[12] @Editora[Addison Wesley][São Paulo: SP] @Ano[2011]

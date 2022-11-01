@@ -1,0 +1,279 @@
+﻿@using Ardalis.GuardClauses
+@using Document.App.Components
+@using Newtonsoft.Json
+
+@typeparam TServer1 where TServer1 : IEntityService
+@typeparam TServer2 where TServer2 : IEntityService
+
+<!--
+<Animate Animation="Animations.ZoomIn" Duration="TimeSpan.FromSeconds(1.5)">
+-->
+<div class="modal t-modal primary fade show"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Selecione os capítulos do documento</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    @if (bookEntities is not null)
+                    {
+                        <table class="table table-sm" cellpadding="1" cellspacing="1">
+                            <tr>
+                                <td align="center"></td>
+                                <td align="center">
+                                    <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
+                                </td>
+                                <td align="center">
+                                    <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
+                                </td>
+                                @*
+                            <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="Created" OnClick="@SortBy" />
+                            </td>
+                            *@
+                                <td align="center">
+                                    <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
+                                </td>
+                            </tr>
+                            <!---->
+                            <tr>
+                                <td align="center"></td>
+                                <td align="center">
+                                    <ClearableInputTextComponent Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
+                                </td>
+                                <td align="center">
+                                    <ClearableInputTextComponent Filter="@textFilter" Waiting="@waiting" OnTextChange="@OnTextChanged"></ClearableInputTextComponent>
+                                </td>
+                                @*
+                            <td align="center">
+                            <ClearableInputTextComponent Filter="@createdFilter" Waiting="@waiting" OnTextChange="@OnCreatedChanged"></ClearableInputTextComponent>
+                            </td>
+                            *@
+                                <td align="center">
+                                    <ClearableInputTextComponent Filter="@lastModifiedFilter" Waiting="@waiting" OnTextChange="@OnLastModifiedChanged"></ClearableInputTextComponent>
+                                </td>
+                            </tr>
+                            <!---->
+                            @foreach (var entity in bookEntities)
+                            {
+                                <tr style="border-style:none;">
+                                    <td>
+                                        <input class="form-check-input me-1" type="checkbox" checked="@IsSelected(entity.Id)" id="@entity.Id" onchange="@(() => OnChangeSelection(entity))" />
+                                    </td>
+                                    <td>
+                                        <div style="font-size: smaller">@entity.Title</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size:x-small">@TextToDisplay(entity.Text, 100)</div>
+                                    </td>
+                                    @*
+                            <td align="center">
+                            <div style="font-size: smaller">@entity.Created.ToString("d")</div>
+                            </td>
+                            *@
+                                    <td align="center">
+                                        <div style="font-size: smaller">@entity.LastModified?.ToString("d")</div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-primary" disabled="@(currentStartPage == 0)" @onclick="@(async () => await GetPreviousPage())">Página anterior</button>
+                            <button type="button" class="btn btn-outline-primary" disabled="@(pageSize != bookEntities.Count)" @onclick="@(async () => await GetNextPage())">Página seguinte</button>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="@(() => Cancel())">Fechar</button>
+                <button type="button" class="btn btn-primary" @onclick="@(async () => await Ok())">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+</Animate>
+-->
+
+@code {
+    [Inject]
+    private TServer1 FirstEntityService { get; set; } = default(TServer1)!;
+    [Inject]
+    private TServer2 SecondEntityService { get; set; } = default(TServer2)!;
+
+    [Parameter]
+    public BookEntity Entity { get; set; } = null!;
+    [Parameter]
+    public Guid InstituteId { get; set; }
+    [Parameter]
+    public Guid DocumentId { get; set; }
+    [Parameter]
+    public EventCallback<List<BookEntity>?> OnClose { get; set; }
+
+    protected List<BookEntity> BookEntities { get; set; } = null!;
+    private List<BookEntity> bookEntities = null!;
+
+    protected List<BookEntity> PreviousSelectedEntities { get; set; } = null!;
+    protected List<BookEntity> SelectedEntities { get; set; } = null!;
+
+    private string TextToDisplay(string text, int maxLength = 200)
+        => text.Length < maxLength ? text : text.Substring(0, maxLength) + " ...";
+
+    protected bool waiting = true;
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? titleFilter = "";
+    protected string? textFilter = "";
+    protected string? createdFilter = "";
+    protected string? createdByFilter = "";
+    protected string? lastModifiedFilter = "";
+    protected string? lastModifiedByFilter = "";
+
+    private int entitiesCount;
+    private int currentStartPage = 0;
+    private readonly int pageSize = 10;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            entitiesCount = await SecondEntityService.GetEntitiesCount(InstituteId);
+
+            await PageRequest();
+
+            var position = await FirstEntityService.GetFirstEntityPosition(DocumentId, Entity.Id);
+
+            PreviousSelectedEntities = new();
+
+            while (position is not null)
+            {
+                var entity = await SecondEntityService.GetEntity(position.SecondEntityId);
+                Guard.Against.Null(entity);
+
+                PreviousSelectedEntities.Add(entity);
+
+                position = (position.NextNodeId is not null)
+                    ? await FirstEntityService.GetNextEntityPosition(position.Id)
+                    : null;
+            }
+
+            Guard.Against.Null(BookEntities);
+            bookEntities = BookEntities.ToList();
+            Guard.Against.Null(PreviousSelectedEntities);
+            SelectedEntities = PreviousSelectedEntities.ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    protected virtual async Task GetPreviousPage()
+    {
+        currentStartPage -= pageSize;
+        if (currentStartPage < 0)
+            currentStartPage = 0;
+        BookEntities = new();
+
+        await PageRequest();
+    }
+
+    protected virtual async Task GetNextPage()
+    {
+        if (entitiesCount > currentStartPage + pageSize)
+        {
+            currentStartPage += pageSize;
+            BookEntities = new();
+
+            await PageRequest();
+        }
+    }
+
+    private void OnChangeSelection(BookEntity entity)
+    {
+        var tmp = SelectedEntities?.FirstOrDefault(o => o.Id == entity.Id);
+
+        if (tmp is not null)
+            SelectedEntities?.Remove(tmp);
+        else
+            SelectedEntities?.Add(entity);
+    }
+
+    private bool IsSelected(Guid id)
+        => SelectedEntities?.FirstOrDefault(o => o.Id == id) is not null;
+
+#pragma warning disable CS8602
+    private async Task OnTitleChanged(ChangeEventArgs args)
+    {
+        titleFilter = args.Value.ToString();
+        await PageRequest();
+    }
+    private async Task OnTextChanged(ChangeEventArgs args)
+    {
+        textFilter = args.Value.ToString();
+        await PageRequest();
+    }
+    private async Task OnCreatedChanged(ChangeEventArgs args)
+    {
+        createdFilter = args.Value.ToString();
+        await PageRequest();
+    }
+    private async Task OnLastModifiedChanged(ChangeEventArgs args)
+    {
+        lastModifiedFilter = args.Value.ToString();
+        await PageRequest();
+    }
+#pragma warning restore CS8602
+
+    private async void SortBy(string SortColumn)
+    {
+        sort = SortColumn;
+        await PageRequest();
+        ascendingSort = !ascendingSort;
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+    private Task Ok()
+    {
+        return OnClose.InvokeAsync(SelectedEntities);
+    }
+
+    protected virtual async Task PageRequest()
+    {
+        waiting = true;
+        var message = await SecondEntityService.PostPage(
+            new Requests.GetEntityPageRequest(
+                InstituteId,
+                currentStartPage,
+                pageSize,
+                sort,
+                ascendingSort,
+                titleFilter,
+                textFilter,
+                createdFilter,
+                createdByFilter,
+                lastModifiedFilter,
+                lastModifiedByFilter
+            )
+        );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<BookEntity>>(await message.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            BookEntities = tmp ?? new();
+        }
+        else
+            BookEntities = new();
+
+        bookEntities = BookEntities;
+        waiting = false;
+
+        StateHasChanged();
+    }
+}

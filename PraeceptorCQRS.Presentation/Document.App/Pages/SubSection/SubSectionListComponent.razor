@@ -1,0 +1,112 @@
+﻿@page "/subsection/list"
+
+@attribute [Authorize]
+
+@using Ardalis.GuardClauses
+@using Document.App.Components
+@using Document.App.Dialogs
+@using PraeceptorCQRS.Utilities
+
+@inherits AbstractListPage<ISubSectionListService>
+
+<!-- Modal: Editar entidade -->
+@if (EditEntityDialogIsOpen)
+{
+    <EditEntityDialog Title="@previousTitle" Text="@previousText" OnClose="@OnEditEntityDialogClose" />
+}
+
+<section class="p-1">
+
+    <PageHeaderComponent Institute="@institute" Text="SUBSEÇÕES" />
+
+    <article class="content px-4">
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+            <thead>
+                <tr>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center" colspan="3">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Texto" Filter="@textFilter" Waiting="@waiting" OnTextChange="@OnTextChanged"></ClearableInputTextComponent>
+                    </td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
+                    </td>
+                    <td align="center" colspan="2">
+                        <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
+                    </td>
+                </tr>
+                <!---->
+            </thead>
+            <tbody>
+                @foreach (var entity in entityList)
+                {
+                    <tr>
+                        <td>
+                            <div style="font-size: smaller">
+                                @TextToDisplay(entity.Title, 50)
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
+                        </td>
+                        <td align="right">
+                            <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editSubSectionModal"
+                                title="Editar"
+                                @onclick="@(() => Edit(entity))"
+                                style="border: none;">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                        <td align="center" style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@waiting"
+                        title="Criar uma nova subseção"
+                        @onclick="() => OnCreate()">
+                    <i class="bi bi-plus-lg"></i>
+                    Criar uma nova subseção
+                </button>
+            </div>
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+        </div>
+    </article>
+</section>
+
+@code {
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
+
+    private InstituteModel? institute;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
+            Guard.Against.Null(institute);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

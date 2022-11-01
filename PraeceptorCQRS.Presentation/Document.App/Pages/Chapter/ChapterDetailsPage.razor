@@ -1,0 +1,155 @@
+﻿@page "/chapter/details/{EntityId:guid}"
+
+@attribute [Authorize]
+
+@using Document.App.Dialogs
+@using Document.App.Notifiers
+@using Document.App.Pages.Chapter
+@using PraeceptorCQRS.Utilities
+
+@inherits AbstractDetailsPage<IChapterListService, ISectionListService>
+
+@inject DocumentNavigationComponentNotifier updateNotifier
+@inject NavigationManager navigationManager
+
+@implements IDisposable
+
+<!-- Modal: Editar entidade -->
+@if (EditEntityDialogIsOpen)
+{
+    <EditEntityDialog Title="@previousTitle" Text="@previousText" OnClose="@OnEditEntityDialogClose" />
+}
+
+<!-- Modal: Inserir ou remover entidades -->
+@if (SelectEntitiesDialogIsOpen)
+{
+    <SelectEntitiesDialog TServer1="IChapterListService"
+                      TServer2="ISectionListService"
+                      OnClose="@OnSelectEntitiesDialogClose"
+                      Entity="@_entity"
+                      InstituteId="@_userInstituteId" />
+}
+
+<DocumentNavigationComponent></DocumentNavigationComponent>
+
+@if (waiting)
+{
+    <button class="btn btn-primary" type="button" disabled>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Carregando...
+    </button>
+}
+else
+{
+    <div>
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>Título</th>
+                    <th></th>
+                    <th>Texto</th>
+                    <th></th>
+                    <th>Atualização</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entity in previousSelectedEntities)
+                {
+                    <tr>
+                        <td align="center">
+                            <button type="button"
+                            class="btn btn-outline-primary"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Mover para cima"
+                            @onclick="@(() => MoveBackward(entity))"
+                            style="border: none;">
+                                <i class="bi bi-chevron-double-up"></i>
+                            </button>
+                        </td>
+                        <td align="center">
+                            <button type="button"
+                            class="btn btn-outline-primary"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Mover para baixo"
+                            @onclick="@(() => MoveForward(entity))"
+                            style="border: none;">
+                                <i class="bi bi-chevron-double-down"></i>
+                            </button>
+                        </td>
+                        <td>@entity.Title</td>
+                        <td align="center">
+                            <button type="button"
+                            class="btn btn-outline-info"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Ver detalhes"
+                            @onclick="@(() => Details(entity))"
+                            style="border: none;">
+                                <i class="bi bi-diagram-3"></i>
+                            </button>
+                        </td>
+                        <td>    
+                            <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
+                        </td>
+                        <td align="center">
+                            <button type="button"
+                            class="btn btn-sm btn-outline-warning"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editChapterModal"
+                            title="Editar"
+                            @onclick="@(() => Edit(entity))"
+                            style="border: none;">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                        <td align="center">
+                            <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <div>
+        <!-- Button trigger modal -->
+        <button type="button"
+            class="btn btn-outline-primary"
+            data-toggle="tooltip"
+            data-placement="top"
+            data-bs-toggle="modal"
+            title="Inserir ou remover seções"
+            @onclick="() => OpenSelectEntitiesDialog()">
+            <i class="bi bi-plus-slash-minus"></i>
+            Inserir ou remover seções
+        </button>
+    </div>
+}
+
+@code {
+    protected override void Details(BookEntity entity)
+    {
+        navigationManager.NavigateTo($"/section/details/{entity.Id}");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            updateNotifier.CallUpdateDocumentNavigationWithChapterChanged(_entity);
+        }
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+    }
+}

@@ -1,0 +1,62 @@
+﻿<div class="input-group mb-3">
+    <input type="text" class="form-control"
+           aria-label="Text input with dropdown button"
+           value=@Filter
+           @onchange=@OnTextChange 
+           disabled="@Waiting"
+           style="background-color:aliceblue;">
+    @if (Waiting)
+    {
+        <button type="button" class="btn btn-outline-primary" disabled>
+            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+        </button>
+    }
+    else
+    {
+        <button class="btn btn-outline-primary" type="button" data-toggle="tooltip" title="Limpar"
+            disabled="@(string.IsNullOrWhiteSpace(Filter))"
+            @onclick="@OnClear">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    }
+    <button class="btn btn-outline-primary dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        @foreach (var key in Options.Keys)
+        {
+            <li>
+                <a @onclick="@((e) => ChangeSelection(e, Options[key]))" data-value="menu1">
+                    @Options[key]
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter]
+    public bool Waiting { get; set; }
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnTextChange { get; set; }
+    [Parameter]
+    public Dictionary<Guid, string> Options { get; set; } = default!;
+    [Parameter]
+    public string? Filter { get; set; } = default!;
+
+    private async Task ChangeSelection(MouseEventArgs args, string filter)
+    {
+        Filter = filter;
+        await OnTextChange.InvokeAsync(new ChangeEventArgs { Value = Filter });
+        StateHasChanged();
+    }
+
+    private async Task OnClear()
+    {
+        Filter = "";
+        await OnTextChange.InvokeAsync(new ChangeEventArgs { Value = Filter });
+        StateHasChanged();
+    }
+}

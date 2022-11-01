@@ -1,0 +1,399 @@
+﻿@page "/user/list"
+
+@using IdentityModel
+@using UserManager.App.Components
+@using UserManager.App.Components.Toaster
+@using UserManager.App.Dialogs
+@using UserManager.App.Interfaces
+@using UserManager.App.Models
+@using Ardalis.GuardClauses
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.User
+
+@inject NavigationManager navigationManager
+
+@inject IUserService userService
+
+<!-- Modal: Editar entidade -->
+@if (EditDialogIsOpen)
+{
+    <EditUserDialog UserName="@previousUserName" Email="@previousEmail" PhoneNumber="@previousPhoneNumber" IsEnabled="@previousEnabled" Gender="@previousGender"
+                HoldingId="@previousHoldingId" InstituteId="@previousInstituteId" CourseId="@previousCourseId"
+                OnClose="@OnEditDialogClose" />
+}
+
+<table class="table table-sm" cellpadding="1" cellspacing="1">
+    <thead>
+        <tr>
+            <td align="center">
+                <ButtonSortComponent Waiting="@waiting" Text="Usuário" SortBy="UserName" OnClick="@SortBy" />
+            </td>
+            <td align="center">
+                <ButtonSortComponent Waiting="@waiting" Text="Email" SortBy="Email" OnClick="@SortBy" />
+            </td>
+            <td align="center">
+                <ButtonSortComponent Waiting="@waiting" Text="Telefone" SortBy="PhoneNumber" OnClick="@SortBy" />
+            </td>
+            <td align="center">
+                <ButtonSortComponent Waiting="@waiting" Text="Habilitado" SortBy="Enabled" OnClick="@SortBy" />
+            </td>
+            <th></th>
+            <th></th>
+        </tr>
+        <!---->
+        <tr>
+            <td align="center">
+                <ClearableInputTextComponent Filter="@userNameFilter" Waiting="@waiting" OnTextChange="@OnUserNameChanged"></ClearableInputTextComponent>
+            </td>
+            <td align="center">
+                <ClearableInputTextComponent Filter="@emailFilter" Waiting="@waiting" OnTextChange="@OnEmailChanged"></ClearableInputTextComponent>
+            </td>
+            <td align="center">
+                <ClearableInputTextComponent Filter="@phoneNumberFilter" Waiting="@waiting" OnTextChange="@OnPhoneNumberChanged"></ClearableInputTextComponent>
+            </td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+            <td align="center"></td>
+        </tr>
+        <!---->
+    </thead>
+    <tbody>
+        @foreach (var entity in userList)
+        {
+            <tr>
+                <td>@TextToDisplay(entity.UserName, 50)</td>
+                <td>@TextToDisplay(entity.Email, 50)</td>
+                <td>@TextToDisplay(entity.PhoneNumber, 50)</td>
+                <td align="center">
+                    @((entity.IsEnabled) ? "Habilitado" : "Desabilitado")
+                </td>
+                <td align="center">
+                    <button type="button"
+                        class="btn btn-outline-info"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Ver detalhes"
+                        @onclick="@(() => Details(entity))"
+                        style="border: none;">
+                        <i class="bi bi-diagram-3"></i>
+                    </button>
+                </td>
+                <td align="center">
+                    <button type="button"
+                        class="btn btn-sm btn-outline-warning"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editHoldingModal"
+                        title="Editar"
+                        @onclick="@(() => Edit(entity))"
+                        style="border: none;">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="btn-group" role="group" aria-label="First group">
+        <button type="button"
+                class="btn btn-outline-primary"
+                data-toggle="tooltip"
+                data-placement="top"
+                data-bs-toggle="modal"
+                disabled="@waiting"
+                title="Criar um novo usuário"
+                @onclick="() => OnCreate()">
+            <i class="bi bi-plus-lg"></i>
+            Criar um novo usuário
+        </button>
+    </div>
+    <div class="input-group">
+        <button type="button" class="btn btn-outline-primary" disabled="@(currentStartPage == 0 || waiting)" @onclick="@(async () => await GetPreviousPage())">Página anterior</button>
+        <button type="button" class="btn btn-outline-primary" disabled="@(pageSize != userList.Count || waiting)" @onclick="@(async () => await GetNextPage())">Página seguinte</button>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = default!;
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
+
+    protected List<UserModel> userList = new();
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? holdingIdFilter = "";
+    protected string? instituteIdFilter = "";
+    protected string? courseIdFilter = "";
+    protected string? userNameFilter = "";
+    protected string? emailFilter = "";
+    protected string? phoneNumberFilter = "";
+    protected bool? enabledFilter;
+    protected char? genderFilter;
+
+    protected UserModel? entitySelected = null!;
+
+    protected string? previousInstituteId;
+    protected string? previousHoldingId;
+    protected string? previousCourseId;
+    protected string previousUserName = default!;
+    protected string previousEmail = default!;
+    protected string? previousPhoneNumber;
+    protected bool previousEnabled;
+    protected char previousGender;
+    protected string previousPasswordHash = default!;
+
+    protected bool EditDialogIsOpen = false;
+
+    protected int currentStartPage = 0;
+    protected readonly int pageSize = 10;
+
+    protected bool waiting = true;
+    protected bool created = false;
+
+    protected string TextToDisplay(string? text, int maxLength = 200)
+        => text is not null && text.Length < maxLength ? text : text?.Substring(0, maxLength) + "...";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            EditDialogIsOpen = false;
+            await PageRequest();
+        }
+    }
+
+    protected async Task PageRequest()
+    {
+        waiting = true;
+        var message = await userService.PostPage(
+            new GetUserPageRequest(
+                currentStartPage,
+                pageSize,
+                sort,
+                ascendingSort,
+                holdingIdFilter,
+                instituteIdFilter,
+                courseIdFilter,
+                userNameFilter,
+                emailFilter,
+                phoneNumberFilter,
+                enabledFilter,
+                genderFilter
+            )
+        );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<UserModel>>(await message.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            userList = tmp.Select(o => (UserModel)o).ToList();
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    protected async Task GetPreviousPage()
+    {
+        if (currentStartPage > 0)
+        {
+            currentStartPage -= pageSize;
+            if (currentStartPage < 0)
+                currentStartPage = 0;
+            userList = new();
+            await PageRequest();
+        }
+        else
+            currentStartPage = 0;
+    }
+
+    protected async Task GetNextPage()
+    {
+        if (userList?.Count == pageSize)
+        {
+            waiting = true;
+            currentStartPage += pageSize;
+            userList = new();
+            await PageRequest();
+        }
+    }
+
+#pragma warning disable CS8602
+    protected async Task OnUserNameChanged(ChangeEventArgs args)
+    {
+        userNameFilter = args.Value.ToString();
+        await PageRequest();
+    }
+    protected async Task OnEmailChanged(ChangeEventArgs args)
+    {
+        emailFilter = args.Value.ToString();
+        await PageRequest();
+    }
+    protected async Task OnPhoneNumberChanged(ChangeEventArgs args)
+    {
+        phoneNumberFilter = args.Value.ToString();
+        await PageRequest();
+    }
+    // protected async Task OnEnabledChanged(ChangeEventArgs args)
+    // {
+    //     enabledFilter = args.Value.ToString();
+    //     await PageRequest();
+    // }
+    protected async Task OnCourseChanged(ChangeEventArgs args)
+    {
+        courseIdFilter = args.Value.ToString();
+        await PageRequest();
+    }
+    // protected async Task OnGenderChanged(ChangeEventArgs args)
+    // {
+    //     genderFilter = args.Value.ToString();
+    //     await PageRequest();
+    // }
+#pragma warning restore CS8602
+
+    protected async void SortBy(string? SortColumn)
+    {
+        sort = SortColumn;
+        await PageRequest();
+        ascendingSort = !ascendingSort;
+    }
+
+    protected void Edit(UserModel entity)
+    {
+        created = false;
+
+        entitySelected = entity;
+        previousInstituteId = entitySelected.InstituteId;
+        previousHoldingId = entitySelected.HoldingId;
+        previousUserName = entitySelected.UserName;
+        previousPasswordHash = entitySelected.PasswordHash;
+        previousEmail = entitySelected.Email;
+        previousPhoneNumber = entitySelected.PhoneNumber;
+        previousEnabled = entitySelected.IsEnabled;
+        previousGender = entitySelected.Gender;
+        previousCourseId = entitySelected.CourseId;
+        EditDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected void OnCreate()
+    {
+        created = true;
+
+        entitySelected = new UserModel();
+        previousInstituteId = default!;
+        previousHoldingId = default!;
+        previousUserName = default!;
+        previousPasswordHash = default!;
+        previousEmail = default!;
+        previousPhoneNumber = default!;
+        previousEnabled = default!;
+        previousGender = default!;
+        previousCourseId = default!;
+        EditDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected async Task OnEditDialogClose(UserModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            waiting = true;
+
+            Guard.Against.Null(entitySelected);
+            entitySelected.UserName = modifiednewEntity.UserName;
+            entitySelected.Email = modifiednewEntity.Email;
+            entitySelected.PasswordHash = modifiednewEntity.PasswordHash;
+            entitySelected.PhoneNumber = modifiednewEntity.PhoneNumber;
+            entitySelected.IsEnabled = modifiednewEntity.IsEnabled;
+            entitySelected.Gender = modifiednewEntity.Gender;
+            entitySelected.HoldingId = modifiednewEntity.HoldingId;
+            entitySelected.InstituteId = modifiednewEntity.InstituteId;
+            entitySelected.CourseId = modifiednewEntity.CourseId;
+            HttpResponseMessage response;
+
+            if (created)
+            {
+                response = await userService.CreateUser(
+                    new CreateUserRequest(
+                        entitySelected.UserName,
+                        entitySelected.Email,
+                        // entitySelected.PasswordHash,
+                        entitySelected.PhoneNumber,
+                        entitySelected.IsEnabled,
+                        entitySelected.Gender,
+                        entitySelected.HoldingId,
+                        entitySelected.InstituteId,
+                        entitySelected.CourseId
+                    )
+                );
+            }
+            else
+            {
+                Guid id = Guid.Parse(entitySelected.Id);
+                Guard.Against.Null(id);
+
+                response = await userService.UpdateUser(
+                    new UpdateUserRequest(
+                        id,
+                        entitySelected.UserName,
+                        entitySelected.Email,
+                        entitySelected.PasswordHash,
+                        entitySelected.PhoneNumber,
+                        entitySelected.IsEnabled,
+                        entitySelected.Gender,
+                        entitySelected.HoldingId,
+                        entitySelected.InstituteId,
+                        entitySelected.CourseId
+                    )
+                );
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+                previousUserName = entitySelected.UserName;
+                previousEmail = entitySelected.Email;
+                previousPasswordHash = entitySelected.PasswordHash;
+                previousPhoneNumber = entitySelected.PhoneNumber;
+                previousEnabled = entitySelected.IsEnabled;
+                previousGender = entitySelected.Gender;
+                previousHoldingId = entitySelected.HoldingId;
+                previousInstituteId = entitySelected.InstituteId;
+                previousCourseId = entitySelected.CourseId;
+                await PageRequest();
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastError(result);
+                entitySelected.UserName = previousUserName;
+                entitySelected.Email = previousEmail;
+                entitySelected.PasswordHash = previousPasswordHash;
+                entitySelected.PhoneNumber = previousPhoneNumber;
+                entitySelected.IsEnabled = previousEnabled;
+                entitySelected.Gender = previousGender;
+                entitySelected.HoldingId = previousHoldingId;
+                entitySelected.InstituteId = previousInstituteId;
+                entitySelected.CourseId = previousCourseId;
+            }
+
+            waiting = false;
+        }
+
+        EditDialogIsOpen = false;
+
+        StateHasChanged();
+    }
+
+    private void Details(UserModel user)
+    {
+        navigationManager.NavigateTo($"/user/details/{user.Id}");
+    }
+}

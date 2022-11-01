@@ -1,0 +1,65 @@
+@PEA [F104108]
+
+  @Ementa
+    [Apresentação de dados em tabelas e gráficos; Medidas de tendência central e a questão da variabilidade; Relação entre duas variáveis; Estimação de parâmetros pelo mínimos quadrados; Probabilidade condicional; Teorema de Bayes; Modelos de distribuição; Intervalo de confiança; Teste de hipótese.]
+
+  @OBJETIVO
+    [Estimular práticas de estudos independentes visando uma progressiva autonomia profissional e intelectual do aluno, para a busca de informações oriundas de várias fontes; Articular a teoria com a prática, valorizando a pesquisa individual e coletiva, aplicando raciocínio lógico-matemático na modelagem de solução de problemas em nível computacional.]
+
+  @Competencias
+    [Trabalhar de forma autônoma.]
+    [Identificar, apresentar e resolver problemas.]
+    [Aplicar os conhecimentos na prática.]
+    [Demonstrar domínio no desenvolvimento de raciocínio lógico estruturado.]
+    [Modelar e solucionar computacionalmente problemas de engenharia utilizando Fundamentos de Programação.]
+    [Compreender e aplicar a linguagem científica.]
+    [Organizar e planejar o tempo para execução de atividades.]
+    [Organizar projetos de pesquisa vinculados à área de conhecimento do curso.]
+    [Buscar, processar e analisar informações procedentes de fontes diversas.]
+    [Trabalhar em equipe, com atenção às habilidades interpessoais.]
+    [Comunicar-se de forma oral e escrita.]
+    [Compromisso ético.]
+    [Responsabilidade social e compromisso cidadão.]
+
+  @UNIDADE1
+    @Chave[Estatística Descritiva]
+        [Apresentação de dados em tabelas e gráficos.]
+        [Medidas de tendência central e a questão da variabilidade.]
+    @Chave[Correlação e regressão linear simples]
+        [Relação entre duas variáveis.]
+        [Estimação de parâmetros pelo mínimos quadrados.]
+
+  @UNIDADE2
+    @Chave[Probabilidade]
+        [Probabilidade condicional.]
+        [Teorema de Baye.]
+    @Chave[Distribuições de Probabilidades]
+        [Modelos de distribuição.]
+    @Chave[Inferência]
+        [Intervalo de confiança.]
+        [Teste de hipótese.]
+        [Construção de um Pré-Projeto para resolução do problema específico.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. As aulas serão expositivas dialogadas, seguidas de discussão dos temas abordados, procurando sempre relacionar os conteúdos com o cotidiano. Durante cada unidade, os alunos receberão listas de exercícios, haverá a medida de eficiência e terão trabalhos em grupos e individuais, referentes aos temas estudados. Na entrega das notas de cada avaliação, haverá a resolução da prova para estimular a visão crítica e fortalecer o processo de aprendizagem.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O Processo avaliativo será continuado e observado a partir de atividades supervisionadas ou extra-classe mediante etapas de desenvolvimento propostas pelo professor em seu plano de atividades para a disciplina nas unidades I e II.]
+
+  @BASICA
+    @Autor[WALPOLE][R. E.] @Autor[MYERS][R. H.] @Autor[MYERS][S. L.] @Autor[YE][K.] @Titulo[Probabilidade e estatística para engenharia e ciência] @Edicao[8] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2009]
+  @BASICA
+    @Autor[MORETTIN][L. G.] @Titulo[Estatística Básica: Probabilidade e inferência] @Edicao[1] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2010]
+  @BASICA
+    @Autor[LARSON][R.] @Autor[FARBER][B.] @Titulo[Estatística Aplicada] @Edicao[10] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2013]
+
+  @COMPLEMENTAR
+    @Autor[MENEZES][Nilo Ney Coutinho] @Titulo[Introdução à Programação com Python - Algoritmos e lógica de programação para iniciantes] @Edicao[2] @Editora[NOVATEC][São Paulo: SP] @Ano[2014]
+  @COMPLEMENTAR
+    @Autor[VIEIRA][S.] @Titulo[Estatística Básica] @Editora[Cengage Learning Edições LTDA (Editora Pioneira)][São Paulo: SP] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[MAGALHÃES][M. N.] @Autor[LIMA][A. C. P.] @Titulo[Noções de probabilidade e estatística] @Edicao[7] @Editora[Editora da USP][São Paulo: SP] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[MORETTIN][Luiz Gonzaga] @Titulo[Estatística Básica: volume único: probabilidade e inferência] @Editora[Pearson Education do Brasil LTDA][] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[MARTINS][Gilberto De Andrade] @Autor[TOLEDO][Geraldo Luciano] @Autor[FONSECA][Jairo Simon da] @Titulo[Estatística Aplicada] @Edicao[2] @Ano[2012]

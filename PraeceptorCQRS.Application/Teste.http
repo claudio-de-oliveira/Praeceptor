@@ -1,0 +1,90 @@
+﻿@hostname=localhost
+@administrativeport=7001
+@administrativehost=https://{{hostname}}:{{administrativeport}}
+
+@documentport=7001
+@documenthost=https://{{hostname}}:{{documentport}}
+
+@contentType=application/json
+
+@documentId=376F9DFA-DF19-4DB2-AA2C-08DA7AE1C940
+
+@firstchapterid=ed065ed7-62a0-4d0c-d9d4-08da7ae1f56e
+@secondchapterid=09e4cae3-9c51-480c-87e8-b7637bd332c6
+@thirdchapterid=0c2903ff-e05a-495a-841c-b0b3a39d2d0c
+
+
+POST {{documenthost}}/document/chapter/create/first
+Content-Type: {{contentType}}
+
+{
+	"FirstEntityId": "{{documentId}}",
+	"SecondEntityId": "{{firstchapterid}}"
+}
+
+
+POST {{documenthost}}/document/chapter/insert/before
+Content-Type: {{contentType}}
+
+{
+	"id": "58899a5f-fbf5-4216-0126-08da7b3a34e9",
+	"FirstEntityId": "{{documentId}}",
+	"SecondEntityId": "{{secondchapterid}}"
+}
+
+
+POST {{documenthost}}/document/chapter/insert/after
+Content-Type: {{contentType}}
+
+{
+	"id": "10ac57e2-6279-412f-0121-08da7b3a34e9",
+	"FirstEntityId": "{{documentId}}",
+	"SecondEntityId": "{{thirdchapterid}}"
+}
+
+
+GET {{documenthost}}/document/chapter/get/last/{{documentId}}
+Content-Type: {{contentType}}
+
+
+GET {{documenthost}}/document/chapter/get/previous/657d32ff-2cac-4a36-0258-08da7b3800c3
+Content-Type: {{contentType}}
+
+
+GET {{documenthost}}/document/chapter/get/previous/ab7f76fb-3f4d-4d42-0259-08da7b3800c3
+Content-Type: {{contentType}}
+
+
+GET {{documenthost}}/document/chapter/get/previous/638d300a-4083-4ac7-0257-08da7b3800c3
+Content-Type: {{contentType}}
+
+
+GET {{documenthost}}/document/chapter/get/first/{{documentId}}
+Content-Type: {{contentType}}
+
+
+GET {{documenthost}}/document/chapter/get/next/106dce83-4b21-48ec-cacc-08da7b2eb016
+Content-Type: {{contentType}}
+
+
+GET {{documenthost}}/document/chapter/get/previous/09888379-edc7-437c-cacd-08da7b2eb016
+Content-Type: {{contentType}}
+
+
+GET {{documenthost}}/document/chapter/get/previous/106dce83-4b21-48ec-cacc-08da7b2eb016
+Content-Type: {{contentType}}
+
+
+
+DELETE {{documenthost}}/document/chapter/delete/4c1e138b-0856-4ed2-cace-08da7b2eb016
+Content-Type: {{contentType}}
+
+
+DELETE {{documenthost}}/document/chapter/delete/09888379-edc7-437c-cacd-08da7b2eb016
+Content-Type: {{contentType}}
+
+
+DELETE {{documenthost}}/document/chapter/delete/106dce83-4b21-48ec-cacc-08da7b2eb016
+Content-Type: {{contentType}}
+
+

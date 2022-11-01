@@ -1,0 +1,42 @@
+﻿@PEA [F109312]
+
+  @Ementa
+    [Fundamentos de conversão eletromecânica de energia. Princípios de funcionamento, características principais (estática e dinâmica), noções de especificação e modelagem das máquinas elétricas (motor de corrente contínua, motor de indução, motor síncrono, máquinas especiais). Princípios de funcionamento dos conversores estáticos (retificadores, pulsadores e inversores), métodos de comando e noções de especificação. Princípios gerais de variadores de velocidade e de posição: estruturas, modelos, redutores, comportamento estático e dinâmico, desempenho.]
+
+  @Unidade1
+    @Chave[Unidade I]
+        [Especificação de motores elétricos.]
+        [Motores de alto rendimento.]
+        [Analise de dispositivos utilizados em baixa tensão.]
+        [Chaves de partida de acionamentos elétricos e seus componentes.]
+        [Projeto de painel de comando e proteção completo, incluindo instalação elétrica para uma indústria, usando um arquivo em programa CAD.]
+
+  @Unidade2
+    @Chave[Unidade II]
+        [Projeto de painel de comando e proteção completa, incluindo instalação elétrica para uma indústria, usando um arquivo em programa CAD.]
+        [Correção de fator de potência automático.]
+        [Variação de velocidade e acionamentos em motores elétricos usando inversores de frequêcia e Soft Starter.]
+
+  @Procedimentos
+    [As aulas serão expositivas dialogadas, seguidas de discussão dos temas abordados, procurando sempre relacionar os conteúdos com o cotidiano. Durante cada unidade, os alunos receberão listas de exercícios, haverá a medida de eficiência e terão trabalhos em grupos e individuais, referentes aos temas estudados. Na entrega das notas de cada avaliação, haverá a resolução da prova para estimular a visão crítica e fortalecer o processo de aprendizagem.]
+
+  @Avaliacao
+    [O Processo avaliativo será continuado e observado a partir de atividades supervisionadas ou extra-classe mediante etapas de desenvolvimento propostas pelo professor em seu plano de atividades para a disciplina nas unidades I e II.]
+
+  @Basica
+    @AUTOR[DEVORE][Jay L.] @TITULO[Probabilidade e estatística: para engenharia e ciências] @EDITORA[Pioneira Thomson Learning][São Paulo: SP] @ANO[2006]
+  @Basica
+    @AUTOR[MAGALHÃES][M. N.] @AUTOR[LIMA][A. C. P.] @TITULO[Noções de probabilidade e estatística] @EDICAO[7] @EDITORA[EDUSP][São Paulo: SP] @ANO[2010]
+  @Basica
+    @AUTOR[MORETTIN][Luiz Gonzaga] @TITULO[Estatística básica: volume único: probabilidade e inferência] @EDITORA[Pearson Prentice Hall][São Paulo: SP] @ANO[2015]
+
+  @Complementar
+    @AUTOR[MORETTIN][Pedro Alberto] @AUTOR[BUSSAB][Wilton de O.] @TITULO[Estatística básica] @EDICAO[5] @EDITORA[Saraiva][São Paulo: SP] @ANO[2009]
+  @Complementar
+    @AUTOR[VIEIRA][Sônia] @TITULO[Elementos de estatística] @EDICAO[5] @EDITORA[Atlas][São Paulo: SP] @ANO[2012]
+  @Complementar
+    @AUTOR[MORETTIN][L. G.] @TITULO[Estatística Básica: Probabilidade e inferência] @EDITORA[Bookman][] @EDICAO[1] @ANO[2010 ]
+  @Complementar
+    @AUTOR[BARBETTA][P. A.] @AUTOR[REIS][M. M.] @AUTOR[BORNIA][A. C.] @TITULO[Estatística para cursos de Engenharia e Informática] @EDICAO[2] @EDITORA[Atlas][São Paulo: SP] @ANO[2010] 
+  @Complementar
+    @AUTOR[LARSON][R.] @AUTOR[FARBER][B.] @TITULO[Estatística Aplicada] @EDICAO[2] @EDITORA[Pearson][] @ANO[2008]

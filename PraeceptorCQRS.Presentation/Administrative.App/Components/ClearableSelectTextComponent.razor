@@ -1,0 +1,49 @@
+﻿@using Administrative.App.Models
+
+<div class="input-group input-group-sm mb-3">
+
+    <input class="form-control form-control-sm" type="text" value="@ComponentFilter"
+           bind-value:event="onchange"
+           @onchange="@OnChange"
+           style="font-size:small; background-color:aliceblue;">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            type="button"
+            data-bind="@Options"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+        @FilterText
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        @foreach (var option in Options)
+        {
+            <li style="font-size:smaller"><a class="dropdown-item" onclick="@(() => OnSelect.InvokeAsync(option))">@option.Name (@option.Code)</a></li>
+        }
+    </ul>
+    <button class="btn btn-sm btn-outline-primary btn-clear" type="button" data-toggle="tooltip" title="Limpar"
+            disabled="@(string.IsNullOrWhiteSpace(FilterText))"
+            @onclick="@OnClear">
+        <i class="bi small bi-x-lg"></i>
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<ClassModel?> OnSelect { get; set; }
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnFilterChange { get; set; }
+    [Parameter]
+    public EventCallback OnClear { get; set; }
+    [Parameter]
+    public string FilterText { get; set; } = default!;
+    [Parameter]
+    public bool Waiting { get; set; }
+    [Parameter]
+    public List<ClassModel> Options { get; set; } = new();
+    [Parameter]
+    public string ComponentFilter { get; set; } = default!;
+
+    private void OnChange(ChangeEventArgs args)
+    {
+        OnFilterChange.InvokeAsync(args);
+    }
+}

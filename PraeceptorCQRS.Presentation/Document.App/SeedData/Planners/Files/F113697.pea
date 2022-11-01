@@ -1,0 +1,60 @@
+@PEA [F113697]
+
+  @Ementa
+    [Lógica de programação e programação estruturada; Modelagem de solução de problemas; Bases orientadoras da ação generalizadas; Interpretação de uma segunda língua; Integração de conteúdo; Bases orientadoras da ação específicas; Desenvolvimento de prática integradora; Linguagem de programação.]
+
+  @OBJETIVO
+    [Estimular práticas de estudos independentes visando uma progressiva autonomia profissional e intelectual do aluno, para a busca de informações oriundas de várias fontes. Articular a teoria com a prática, valorizando a pesquisa individual e coletiva, aplicando raciocínio lógico-matemático na modelagem de solução de problemas em nível computacional.]
+
+  @Competencias
+    [Trabalhar de forma autônoma.]
+    [Identificar, apresentar e resolver problemas.]
+    [Aplicar os conhecimentos na prática.]
+    [Demonstrar domínio no desenvolvimento de raciocínio lógico estruturado.]
+    [Modelar e solucionar computacionalmente problemas de engenharia utilizando Fundamentos de Programação.]
+    [Compreender e aplicar a linguagem científica.]
+    [Organizar e planejar o tempo para execução de atividades.]
+    [Organizar projetos de pesquisa vinculados à área de conhecimento do curso.]
+    [Buscar, processar e analisar informações procedentes de fontes diversas.]
+    [Trabalhar em equipe, com atenção às habilidades interpessoais.]
+    [Comunicar-se de forma oral e escrita.]
+    [Compromisso ético.]
+    [Responsabilidade social e compromisso cidadão.]
+
+  @UNIDADE1
+    @Chave[Algoritmos]
+        [Integração Bases Orientadoras da Ação.]
+        [Aplicações de Algoritmos.]
+    @Chave[introdução a desenvolvimento de projetos]
+        [Definição de Objetivos.]
+        [Estruturação de Etapas.]
+        [Experimentação e análise de resultados.]
+
+  @UNIDADE2
+    @Chave[Modelagem de solução]
+        [Modelagem matemática de solução de problemas.]
+        [Desenvolvimento algorítmico da solução.]
+        [Construção de um Pré-Projeto para resolução do problema específico.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. A disciplina será trabalhada de forma a possibilitar a participação ativa e crítica dos alunos de acordo com os conceitos-chave a serem trabalhados por unidade de ensino, com orientações individuais e coletivas, estudos de texto, discussões e argumentações no contorno do projeto, estudos dirigidos com gradação de dificuldade, acompanhamento a cada encontro das etapas de desenvolvimento do trabalho e trabalho em equipe para resolução de problema multidisciplinar da sua área de atuação profissional.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O Processo avaliativo será continuado e observado a partir de atividades supervisionadas ou extra-classe mediante etapas de desenvolvimento propostas pelo professor em seu plano de atividades para a disciplina nas unidades I e II.]
+
+  @BASICA
+    @Autor[CERVO][Amado Luiz] @Autor[BERVIAN][Pedro Alcino] @Autor[SILVA][Roberto da] @Titulo[Metodologia científica] @Edicao[6] @Editora[Pearson Education do Brasil LTDA][] @Ano[2011]
+  @BASICA
+    @Autor[GIL][Antonio Carlos] @Titulo[Como elaborar projetos de pesquisa] @Edicao[5] @Editora[Editora Atlas LTDA(Atlas)][São Paulo: SP] @Ano[2010]
+  @BASICA
+    @Autor[IIDA][I.] @Titulo[Ergonomia: Projeto e Produção] @Edicao[2] @Editora[Editora Edgard Blücher LTDA][São Paulo: SP] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[ANDRADE][Maria Margarida de]@Titulo[Introdução à Metodologia do Trabalho Científico]@Editora[Editora Atlas LTDA(Atlas)][São Paulo: SP]@Ano[2011]
+  @COMPLEMENTAR
+    @Autor[ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS][]@Titulo[NBR 6022: informação e documentação: artigo em publicação periódica científica impressa]@Ano[2002]
+  @COMPLEMENTAR
+    @Autor[ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS][]@Titulo[NBR 10520: informação e documentação: citações em documentos: apresentação]@Ano[2002]
+  @COMPLEMENTAR
+    @Autor[ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS][]@Titulo[NBR 15287: informação e documentação: projeto de pesquisa]@Ano[2011]
+  @COMPLEMENTAR
+    @Autor[MENEZES][Nilo Ney Coutinho]@Titulo[Introdução à Programação com Python - Algoritmos e lógica de programação para iniciantes] @Edicao[2]@Editora[NOVATEC][São Paulo: SP]@Ano[2014]

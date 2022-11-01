@@ -1,0 +1,44 @@
+﻿# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7052
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+## G E T #################################################
+GET {{host}}/user/get/count
+Content-Type: {{contentType}}
+
+## G E T #################################################
+POST {{host}}/user/get/page
+Content-Type: {{contentType}}
+
+{
+    "start": 0,
+    "count": 10,
+    "sort": "UserName",
+    "ascending": false,
+    "holdingidfilter": "",
+    "instituteidfilter": "",
+    "courseidfilter": "",
+    "usernamefilter": "",
+    "emailfilter": "",
+    "phonenumberfilter": ""
+}
+
+# R E G I S T E R ########################################
+POST https://localhost:7242/Account/Register
+Content-Type: {{contentType}}
+
+{
+    "UserName": "UserName",
+    "Email": "clalulana@gmail.com",
+    "PasswordHash": "Pa$$123",
+    "PhoneNumber": "",
+    "IsEnabled": "True",
+    "Gender": "M",
+    "HoldingId": "",
+    "InstituteId": "",
+    "CourseId": ""
+}
+

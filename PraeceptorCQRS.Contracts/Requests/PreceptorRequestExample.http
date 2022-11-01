@@ -1,0 +1,78 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7000
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@instituteId=2DC66113-D6F4-4A18-771F-08DA896D3A86
+
+## C R E A T E ###########################################
+POST {{host}}/preceptor/create
+Content-Type: {{contentType}}
+
+{
+    "Code": "8124",
+    "Name": "Claudio de Oliveira",
+    "Email": "clalulana@gmail.com",
+    "Image": null,
+    "DegreeTypeId": "136EFE32-4960-4739-7BF7-08DA8AD322A7",
+    "RegimeTypeId": "443E3899-5B06-449A-BBB7-08DA8AD32DC4",
+    "InstituteId":  "2DC66113-D6F4-4A18-771F-08DA896D3A86"
+}
+# TODO: add above the CreatePreceptorRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=374e5117-9a46-4b42-f575-08da8ad52348
+@idToUpd=374e5117-9a46-4b42-f575-08da8ad52348
+@idToDel=374e5117-9a46-4b42-f575-08da8ad52348
+
+## G E T #################################################
+GET {{host}}/preceptor/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/preceptor/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+    "Code": "8124",
+    "Name": "Claudio de Oliveira",
+    "Email": "claudio.oliveira@unit.com",
+    "Image": null,
+    "DegreeTypeId": "136EFE32-4960-4739-7BF7-08DA8AD322A7",
+    "RegimeTypeId": "443E3899-5B06-449A-BBB7-08DA8AD32DC4",
+    "InstituteId":  "2DC66113-D6F4-4A18-771F-08DA896D3A86"
+}
+# TODO: add above the UpdatePreceptorRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/preceptor/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+
+## G E T #################################################
+GET {{host}}/preceptor/get/count/{{instituteId}}
+Content-Type: {{contentType}}
+
+
+## P A G E ###############################################
+POST {{host}}/preceptor/get/page
+Content-Type: {{contentType}}
+
+{
+    "instituteid": "{{instituteId}}",
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "titlefilter": "2",
+    "textfilter": "1",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

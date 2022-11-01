@@ -1,0 +1,60 @@
+@PEA [H118840]
+
+  @Ementa
+    [Finalidade da metodologia científica. Importância da metodologia no âmbito das ciências. Metodologia de estudos. O conhecimento e suas formas. Os métodos científicos. A pesquisa enquanto instrumento de ação reflexiva, crítica e ética. Tipos, níveis, etapas e planejamento da pesquisa científica. Procedimentos materiais e técnicos da pesquisa científica. Diretrizes básicas para elaboração de trabalhos didáticos, acadêmicos e científicos. Normas técnicas da ABNT para referências, citações e notas de rodapé. Projeto de Pesquisa.]
+
+  @OBJETIVO
+    [Contribuir para o desenvolvimento de trabalhos acadêmicos e científicos com rigor metodológico; raciocínio crítico, reflexivo, analítico e sistemático; e, de acordo com normas técnicas e oficializadas, visando ao interesse pela ciência e investigação científica.]
+
+  @Competencias
+    [Elaborar e apresentar trabalhos acadêmicos e científicos, de forma individual e/ou em grupo, de acordo com procedimentos metodológicos e Normas da Associação Brasileira de Normas e Técnicas - ABNT.]
+    [Desenvolver pesquisa científica, utilizando-se de métodos, técnicas e linguagem científica.]
+    [Elaborar projeto de pesquisa, fundamentado em conhecimentos, métodos e técnicas científicas.]
+    [Utilizar o raciocínio analítico, sistemático, crítico e reflexivo no processo da investigação científica.]
+
+  @UNIDADE1
+    @Chave[Metodologia Científica e técnicas de estudo]
+        [Finalidade e importância.]
+        [Organização dos estudos.]
+        [Técnicas de sublinhar e esquema.]
+        [Resumos e fichamento.]
+    @Chave[Trabalhos acadêmico-científicos]
+        [Pesquisa científica / Ética e Pesquisa.]
+        [Pesquisa bibliográfica e normas de referências, citações e notas de rodapé.]
+        [Artigo e Relatório técnico-científico.]
+        [Monografia e Seminário.]
+
+  @UNIDADE2
+    @Chave[Conhecimento, Ciência e Método]
+        [O Conhecimento.]
+        [A Ciência.]
+        [Métodos de abordagem.]
+        [Métodos de procedimento.]
+    @Chave[Elaboração do Projeto de Pesquisa]
+        [Tema e problema de pesquisa.]
+        [Questões, hipóteses e objetivos da pesquisa.]
+        [Técnicas de coleta de dados.]
+        [Estrutura do projeto de pesquisa.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. O curso de extensão utilizar-se-á de diversas mídias, tendo a prática como fio condutor do processo de aprendizagem a partir da pesquisa como princípio educativo. As atividades serão desenvolvidas por meio de conteúdos disponíveis no Ambiente Virtual de Aprendizagem (AVA), visando à sinergia entre as estratégias de inovação no uso de tecnologias de informação e comunicação (TIC) e os objetivos da disciplina, com vistas a promover aprendizagem significativa e colaborativa.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O processo de avaliação da disciplina será realizado a partir da participação e das atividades de autoaprendizagem no Ambiente Virtual de Aprendizagem (AVA) ao longo das unidades. Utilizar-se-á também desafios de aprendizagem e prova presencial com questões contextualizadas objetivas e subjetivas.]
+
+  @BASICA
+    @Autor[ANDRADE][Maria Margarida de] @Titulo[Introdução à Metodologia do Trabalho Científico] @Editora[Atlas][São Paulo: SP] @Ano[2009]
+  @BASICA
+    @Autor[CERVO][Amado Luiz] @Autor[BERVIAN][Pedro Alcino] @Titulo[Metodologia Científica] @Editora[Prentice Hall][São Paulo: SP] @Ano[2009]
+  @BASICA
+    @Autor[EVERINO][Antônio Joaquim] @Titulo[Metodologia do Trabalho Científico] @Editora[Cortez][São Paulo: SP] @Ano[2008]
+  @COMPLEMENTAR
+    @Autor[BASTOS][Cleverson Leite] @Autor[KELLER][Vicente] @Titulo[Aprendendo a aprender: introdução à metodologia científica] @Edicao[20] @Editora[Vozes][Petrópolis: RJ] @Ano[2007]
+  @COMPLEMENTAR
+    @Autor[GONÇALVES][Hortência de Abreu] @Titulo[Manual de metodologia da pesquisa científica] @Edicao[2] @Editora[Avercamp][] @Ano[2014]
+  @COMPLEMENTAR
+    @Autor[LAKATOS][Eva Maria] @Autor[MARCONI][Marina de Andrade] @Titulo[Fundamentos de metodologia científica] @Edicao[6] @Editora[Editora Atlas LTDA (Atlas)][São Paulo: SP] @Ano[2009]
+  @COMPLEMENTAR
+    @Autor[LAKATOS][Eva Maria] @Autor[MARCONI][Marina de Andrade] @Titulo[Metodologia científica: ciência e conhecimento científico, métodos científicos - teoria, hipóteses e variáveis] @Edicao[5] @Editora[Editora Atlas LTDA (Atlas)][São Paulo: SP] @Ano[2009]
+  @COMPLEMENTAR
+    @Autor[RODRIGUES][Auro de Jesus] @Titulo[Metodologia científica] @Edicao[2] @Editora[Avercamp][São Paulo: SP] @Ano[2009]

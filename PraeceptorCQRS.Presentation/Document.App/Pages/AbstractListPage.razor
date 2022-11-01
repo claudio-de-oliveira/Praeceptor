@@ -1,0 +1,219 @@
+@using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc
+@using Newtonsoft.Json
+
+@using Document.App.Components
+@using Document.App.Components.Toaster
+@using Document.App.Requests
+
+@typeparam TServer where TServer : IEntityService
+
+@inherits AuthenticatedPage
+
+@code {
+    [Inject]
+    protected TServer EntityService { get; set; } = default(TServer)!;
+
+    protected List<BookEntity> entityList = new();
+
+    protected bool ascendingSort = true;
+    protected string? sort = "Title";
+    protected string? textFilter = "";
+    protected string? titleFilter = "";
+    protected string? createdFilter = "";
+    protected string? createdByFilter = "";
+    protected string? lastModifiedFilter = "";
+    protected string? lastModifiedByFilter = "";
+
+    protected BookEntity? entitySelected = null!;
+    protected string previousTitle = string.Empty;
+    protected string previousText = string.Empty;
+
+    protected bool EditEntityDialogIsOpen = false;
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool waiting = true;
+    protected bool created = false;
+
+
+    protected string TextToDisplay(string? text, int maxLength = 200)
+        => text is not null && text.Length < maxLength ? text : text?.Substring(0, maxLength) + "...";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            EditEntityDialogIsOpen = false;
+            await PageRequest(currentPage);
+        }
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
+    }
+
+#pragma warning disable CS8602
+    protected async Task OnTitleChanged(ChangeEventArgs args)
+    {
+        titleFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnTextChanged(ChangeEventArgs args)
+    {
+        textFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnCreatedChanged(ChangeEventArgs args)
+    {
+        createdFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnCreatedByChanged(ChangeEventArgs args)
+    {
+        createdByFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedChanged(ChangeEventArgs args)
+    {
+        lastModifiedFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedByChanged(ChangeEventArgs args)
+    {
+        lastModifiedByFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+#pragma warning restore CS8602
+
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+    protected virtual async Task PageRequest(int page)
+    {
+        waiting = true;
+        var message = await EntityService.PostPage(
+            new Requests.GetEntityPageRequest(
+                _userInstituteId,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                titleFilter,
+                textFilter,
+                createdFilter,
+                createdByFilter,
+                lastModifiedFilter,
+                lastModifiedByFilter
+            )
+        );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfBookEntity>(content);
+            Guard.Against.Null(tmp);
+            entityList = tmp.Entities.Select(o => (BookEntity)o).ToList();
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    protected virtual void Edit(BookEntity entity)
+    {
+        created = false;
+
+        entitySelected = entity;
+        previousTitle = entitySelected.Title;
+        previousText = entitySelected.Text;
+        EditEntityDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected virtual void OnCreate()
+    {
+        created = true;
+
+        entitySelected = new BookEntity();
+        previousTitle = "";
+        previousText = "";
+        EditEntityDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected virtual async Task OnEditEntityDialogClose(BookEntity? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            waiting = true;
+
+            Guard.Against.Null(entitySelected);
+            entitySelected.Title = modifiednewEntity.Title;
+            entitySelected.Text = modifiednewEntity.Text;
+            HttpResponseMessage response;
+
+            if (created)
+            {
+                response = await EntityService.CreateEntity(
+                    new CreateEntityRequest(
+                        entitySelected.Title,
+                        entitySelected.Text,
+                        _userInstituteId,
+                        _userName
+                    )
+                );
+            }
+            else
+            {
+                response = await EntityService.UpdateEntity(
+                    new UpdateEntityRequest(
+                        entitySelected.Id,
+                        entitySelected.Title,
+                        entitySelected.Text,
+                        _userName
+                    )
+                );
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+                previousTitle = entitySelected.Title;
+                previousText = entitySelected.Text;
+                await PageRequest(currentPage);
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
+                entitySelected.Title = previousTitle;
+                entitySelected.Text = previousText;
+            }
+
+            waiting = false;
+        }
+
+        EditEntityDialogIsOpen = false;
+
+        StateHasChanged();
+    }
+}

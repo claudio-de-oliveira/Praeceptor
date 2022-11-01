@@ -1,0 +1,20 @@
+﻿@page "/"
+
+@namespace UserManager.App.Pages
+@attribute [Authorize]
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@using Microsoft.AspNetCore.Authorization
+@using Ardalis.GuardClauses
+
+@{
+    Layout = "_Layout";
+
+    var tokens = new InitialApplicationState
+            {
+                XsrfToken = Xsrf.GetAndStoreTokens(HttpContext).RequestToken ?? default!
+            };
+}
+
+<component type="typeof(App)" render-mode="ServerPrerendered" param-InitialState="tokens" />

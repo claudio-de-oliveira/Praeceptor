@@ -1,0 +1,384 @@
+﻿@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.Course
+@using PraeceptorCQRS.Contracts.Entities.Holding
+@using PraeceptorCQRS.Contracts.Entities.Institute
+@using UserManager.App.Interfaces
+@using UserManager.App.Models
+@using Ardalis.GuardClauses
+
+<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <form>
+                            <div class="mb-3">
+                                <label for="recipient-username" class="col-form-label">Usuário</label>
+                                <input type="text" class="form-control" @bind-value="@userName" id="recipient-username" disabled="@(!create)" contenteditable="false" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-email" class="col-form-label">Email</label>
+                                <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="false" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-phonenumber" class="col-form-label">Telefone</label>
+                                <input type="text" class="form-control" @bind-value="@phoneNumber" id="recipient-phonenumber" contenteditable="true" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                @if (isEnabled)
+                                {
+                                    <input class="form-check-input" type="checkbox" @bind-value="isEnabled" id="flexCheckChecked" checked>
+                                }
+                                else
+                                {
+                                    <input class="form-check-input" type="checkbox" @bind-value="isEnabled" id="flexCheckChecked">
+                                }
+                                <label class="form-check-label" for="flexCheckChecked">
+                                    Habilitado
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-gender" class="col-form-label">Gênero</label>
+                                <select class="form-select" value="@gender" @onchange="@OnGenderChange" id="recipient-gender" style="background-color:aliceblue;">
+                                    <option value='F'>Feminino</option>
+                                    <option value='M'>Masculino</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-holding" class="col-form-label">Holding</label>
+                                <select class="form-select" value="@holdingId" @onchange="@OnHoldingChange" id="recipient-holding" style="background-color:aliceblue;">
+                                    @foreach (var option in holdingList)
+                                    {
+                                        <option value=@option.Key>@option.Value</option>
+                                    }
+                                </select>
+                            </div>
+                            @if (holdingId != Guid.Empty)
+                            {
+                                <div class="mb-3">
+                                    <label for="recipient-institute" class="col-form-label">Instituição</label>
+                                    <select class="form-select" value="@instituteId" @onchange="@OnInstituteChange" id="recipient-institute" style="background-color:aliceblue;">
+                                        @foreach (var option in instituteList)
+                                        {
+                                            <option value=@option.Key>@option.Value</option>
+                                        }
+                                    </select>
+                                </div>
+                                @if (instituteId != Guid.Empty)
+                                {
+                                    <div class="mb-3">
+                                        <label for="recipient-course" class="col-form-label">Curso</label>
+                                        <select class="form-select" value="@courseId" @onchange="@OnCourseChange" id="recipient-course" style="background-color:aliceblue;">
+                                            @foreach (var option in courseList)
+                                            {
+                                                <option value=@option.Key>@option.Value</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editChapterModal"
+                        title="Cuidado: As modificações serão perdidas"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" class="btn btn-outline-primary" @onclick="@(async () => await Ok())">Salvar alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private IHoldingService holdingService { get; set; } = default!;
+    [Inject]
+    private IInstituteService instituteService { get; set; } = default!;
+    [Inject]
+    private ICourseService courseService { get; set; } = default!;
+
+    [Parameter]
+    public string UserName { get; set; } = default!;
+    [Parameter]
+    public string Email { get; set; } = default!;
+    [Parameter]
+    public string PhoneNumber { get; set; } = default!;
+    [Parameter]
+    public bool IsEnabled { get; set; }
+    [Parameter]
+    public char Gender { get; set; } = default!;
+    [Parameter]
+    public string HoldingId { get; set; } = default!;
+    [Parameter]
+    public string InstituteId { get; set; } = default!;
+    [Parameter]
+    public string CourseId { get; set; } = default!;
+    [Parameter]
+    public EventCallback<UserModel?> OnClose { get; set; }
+
+    private Dictionary<Guid, string> holdingList = new();
+    private Dictionary<Guid, string> instituteList = new();
+    private Dictionary<Guid, string> courseList = new();
+
+    private string userName = default!;
+    private string email = default!;
+    private string? phoneNumber;
+    private bool isEnabled;
+    private char gender;
+    private Guid holdingId;
+    private Guid instituteId;
+    private Guid courseId;
+
+    private bool create = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userName = UserName;
+
+            create = string.IsNullOrWhiteSpace(userName);
+
+            email = Email;
+            phoneNumber = PhoneNumber;
+            isEnabled = IsEnabled;
+            gender = Gender;
+
+            Guid.TryParse(HoldingId, out holdingId);
+            Guid.TryParse(InstituteId, out instituteId);
+            Guid.TryParse(CourseId, out courseId);
+
+            await InitializeHoldingList();
+
+            if (holdingId != Guid.Empty)
+            {
+                await InitializeInstituteList(holdingId);
+                if (instituteId != Guid.Empty)
+                {
+                    await InitializeCourseList(instituteId);
+                }
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task InitializeHoldingList()
+    {
+        holdingList = new();
+        holdingList.Add(Guid.Empty, "<Nenhum>");
+
+        var responseMessage = await holdingService.PostPage(
+            new GetHoldingPageRequest(
+                0,
+                int.MaxValue,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<HoldingModel>>(await responseMessage.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.ForEach(o => holdingList.Add(o.Id, o.Acronym));
+        }
+    }
+
+    private async Task InitializeInstituteList(Guid holdingId)
+    {
+        instituteList = new();
+        instituteList.Add(Guid.Empty, "<Nenhum>");
+
+        if (holdingId == Guid.Empty)
+            return;
+
+        var responseMessage = await instituteService.PostPage(
+            new GetInstitutePageRequest(
+                holdingId,
+                0,
+                int.MaxValue,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<InstituteModel>>(await responseMessage.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.ForEach(o => instituteList.Add(o.Id, o.Acronym));
+        }
+    }
+
+    private async Task InitializeCourseList(Guid instituteId)
+    {
+        courseList = new();
+        courseList.Add(Guid.Empty, "<Nenhum>");
+
+        if (instituteId == Guid.Empty)
+            return;
+
+        var responseMessage = await courseService.PostPage(
+            new GetCoursePageRequest(
+                instituteId,
+                0,
+                int.MaxValue,
+                null,
+                true,
+                null,
+                null,
+                null,
+                -1,
+                -1,
+                -1,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<CourseModel>>(await responseMessage.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.ForEach(o => courseList.Add(o.Id, o.Name));
+        }
+    }
+
+    private async Task<Guid> ChangeHolding(Guid id)
+    {
+        if (id != Guid.Empty)
+            await InitializeInstituteList(id);
+
+        instituteId = await ChangeInstitute(Guid.Empty);
+
+        return id;
+    }
+
+    private async Task<Guid> ChangeInstitute(Guid id)
+    {
+        if (id != Guid.Empty)
+            await InitializeCourseList(id);
+
+        courseId = await ChangeCourse(Guid.Empty);
+
+        return id;
+    }
+
+    private async Task<Guid> ChangeCourse(Guid id)
+    {
+        await Task.CompletedTask;
+
+        return id;
+    }
+
+    private async Task OnHoldingChange(ChangeEventArgs args)
+    {
+        Guid id = default!;
+
+        Guid.TryParse((string?)args.Value, out id);
+
+        if (id != holdingId)
+            holdingId = await ChangeHolding(id);
+
+        StateHasChanged();
+    }
+
+    private async Task OnInstituteChange(ChangeEventArgs args)
+    {
+        Guid id = default!;
+
+        Guid.TryParse((string?)args.Value, out id);
+
+        if (id != instituteId)
+            instituteId = await ChangeInstitute(id);
+
+        StateHasChanged();
+    }
+
+    private async Task OnCourseChange(ChangeEventArgs args)
+    {
+        Guid id = default!;
+
+        Guid.TryParse((string?)args.Value, out id);
+
+        if (id != courseId)
+            courseId = await ChangeCourse(id);
+
+        StateHasChanged();
+    }
+
+    private void OnGenderChange(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        gender = ((string)args.Value)[0];
+
+        StateHasChanged();
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+
+    private Task Ok()
+    {
+        if (string.Compare(UserName, userName) != 0 ||
+            string.Compare(Email, email) != 0 ||
+            string.Compare(PhoneNumber, phoneNumber) != 0 ||
+            IsEnabled != isEnabled ||
+            Gender != gender ||
+            string.Compare(HoldingId, holdingId.ToString(), true) != 0 ||
+            string.Compare(InstituteId, instituteId.ToString(), true) != 0 ||
+            string.Compare(CourseId, courseId.ToString(), true) != 0
+        )
+            return OnClose.InvokeAsync(new UserModel
+                {
+                    UserName = userName,
+                    Email = email,
+                    PhoneNumber = phoneNumber,
+                    IsEnabled = isEnabled,
+                    Gender = gender,
+                    HoldingId = holdingId.ToString(),
+                    InstituteId = instituteId.ToString(),
+                    CourseId = courseId.ToString(),
+                });
+        else
+            return OnClose.InvokeAsync(null);
+    }
+}

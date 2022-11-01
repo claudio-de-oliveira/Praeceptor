@@ -1,0 +1,56 @@
+@PEA [F113646]
+
+  @Ementa
+    [Domínio métodos, ferramentas e técnicas de representação de objetos em duas e três dimensões, em concordância com as Normas Brasileiras relacionadas. Construção de modelos tridimensionais para submissão em simulação. Utilização de recursos computacionais.]
+
+  @OBJETIVO
+    [Compor projetos por meio de representações em duas e três dimensões com auxílio de ferramentas computacionais.]
+
+  @Competencias
+    [Conhecer critérios e parâmetros das normas técnicas (Padrão ABNT).]
+    [Desenvolver técnicas e procedimentos intrínsecos à representação 2D e 3D.]
+    [Definir e utilizar as técnicas de elaboração, as ferramentas e sua utilização correta em projetos gráficos.]
+    [Executar esboços em ambiente bi ou tridimensional com recurso CAD e CAE.]
+    [Planejar, ler, interpretar, compor e executar desenhos de projetos técnicos.]
+    [Interpretar e aplicar normas e recomendações técnicas específicas aplicáveis à execução de projetos técnicos.]
+
+  @UNIDADE1
+    @Chave[Comunicar-se efetivamente de forma oral, escrita e gráfica]
+        [Ambiente tridimensional CAD/CAE.]
+        [Representação 2D em plataforma CAD.]
+        [Ferramentas de auxílio ao desenho.]
+        [NBR 10126 – Cotagem em Desenho Técnico.]
+        [Recomendações para cotagem.]
+        [Ferramentas de precisão.]
+        [Ferramentas de edição.]
+
+  @UNIDADE2
+    @Chave[Dominar ferramentas básicas e técnicas, com capacidade de integrá-las em seu fazer profissional]
+        [Configuração de desenho.]
+        [NBR 8196 – Desenho Técnico - Emprego de Escalas.]
+        [NBR 12298 – Cortes: Tipos, hachuras e seções.]
+        [Modelamento de sólidos e conjuntos.]
+        [Simulação.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. A metodologia adotada no processo de ensino aprendizagem deve considerar os conceitos-chaves utilizando aulas expositivas e resolução de exercícios em conjunto com os discentes, elevando o grau de dificuldade de cada exercício e apresentando funções mais complexas de cada software. A aplicabilidade do conhecimento será realizada por meio de estudos de caso onde objetos do dia-a-dia serão representados por meio de ferramentas computacionais que demostrem simulação em duas e três dimensões.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. As Unidades de Ensino serão divididas em duas Unidades Avaliativas. A primeira Unidade Avaliativa será composta pelo conceito-chave I, e a segunda pelo conceito-chave II. Cada Unidade Avaliativa será composta por prova teórica e prática com valor de até 8,0 pontos, o que corresponde a 80% da nota de cada Unidade. A Medida de Eficiência valerá até 2,0 pontos (20% da nota), onde poderão ser realizadas atividades individuais ou em grupo.]
+
+  @BASICA
+    @Autor[BUENO][Claudia Pimentel] @Autor[PAPAZOGLOU][Rosarita Steil] @Titulo[Desenho Técnico para Engenharias] @Edicao[1] @Editora[Juruá][] @Ano[2012]
+  @BASICA
+    @Autor[GIESECKE][Frederick E.] @Titulo[Comunicação gráfica moderna] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2002]
+  @BASICA
+    @Autor[MAGUIRE][D. E.] @Autor[SMMONS][C. H.] @Titulo[Desenho técnico] @Editora[Hemus Livraria Distribuidora e Editora S/A (Hemus Editora S/A)][] @Ano[2004]
+  @COMPLEMENTAR
+    @Autor[FIALHO][Arivelto Bustamante] @Titulo[Solidworks Premium 2009: teoria e prática no desenvolvimento de produtos industriais – plataforma para projetos CAD/CAE/CAM] @Editora[Editora Érica LTDA][São Paulo: SP] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[LESKO][Jim]@Tradutor[KINDLEIN JR.][Wilson]@Tradutor[PERES][Clovis Belbute]@Titulo[Design industrial – materiais e processos de fabricação]@Editora[Editora Edgard Blücher LTDA][São Paulo: SP]@Ano[2008]
+  @COMPLEMENTAR
+    @Autor[MONTENEGRO][Gildo A.]@Titulo[Desenho de projetos]@Editora[Perspectiva][] @Ano[2011]
+  @COMPLEMENTAR
+    @Autor[SPECK][Henderson José]@Autor[PEIXOTO][Virgílio Vieira]@Titulo[Manual básico de desenho técnico]@Edicao[4]@Editora[UFSC][]@Ano[2013]
+  @COMPLEMENTAR
+    @Autor[CUNHA][Luis Veiga da]@Titulo[Desenho Técnico]@Edicao[12]@Editora[Fundação Calouste Gulbenkian][Lisboa, Portugal]@Ano[2008]

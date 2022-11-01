@@ -1,0 +1,60 @@
+@PEA [F114022]
+
+  @Ementa
+    [Aplicações da integral definida. Coordenadas Polares. Introdução ao estudo de sequências e séries infinitas. Funções de Várias Variáveis e Derivadas Parciais. Derivadas Direcionais e Vetor Gradiente.]
+
+  @OBJETIVO
+    [Compreender os conceitos básicos do cálculo, a saber: Aplicação das integrais definidas e funções de várias variáveis, necessários à resolução de problemas matemáticos inerentes às disciplinas correlatas.]
+
+  @Competencias
+    [Confrontar opiniões e pontos de vista sobre os livros e textos apresentados para o estudo do cálculo.]
+    [Desenvolver a capacidade investigativa dentro dos princípios teóricos do cálculo.]
+    [Desenvolver a capacidade de trabalho em equipe e individual de forma oral e/ou escrita com planejamento do tempo.]
+    [Identificar a partir de leituras e discussões as diferentes formas de aplicação do cálculo no contexto do conteúdo apreendido e sua interação com as demais disciplinas do curso.]
+
+  @UNIDADE1
+    @Chave[UNIDADE I: Aplicações da Integral Definida]
+        [Cálculo de volumes de sólidos de revolução.]
+        [Área de superfícies de revolução.]
+        [Comprimento de arco.]
+        [Coordenadas polares: representação polar de curvas.]
+        [Área e comprimento de arco em coordenadas polares.]
+        [Sequências numéricas e limites.]
+        [Séries numéricas e convergência.]
+        [Testes de convergência de séries: teste da comparação, teste da comparação no limite, teste da razão, teste da raiz nésima e teste da integral.]
+
+  @UNIDADE2
+    @Chave[UNIDADE II: Funções de Várias Variáveis]
+        [Funções de várias variáveis.]
+        [Curvas e superfícies de nível.]
+        [Limite e continuidade de funções.]
+        [Derivadas parciais.]
+        [Regra da cadeia.]
+        [Derivada direcional. Gradiente de uma função e propriedades.]
+        [Pontos críticos. Estudo de máximos de mínimos de funções de várias variáveis.]
+        [Multiplicadores de Lagrange: aplicação a problemas de máximos e mínimos.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. Para atingir os propósitos da disciplina serão desenvolvidas aulas com aplicação de metodologias ativas. Sendo privilegiado o processo de aprendizagem centrado no aluno com desenvolvimento de competências gerais e específicas para a formação profissional. Aulas expositivas e dialogadas, sendo desenvolvidas de acordo com os conteúdos que deverão ser trabalhados, através de conceitos fundamentais relacionados a cada tema em discussão, com apresentação de questões relacionadas ao tema, fixando os conceitos construídos na interação professor-aluno-conhecimento.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O Processo Avaliativo será mediante aplicação de uma Prova Contextualizada - PC (individual) e de Medida de Eficiência – ME, em cada uma das unidades.  A medida de Eficiência tem como princípio o acompanhamento do aluno em pelo menos duas atividades previstas no plano da disciplina.]
+
+  @BASICA
+    @Autor[THOMAS][George B.] @Titulo[Cálculo] @Volume[2] @Edicao[12] @Editora[Addison Wesley][São Paulo: SP] @Ano[2007]
+  @BASICA
+    @Autor[STEWART][James] @Titulo[Cálculo] @Volume[2] @Edicao[7] @Editora[Cengage Learning][São Paulo: SP] @Ano[2014]
+  @BASICA
+    @Autor[GONÇALVES][Miriam Buss] @Autor[FLEMMING][Diva Marília] @Titulo[Cálculo B: funções de várias variáveis, integrais múltiplas, integrais curvilíneas e de superfície] @Edicao[2] @Editora[Pearson Prentice Hall][São Paulo: SP] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[BARBONI][Ayrton] @Autor[PAULETTE][Walter] @Titulo[Cálculo e análise: cálculo diferencial e integral a uma variável] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2011]
+  @COMPLEMENTAR
+    @Autor[BOULOS][Paulo] @Autor[ABUD][Zara Issa] @Titulo[Cálculo diferencial e integral] @Edicao[2] @Editora[Pearson Makron Books][São Paulo: SP] @Ano[2013]
+  @COMPLEMENTAR
+    @Autor[GUIDORIZZI][H. L.] @Titulo[Um Curso de Cálculo] @Edicao[5] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2015]
+  @COMPLEMENTAR
+    @Autor[LARSON][Ron] @Autor[HOSTETLER][Robert P.] @Autor[EDWARDS][Bruce H.] @Titulo[Cálculo] @Volume[2] @Editora[McGraw Hill][São Paulo: SP] @Ano[2006]
+  @COMPLEMENTAR
+    @Autor[STEWART][James] @Titulo[Cálculo] @Editora[Cengage Learning][São Paulo: SP] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[Hoffmann][Laurence] @Autor[Bradley][Gerald] @Autor[Sobecki][Dave] @Autor[Price][Michael] @Titulo[Cálculo: um curso moderno e suas aplicações: tópicos avançados] @Edicao[11] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2015]

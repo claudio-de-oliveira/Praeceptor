@@ -1,0 +1,70 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7000
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@holdingId=0d7cb974-dc4a-4a16-8cde-08da8ce912d2
+
+## C R E A T E ###########################################
+POST {{host}}/institute/create
+Content-Type: {{contentType}}
+
+{
+	"acronym": "PUC/PR",
+	"name": "Pontifícia Universidade Católica do Paraná",
+	"address": "Imaculada Conceição",
+	"holdingid": "{{holdingId}}"
+	
+}
+# TODO: add above the CreateInstituteRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=cad2e614-ca18-4ad8-dc5f-08da7add8cf1
+@idToUpd=cad2e614-ca18-4ad8-dc5f-08da7add8cf1
+@idToDel=cad2e614-ca18-4ad8-dc5f-08da7add8cf1
+
+## G E T #################################################
+GET {{host}}/institute/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/institute/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+
+}
+# TODO: add above the UpdateInstituteRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/institute/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+
+## G E T #################################################
+GET {{host}}/institute/get/count/{{holdingId}}
+Content-Type: {{contentType}}
+
+
+## P A G E ###############################################
+POST {{host}}/institute/get/page
+Content-Type: {{contentType}}
+
+{
+    "instituteid": "{{holdingId}}",
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "titlefilter": "2",
+    "textfilter": "1",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

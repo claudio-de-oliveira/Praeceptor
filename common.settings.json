@@ -1,0 +1,173 @@
+{
+  "DatabaseOptions": {
+    "MaxRetryCount": 3,
+    "CommandTimeout": 30,
+    "EnableDetailedErrors": false,
+    "EnableSensitiveDataLogging": true
+  },
+  "AuthenticationOptions": {
+    "MaxRetryCount": 3,
+    "CommandTimeout": 30,
+    "EnableDetailedErrors": false,
+    "EnableSensitiveDataLogging": true
+  },
+
+  /*
+  HOW TO ENABLE LESS SECURE APPS WITH GMAIL
+
+  From May 30, 2022, ​​Google no longer supports the use of third-party apps or devices which ask you to sign in to 
+  your Google Account using only your username and password. So, we have to use a different solution for our application. 
+  To do this, we need to enable 2-step verification for our Gmail account first and then we can use the App Password 
+  feature to overcome this issue.
+
+  So, to enable 2-step verification, we have to:
+
+  - Navigate to our Google Account – the account you will send the emails from (https://myaccount.google.com/)
+  - In the menu on the left, we should select Security
+  - Then under the “Signing in to Google” section, we can see that 2-Step Verification is off – so we have to click on it
+  - Click Get Started, provide your password, and confirm the code by providing a mobile number
+  - If everything goes well, you should see the Turn On option, so just click on it
+
+  At this point, we have enabled our 2-Step verification and we can return to the Security page. There, under the same 
+  “Signing in to Google” section, we can find the App passwords option set to None. 
+
+  So, we have to:
+
+  - Click on it
+  - Provide a password
+  - Click the Select app menu and choose the Other (Custom Name) option
+  - Now, all we have to do is to provide any name we like for our app and click the Generate button
+
+  This will generate a new password for us, which we should use in our appsettings.json file instead of our personal password. 
+
+  With this in place, we are enabled again to send emails with our third-party apps.
+  */
+  "EmailConfiguration": {
+    "From": "clalulana@gmail.com",
+    "SmtpServer": "smtp.gmail.com",
+    "Username": "clalulana@gmail.com",
+    "Password": "soiiqrbppndemitd",
+    "Port": 465
+  },
+
+  "IdentityServer": {
+    "Authority": "https://localhost:7242"
+  },
+
+  "UserManager.API": {
+    "applicationUrl": "https://localhost:7052",
+    "audience": "UserManager.API",
+    "description": "API para gerenciar usuários do sistema Praeceptor",
+    "Scopes": [
+      "UserManager.API.Read",
+      "UserManager.API.Create",
+      "UserManager.API.Update",
+      "UserManager.API.Delete",
+      "UserManager.API.FullAccess"
+    ]
+  },
+  "Document.API": {
+    "applicationUrl": "https://localhost:7001",
+    "audience": "Document.API",
+    "description": "API para acessar documentos",
+    "Scopes": [
+      "Document.API.Read",
+      "Document.API.Create",
+      "Document.API.Update",
+      "Document.API.Delete",
+      "Document.API.FullAccess"
+    ]
+  },
+  "Administrative.API": {
+    "applicationUrl": "https://localhost:7000",
+    "audience": "Administrative.API",
+    "description": "API para acessar estrutura organizacional",
+    "Scopes": [
+      "Administrative.API.Read",
+      "Administrative.API.Create",
+      "Administrative.API.Update",
+      "Administrative.API.Delete",
+      "Administrative.API.FullAccess"
+    ]
+  },
+  "FileStream.API": {
+    "applicationUrl": "https://localhost:7003",
+    "audience": "FileStream.API",
+    "description": "API para acessar arquivos",
+    "Scopes": [
+      "FileStream.API.Read",
+      "FileStream.API.Create",
+      "FileStream.API.Update",
+      "FileStream.API.Delete",
+      "FileStream.API.FullAccess"
+    ]
+  },
+  "Pea.API": {
+    "applicationUrl": "https://localhost:7077",
+    "audience": "Pea.API",
+    "description": "API para acessar PEAS",
+    "Scopes": [
+      "Pea.API.Read",
+      "Pea.API.Create",
+      "Pea.API.Update",
+      "Pea.API.Delete",
+      "Pea.API.FullAccess"
+    ]
+  },
+
+  "Administrative.APP": {
+    "applicationUrl": "https://localhost:7193",
+    "logoutUri": "index",
+    "clientId": "Administrative.APP",
+    "description": "APP para a manutenção da estrutura organizacional",
+    "clientSecret": "{2EC52EA1-36C8-4A4B-B3C2-7B9EEA7CC4E1}",
+    "postLogoutRedirectUri": "index",
+    "responseType": "code",
+    "allowedScopes": [
+      "UserManager.API.Create",
+      "Administrative.API.FullAccess",
+      "roles"
+    ]
+  },
+
+  "Document.APP": {
+    "applicationUrl": "https://localhost:7074",
+    "logoutUri": "document/list",
+    "clientId": "Document.APP",
+    "description": "APP para a manutenção da estrutura organizacional",
+    "clientSecret": "{A0DF8812-DF29-41EE-A8F6-4F65730787F0}",
+    "postLogoutRedirectUri": "index",
+    "responseType": "code",
+    "allowedScopes": [
+      "Document.API.FullAccess",
+      "Administrative.API.ReadAccess",
+      "FileStream.API.FullAccess",
+      "roles"
+    ]
+  },
+
+  "UserManager.APP": {
+    "applicationUrl": "https://localhost:7266",
+    "logoutUri": "user/list",
+    "clientId": "UserManager.APP",
+    "description": "APP para a manutenção de usuários",
+    "clientSecret": "{2C8C6BA1-B554-4E75-83E2-808F59C758FC}",
+    "postLogoutRedirectUri": "index",
+    "responseType": "code",
+    "allowedScopes": [
+      "UserManager.API.FullAccess",
+      "Administrative.API.Read",
+      "roles"
+    ]
+  },
+
+
+
+  "ConnectionStrings": {
+    /* TODO: the connection string must be the same as defined in "PraeceptorCQRSDbContextFactory" class (Folder: PraeceptorCQRS.Infrastructure.Data) */
+    "FileStreamConnection": "Data Source=DESKTOP-C50EKSV;Initial Catalog=PrCQRS_Files_DB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
+    "DefaultConnection": "Data Source=DESKTOP-C50EKSV;Initial Catalog=PrCQRS_DB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
+    "IdentityServerHostConnection": "Data Source=DESKTOP-C50EKSV;Initial Catalog=PrCQRS_IS4_DB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
+  }
+}
+

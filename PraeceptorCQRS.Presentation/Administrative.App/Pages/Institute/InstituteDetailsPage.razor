@@ -1,0 +1,135 @@
+﻿@page "/institute/details/{instituteId:guid}"
+@page "/institute/details/{instituteId:guid}/{page}"
+@page "/institute/details/{instituteId:guid}/{page}/{table}"
+@attribute [Authorize]
+
+@using Administrative.App.Components
+@using Administrative.App.Interfaces
+@using Administrative.App.Models
+@using Ardalis.GuardClauses
+
+@inherits AuthenticatedPage
+
+@if (waiting)
+{
+    <div class="spinner-grow text-primary m-5" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+}
+else
+{
+    <section class="p-1">
+
+        <article class="content px-4">
+            <nav style="--bs-breadcrumb-divider: ''; padding-bottom:20px;" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                            <InstituteInfoCardComponent Title="Tabelas" Institute="@institute"></InstituteInfoCardComponent>
+                        </a>
+                        <ul class="dropdown-menu" style="font-size:small; background-color:azure; color: blue;">
+                            <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/classtype")">Tipos de componente curricular</a></li>
+                            <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/axistype")">Tipos de eixo curricular</a></li>
+                            <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/degreetype")">Tipos de titulação</a></li>
+                            <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/regimetype")">Tipos de regime de trabalho</a></li>
+                        </ul>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        <a href="@($"/institute/details/{instituteId}/courses")">
+                            <InstituteInfoCardComponent Title="Cursos" Institute="@institute"></InstituteInfoCardComponent>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="@($"/institute/details/{instituteId}/classes")">
+                            <InstituteInfoCardComponent Title="Disciplinas" Institute="@institute"></InstituteInfoCardComponent>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="@($"/institute/details/{instituteId}/preceptors")">
+                            <InstituteInfoCardComponent Title="Docentes" Institute="@institute"></InstituteInfoCardComponent>
+                        </a>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="container-fluid">
+                @if (Page == "config")
+                {
+                    @if (Table == "classtype")
+                    {
+                        <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando os tipos de componentes curriculares da {institute?.Acronym}")" />
+                        <ClassTypeListPage InstituteId="@instituteId"></ClassTypeListPage>
+                    }
+                    else
+                    @if (Table == "degreetype")
+                    {
+                        <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando as titulações da {institute?.Acronym}")" />
+                        <DegreeTypeListPage InstituteId="@instituteId"></DegreeTypeListPage>
+                    }
+                    else
+                    @if (Table == "regimetype")
+                    {
+                        <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando os regimes de trabalho da {institute?.Acronym}")" />
+                        <RegimeTypeListPage InstituteId="@instituteId"></RegimeTypeListPage>
+                    }
+                    else
+                    {
+                        <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando os tipos de eixos pedagógicos da {institute?.Acronym}")" />
+                        <AxisTypeListPage InstituteId="@instituteId"></AxisTypeListPage>
+                    }
+                }
+                else if (Page == "preceptors")
+                {
+                    <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando os docentes da {institute?.Acronym}")" />
+                    <PreceptorListPage InstituteId="@instituteId"></PreceptorListPage>
+                }
+                else if (Page == "classes")
+                {
+                    <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando a tabela de componentes curriculares da {institute?.Acronym}")" />
+                    <ClassListPage InstituteId="@instituteId"></ClassListPage>
+                }
+                else if (Page == "courses")
+                {
+                    <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando a tabela de cursos da {institute?.Acronym}")" />
+                    <CourseListPage InstituteId="@instituteId"></CourseListPage>
+                }
+                else
+                {
+                    <h5 style="color:darkmagenta; text-align:center;">Escolha o que deseja fazer</h5>
+                }
+            </div>
+        </article>
+    </section>
+}
+
+@code {
+    [Inject]
+    private IInstituteService instituteService { get; set; } = default!;
+    [Parameter]
+    public Guid InstituteId { get; set; } = default!;
+    [Parameter]
+    public string? Page { get; set; }
+    [Parameter]
+    public string? Table { get; set; }
+
+    private Guid instituteId = default!;
+    private InstituteModel? institute = default!;
+
+    protected bool waiting = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            instituteId = InstituteId;
+            institute = await instituteService.GetInstituteById(instituteId);
+            Guard.Against.Null(institute);
+
+            waiting = false;
+
+            StateHasChanged();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

@@ -1,0 +1,275 @@
+﻿@using Administrative.App.Components.Toaster
+@using Ardalis.GuardClauses
+@using Newtonsoft.Json
+
+@using Administrative.App.Components
+@using Administrative.App.Interfaces
+@using Administrative.App.Models
+
+@using PraeceptorCQRS.Contracts.Entities.AxisType
+@using PraeceptorCQRS.Contracts.Entities.Class
+
+<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <form class="row g-3">
+                            <!--------------------------------------------------------------------
+                                A forma de reinicializar a lista de componentes curriculares é
+                                recriar o componente ClearableSelectTextComponent. Esta recriação
+                                deve ocorrer sempre que o filtro for modificado - ver função
+                                OnFilterChange
+                            --------------------------------------------------------------------->
+                            <div class="col-12">
+                                <label for="recipient-class" class="col-form-label">Componente curricular</label>
+                                @if (viewSelectControl)
+                                {
+                                    <ClearableSelectTextComponent OnSelect="@SelectClass"
+                                                              OnFilterChange="@OnFilterChange"
+                                                              OnClear="@OnClear"
+                                                              FilterText="Selecionar"
+                                                              Waiting="@waiting"
+                                                              ComponentFilter="@componentFilter"
+                                                              Options="@Options" />
+                                }
+                                else
+                                {
+                                    <ClearableSelectTextComponent OnSelect="@SelectClass"
+                                                              OnFilterChange="@OnFilterChange"
+                                                              OnClear="@OnClear"
+                                                              FilterText="Selecionar"
+                                                              Waiting="@waiting"
+                                                              ComponentFilter="@componentFilter"
+                                                              Options="@Options" />
+                                }
+                            </div>
+
+                            <label for="recipient-axis" class="col-form-label">Eixo</label>
+                            <div class="col-9">
+                                <div class="input-group mb-3">
+                                    <select id="recipient-axis" class="form-select" aria-label="Default select example" @onchange="OnAxisTypeChanged">
+                                        <option value=""><i>* Selecione *</i></option>
+                                        @foreach (var axis in axisTypeList)
+                                        {
+                                            <option value="@axis.Code">@axis.Code</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                            </div>
+                            <div class="col-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" value="@optative" type="checkbox" id="flexCheckChecked" @onchange="@OnChangeOptative" checked=@optative>
+                                    <label class="form-check-label" for="flexCheckChecked">
+                                        Optativa
+                                    </label>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editChapterModal"
+                        title="Cuidado: As modificações serão perdidas"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" class="btn btn-outline-primary"
+                        @onclick="@(async () => await Ok())"
+                        disabled="@(selectedAxisType is null || selectedClass is null)">
+                    Salvar alterações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public IAxisTypeService axisService { get; set; } = default!;
+    [Inject]
+    public IClassService classService { get; set; } = default!;
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
+
+    [Parameter]
+    public Guid InstituteId { get; set; } = default!;
+    [Parameter]
+    public Guid CourseId { get; set; } = default!;
+    [Parameter]
+    public int Curriculum { get; set; }
+    [Parameter]
+    public int Season { get; set; }
+    [Parameter]
+    public List<ComponentModel> Components { get; set; } = default!;
+    [Parameter]
+    public EventCallback<ComponentModel?> OnClose { get; set; }
+
+    [Parameter]
+    public string? ComponentFilter { get; set; }
+    [Parameter]
+    public string? AxisType { get; set; }
+
+    private List<AxisTypeModel> axisTypeList = new();
+    private List<ClassModel> classList = new();
+
+    private List<ClassModel> Options = new();
+
+    private string componentFilter = "";
+
+    private bool waiting = false;
+    private bool viewSelectControl = false;
+
+    private AxisTypeModel? selectedAxisType;
+    private ClassModel? selectedClass;
+    private bool optative = false;
+
+    protected override void OnInitialized()
+    {
+        if (InstituteId == Guid.Empty)
+            throw new InvalidDataException("InstituteId inválido");
+        base.OnInitialized();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        waiting = true;
+        var result = await axisService.GetAxisTypePage(
+            new GetAxisTypePageRequest(
+                InstituteId,
+                0,
+                int.MaxValue,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+        if (result.IsSuccessStatusCode)
+        {
+            var response = JsonConvert.DeserializeObject<PageOfAxisTypeModel>(await result.Content.ReadAsStringAsync());
+            Guard.Against.Null(response);
+            axisTypeList = response.Entities.Select(o => (AxisTypeModel)o).ToList();
+        }
+
+        waiting = false;
+    }
+
+    private void OnAxisTypeChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        var code = (string)args.Value;
+        selectedAxisType = axisTypeList.FirstOrDefault(o => o.Code == code);
+    }
+
+    protected async Task PageRequest()
+    {
+        waiting = true;
+        var message = await classService.PostPage(
+            new GetClassPageRequest(
+                InstituteId,
+                0,
+                10,
+                null,
+                true,
+                componentFilter,
+                componentFilter,
+                -1,
+                -1,
+                -1,
+                Guid.Empty,
+                null,
+                null,
+                null,
+                null
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var response = JsonConvert.DeserializeObject<PageOfClassModel>(await message.Content.ReadAsStringAsync());
+            Guard.Against.Null(response);
+            classList = response.Entities.Select(o => (ClassModel)o).ToList();
+        }
+
+        waiting = false;
+    }
+
+    private async Task OnFilterChange(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        componentFilter = (string)args.Value;
+        classList.Add(new ClassModel { Name = componentFilter });
+        await PageRequest();
+
+        Options = classList.ToList();
+
+        // Forçar recriação do componente ClearableSelectTextComponent
+        viewSelectControl = !viewSelectControl;
+
+        StateHasChanged();
+    }
+
+    private void OnChangeOptative()
+    {
+        optative = !optative;
+    }
+
+    private void OnClear()
+    {
+        componentFilter = "";
+        classList = new();
+        Options = classList.ToList();
+        StateHasChanged();
+    }
+
+    private void SelectClass(ClassModel classModel)
+    {
+        selectedClass = classModel;
+        componentFilter = classModel.Name;
+        StateHasChanged();
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+
+    private Task Ok()
+    {
+        Guard.Against.Null(selectedClass);
+        Guard.Against.Null(selectedAxisType);
+
+        return OnClose.InvokeAsync(new ComponentModel
+            {
+                ClassId = selectedClass.Id,
+                AxisTypeId = selectedAxisType.Id,
+                Optative = optative,
+                Season = Season,
+                Class = selectedClass,
+                Axis = selectedAxisType
+            });
+    }
+}

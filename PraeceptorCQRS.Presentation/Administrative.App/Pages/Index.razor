@@ -1,0 +1,13 @@
+﻿@*@page "/"*@
+@using Ardalis.GuardClauses
+
+@inherits AuthenticatedPage
+
+@code {
+    [Inject]
+    protected NavigationManager navigationManager { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+    }
+}

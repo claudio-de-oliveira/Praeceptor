@@ -1,0 +1,54 @@
+@PEA [F106038]
+
+  @Ementa
+    [Introdução à Ciência dos Materiais. Estrutura cristalina. Direções e planos cristalográficos. Estruturas não cristalinas. Soluções sólidas. Imperfeições nos sólidos. Diagramas de Equilíbrio de Fases Metálicas. Corrosão. Comportamento Mecânico: ensaios mecânicos e propriedades dos materiais.]
+
+  @OBJETIVO
+    [Propiciar ao aluno noções sobre os diferentes tipos de materiais, assim como, a relação existente entre a composição química, estrutura cristalina e propriedades dos mesmos. Estas propriedades e estruturas dos materiais serão importantes para o aluno compreender as mudanças de fases que acontecem nos materiais quando processados, assim como, nos processos de degradação dos mesmos. Desta forma o aluno poderá compreender e discernir sobre a escolha adequada de um determinado material à uma especifica aplicação.]
+
+  @Competencias
+    [Desenvolver o conhecimento básico acerca das estruturas básicas a nível molecular dos materiais, bem como das propriedades dos materiais.]
+    [Entender os mecanismos da formação das microestruturas em sólidos bem como as imperfeições cristalinas para melhor compreender sobre as propriedades dos matérias e suas aplicações.]
+    [Conhecer os processos de corrosão e ensaios mecânicos, para facilitar a compreensão do cotidiano e posterior aplicação profissional.]
+
+  @UNIDADE1
+    @Chave[Classificação e Estrutura do Materiais]
+        [Introdução Histórica e inovação tecnológica.]
+        [Ligação química nos sólidos.]
+        [Materiais cristalinos e não cristalinos.]
+        [Planos e direções cristalográficas.]
+        [Métodos de caracterização de estruturas cristalinas.]
+        [Imperfeições nos sólidos.]
+
+  @UNIDADE2
+    @Chave[Propriedades Físicas dos Materiais]
+        [Conceitos fundamentais.]
+        [Propriedades mecânicas, elétricas, ópticas, magnéticas e térmicas.]
+        [Fratura, fadiga e fluência .]
+        [Corrosão e Degradação dos materiais.]
+    @Chave[Processamento e Aplicação dos Materiais]
+        [Diagramas de Equilíbrio.]
+        [Questões Econômicas, Ambientais e Sociais na Ciência e Tecnologia de Materiais.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. A disciplina será ministrada através de aulas expositivas e dialogadas, envolvendo exemplos ilustrativos, discussão de artigos, exercícios propostos, ensaios laboratoriais de materiais e visitas técnicas, fixando assim, os conceitos na interação professor-aluno-conhecimento. Metodologias, tais como tempestade de ideias, socrative, etc. serão utilizadas deverá contribuir para que o aluno tenha domínio de conteúdos teóricos e conhecimentos práticos, que contribuam para o processo de formação acadêmica e profissional.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O processo avaliativo será mediante aplicação de uma Prova Contextualizada – PC (individual) baseada em questões do ENAD e de Medida de Eficiência – ME, em cada uma das unidades. A medida de eficiência tem como princípio o acompanhamento do aluno em pelo menos duas atividades previstas no plano da disciplina. Para a Unidade I será proposto um modelo de apresentação baseado em um experimento científico capaz de explorar as propriedades dos materiais. Para a Unidade II os alunos poderão discutir propostas de projetos utilizando um material específico, aliado com uma visão empreendedora para a venda do projeto.]
+
+  @BASICA
+    @Autor[CALLISTER JR.][William D.] @Titulo[Ciência e engenharia de materiais: uma introdução] @Edicao[8] @Editora[Livros Técnicos E Científicos Editora LTDA (LTC)][Rio de Janeiro: RJ] @Ano[2012]
+  @BASICA
+    @Autor[ASKELAND][Donald R.] @Titulo[Ciência e Engenharia dos Materiais] @Edicao[3] @Editora[Cengage Learning Edições LTDA (Editora Pioneira)][São Paulo: SP] @Ano[2015]
+  @BASICA
+    @Autor[SMITH][William F.] @Autor[HASHEMI][Javad] @Titulo[Fundamentos de Engenharia e Ciência dos Materiais] @Edicao[5] @Editora[Minha Biblioteca] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[BROWN][Lawrence S.] @Autor[HOLME][Thomas A.] @Titulo[Química geral aplicada à engenharia] @Editora[Cengage Learning Edições LTDA (Editora Pioneira)][São Paulo: SP] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[VAN VLACK][L.] @Titulo[Princípios de Ciência e Tecnologia dos Materiais] @Editora[Campus][Rio de Janeiro: RJ] @Ano[1984]
+  @COMPLEMENTAR
+    @Autor[BEER][Ferdinand Pierres] @Autor[JOHNSTON][E. Russel] @Titulo[Resistência dos Materiais] @Edicao[4] @Editora[Editora McGraw Hill do Brasil LTDA][] @Ano[2008]
+  @COMPLEMENTAR
+    @Autor[BOTELHO][Manoel Henrique Campos] @Titulo[Resistencia dos Materiais Para Entender e Gostar: Um Texto Curricular] @Editora[Studio Nobel][] @Ano[1998]
+  @COMPLEMENTAR
+    @Autor[HIBBELER][R.C.] @Titulo[Resistência dos materiais] @Edicao[7] @Editora[Pearson Education] @Ano[2010]

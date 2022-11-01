@@ -1,0 +1,319 @@
+﻿@page "/user/details/{userid:guid}"
+
+@using Ardalis.GuardClauses
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.Course
+@using PraeceptorCQRS.Contracts.Entities.Holding
+@using PraeceptorCQRS.Contracts.Entities.Institute
+@using UserManager.App.Interfaces
+@using UserManager.App.Models
+
+<form>
+    <div class="mb-3">
+        <label for="recipient-username" class="col-form-label">Usuário</label>
+        <input type="text" class="form-control" @bind-value="@userName" id="recipient-username" contenteditable="false" style="background-color:aliceblue;">
+    </div>
+    <div class="mb-3">
+        <label for="recipient-email" class="col-form-label">Email</label>
+        <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="false" style="background-color:aliceblue;">
+    </div>
+    <div class="mb-3">
+        <label for="recipient-phonenumber" class="col-form-label">Telefone</label>
+        <input type="text" class="form-control" @bind-value="@phoneNumber" id="recipient-phonenumber" contenteditable="true" style="background-color:aliceblue;">
+    </div>
+    <div class="mb-3">
+        <input class="form-check-input" type="checkbox" value="@isEnabled" id="flexCheckChecked" checked="@isEnabled">
+        <label class="form-check-label" for="flexCheckChecked">
+            Habilitado
+        </label>
+    </div>
+    <div class="mb-3">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefaultF" checked="@(gender == 'F')">
+        <label class="form-check-label" for="flexRadioDefaultF">
+            Feminino
+        </label>
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefaultM" checked="@(gender == 'M')">
+        <label class="form-check-label" for="flexRadioDefaultM">
+            Masculino
+        </label>
+    </div>
+    <div class="mb-3">
+        <label for="recipient-holding" class="col-form-label">Holding</label>
+        <select class="form-select" @onchange="@OnHoldingChange" id="recipient-holding" disabled="@Waiting" style="background-color:aliceblue;">
+            <option HoldingId></option>
+            @foreach (var option in holdingList)
+            {
+                @if (option.Key != HoldingId)
+                {
+                    <option value=@option.Key>@option.Value</option>
+                }
+                else
+                {
+                    <option selected=@option.Key>@option.Value</option>
+                }
+            }
+        </select>
+    </div>
+    @if (HoldingId != Guid.Empty)
+    {
+        <div class="mb-3">
+            <label for="recipient-institute" class="col-form-label">Instituição</label>
+            <select class="form-select" @onchange="@OnInstituteChange" id="recipient-institute" disabled="@Waiting" style="background-color:aliceblue;">
+                <option InstituteId></option>
+                @foreach (var option in instituteList)
+                {
+                    @if (option.Key != InstituteId)
+                    {
+                        <option value=@option.Key>@option.Value</option>
+                    }
+                    else
+                    {
+                        <option selected=@option.Key>@option.Value</option>
+                    }
+                }
+            </select>
+        </div>
+        @if (InstituteId != Guid.Empty)
+        {
+            <div class="mb-3">
+                <label for="recipient-course" class="col-form-label">Curso</label>
+                <select class="form-select" @onchange="@OnCourseChange" id="recipient-course" disabled="@Waiting" style="background-color:aliceblue;">
+                    <option CourseId></option>
+                    @foreach (var option in courseList)
+                    {
+                        @if (option.Key != CourseId)
+                        {
+                            <option value=@option.Key>@option.Value</option>
+                        }
+                        else
+                        {
+                            <option selected=@option.Key>@option.Value</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+
+    }
+</form>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = default!;
+    [Inject]
+    private IUserService userService { get; set; } = default!;
+    [Inject]
+    private IHoldingService holdingService { get; set; } = default!;
+    [Inject]
+    private IInstituteService instituteService { get; set; } = default!;
+    [Inject]
+    private ICourseService courseService { get; set; } = default!;
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    private string userName = "";
+    private string email = "";
+    private string phoneNumber = "";
+    private bool isEnabled = false;
+    private char gender = 'F';
+
+    private bool Waiting = true;
+
+    private Dictionary<Guid, string> holdingList = default!;
+    private Guid HoldingId = Guid.Empty;
+    private Dictionary<Guid, string> instituteList = default!;
+    private Guid InstituteId = Guid.Empty;
+    private Dictionary<Guid, string> courseList = default!;
+    private Guid CourseId = Guid.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Waiting = true;
+
+            var user = await userService.GetUserById(UserId);
+            Guard.Against.Null(user);
+
+            await InitializeHoldingList();
+            if (user.HoldingId is not null)
+            {
+                Guid.TryParse(user.HoldingId, out HoldingId);
+                if (HoldingId != Guid.Empty)
+                {
+                    await InitializeInstituteList(HoldingId);
+                    if (user.InstituteId is not null)
+                    {
+                        Guid.TryParse(user.InstituteId, out InstituteId);
+                        if (InstituteId != Guid.Empty)
+                        {
+                            await InitializeCourseList(InstituteId);
+                            if (user.CourseId is not null)
+                            {
+                                Guid.TryParse(user.CourseId, out CourseId);
+                            }
+                        }
+                    }
+                }
+            }
+
+            userName = user.UserName;
+            email = user.Email;
+            phoneNumber = user.PhoneNumber ?? "";
+            isEnabled = user.IsEnabled;
+            gender = user.Gender;
+
+            Waiting = false;
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task InitializeHoldingList()
+    {
+        holdingList = new();
+
+        var responseMessage = await holdingService.PostPage(
+            new GetHoldingPageRequest(
+                0,
+                int.MaxValue,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<HoldingModel>>(await responseMessage.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.ForEach(o => holdingList.Add(o.Id, o.Acronym));
+        }
+    }
+
+    private async Task InitializeInstituteList(Guid holdingId)
+    {
+        instituteList = new();
+
+        var responseMessage = await instituteService.PostPage(
+            new GetInstitutePageRequest(
+                holdingId,
+                0,
+                int.MaxValue,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<InstituteModel>>(await responseMessage.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.ForEach(o => instituteList.Add(o.Id, o.Acronym));
+        }
+    }
+
+    private async Task InitializeCourseList(Guid instituteId)
+    {
+        courseList = new();
+
+        var responseMessage = await courseService.PostPage(
+            new GetCoursePageRequest(
+                instituteId,
+                0,
+                int.MaxValue,
+                null,
+                true,
+                null,
+                null,
+                null,
+                -1,
+                -1,
+                -1,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<List<CourseModel>>(await responseMessage.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.ForEach(o => courseList.Add(o.Id, o.Name));
+        }
+    }
+
+    private async Task OnHoldingChange(ChangeEventArgs args)
+    {
+        Guid holdingId = default!;
+
+        Guid.TryParse((string?)args.Value, out holdingId);
+
+        if (holdingId == Guid.Empty)
+        {
+            instituteList = new();
+            HoldingId = Guid.Empty;
+            InstituteId = Guid.Empty;
+            CourseId = Guid.Empty;
+        }
+        else if (holdingId != HoldingId)
+        {
+            HoldingId = holdingId;
+            InstituteId = Guid.Empty;
+            CourseId = Guid.Empty;
+
+            Waiting = true;
+            await InitializeInstituteList(HoldingId);
+            Waiting = false;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task OnInstituteChange(ChangeEventArgs args)
+    {
+        Guid instituteId = default!;
+
+        Guid.TryParse((string?)args.Value, out instituteId);
+
+        if (instituteId == Guid.Empty)
+        {
+            courseList = new();
+            InstituteId = Guid.Empty;
+            CourseId = Guid.Empty;
+        }
+        else if (instituteId != InstituteId)
+        {
+            InstituteId = instituteId;
+            CourseId = Guid.Empty;
+
+            Waiting = true;
+            await InitializeCourseList(instituteId);
+            Waiting = false;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnCourseChange(ChangeEventArgs args)
+    {
+        Guid.TryParse((string?)args.Value, out CourseId);
+
+        StateHasChanged();
+    }
+}

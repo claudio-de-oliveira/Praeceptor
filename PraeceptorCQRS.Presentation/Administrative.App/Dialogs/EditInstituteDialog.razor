@@ -1,0 +1,120 @@
+﻿@using Administrative.App.Models
+@using Ardalis.GuardClauses
+
+<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <form>
+                            <div class="mb-3">
+                                <!-- Não pode ser nulo -->
+                                <label for="recipient-name" class="col-form-label">Acrônimo</label>
+                                <input type="text" class="form-control" @bind-value="@acronym" id="recipient-name" contenteditable="false" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <!-- Não pode ser nulo -->
+                                <label for="message-text" class="col-form-label">Nome</label>
+                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            @if (!IsInstituteAdmin)
+                            {
+                                <div class="mb-3">
+                                    <label for="message-text" class="col-form-label">Endereço</label>
+                                    <input type="text" class="form-control" @bind-value="@address" id="recipient-name" contenteditable="true" style="background-color:aliceblue;">
+                                </div>
+                                <div class="mb-3">
+                                    <!-- Não pode ser nulo -->
+                                    <label for="message-admin" class="col-form-label">Administrador</label>
+                                    <input type="text" class="form-control" @bind-value="@administrator" id="recipient-admin" contenteditable="true" style="background-color:aliceblue;">
+                                </div>
+                                <div class="mb-3">
+                                    <!-- Tem que ser um endereço válido -->
+                                    <label for="message-email" class="col-form-label">Email do administrador</label>
+                                    <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="true" style="background-color:aliceblue;">
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editInstituteModal"
+                        title="Cuidado: As modificações serão perdidas"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" class="btn btn-outline-primary" @onclick="@(async () => await Ok())">Salvar alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Acronym { get; set; } = default!;
+    [Parameter]
+    public string Name { get; set; } = default!;
+    [Parameter]
+    public string Address { get; set; } = default!;
+    [Parameter]
+    public Guid HoldingId { get; set; }
+    [Parameter]
+    public bool Create { get; set; }
+    [Parameter]
+    public bool IsInstituteAdmin { get; set; }
+    [Parameter]
+    public EventCallback<InstituteModel?> OnClose { get; set; }
+
+    private string acronym = "";
+    private string name = "";
+    private string address = "";
+    private string administrator = "";
+    private string email = "";
+
+    protected override void OnInitialized()
+    {
+        Guard.Against.Null(HoldingId);
+        base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            acronym = Acronym;
+            name = Name;
+            address = Address;
+
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+    private Task Ok()
+    {
+        if (string.Compare(Acronym, acronym) != 0 || string.Compare(Name, name) != 0 || string.Compare(Address, address) != 0 || !string.IsNullOrWhiteSpace(administrator) || !string.IsNullOrWhiteSpace(email))
+            return OnClose.InvokeAsync(new InstituteModel { Acronym = acronym, Name = name, Address = address, HoldingId = HoldingId, Administrator = administrator, Email = email });
+        else
+            return OnClose.InvokeAsync(null);
+    }
+}

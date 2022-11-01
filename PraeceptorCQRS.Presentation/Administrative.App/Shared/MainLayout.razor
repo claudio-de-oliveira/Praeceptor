@@ -1,0 +1,60 @@
+﻿@inherits LayoutComponentBase
+
+@using Ardalis.GuardClauses
+
+<PageTitle>Administrative.App</PageTitle>
+
+<!-- N A V B A R -->
+<NavMenu />
+
+<!-- B O D Y -->
+@Body
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = default!;
+
+    private string authenticatedUserName = default!;
+    private string authenticatedUserRole = default!;
+    private char authenticatedUserGender = 'X';
+    private Guid authenticatedInstituteId = Guid.Empty;
+    private Guid authenticatedHoldingId = Guid.Empty;
+    private Guid authenticatedCourseId = Guid.Empty;
+
+    private string header2 =>
+        (!string.IsNullOrEmpty(authenticatedUserName))
+        ? (!string.IsNullOrEmpty(authenticatedUserRole))
+            ? $"{authenticatedUserName} ({authenticatedUserRole})"
+            : $"{authenticatedUserName}"
+        : "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        var principal = authState.User;
+
+        if (principal.Identity is not null && principal.Identity.IsAuthenticated)
+        {
+            var claimName = principal.Claims.FirstOrDefault(c => c.Type == "name");
+            Guard.Against.Null(claimName);
+            authenticatedUserName = claimName.Value;
+            var claimRole = principal.Claims.FirstOrDefault(c => c.Type == "role");
+            Guard.Against.Null(claimRole);
+            authenticatedUserRole = claimRole.Value;
+            var claimGender = principal.Claims.FirstOrDefault(c => c.Type == "gender");
+            Guard.Against.Null(claimGender);
+            authenticatedUserGender = claimGender.Value[0];
+            var claimInstituteId = principal.Claims.FirstOrDefault(c => c.Type == "instituteid");
+            Guard.Against.Null(claimInstituteId);
+            authenticatedInstituteId = Guid.Parse(claimInstituteId.Value);
+            var claimHoldingId = principal.Claims.FirstOrDefault(c => c.Type == "holdingid");
+            Guard.Against.Null(claimHoldingId);
+            authenticatedHoldingId = Guid.Parse(claimHoldingId.Value);
+            var claimCourseId = principal.Claims.FirstOrDefault(c => c.Type == "courseid");
+            Guard.Against.Null(claimCourseId);
+            authenticatedCourseId = Guid.Parse(claimCourseId.Value);
+        }
+
+        StateHasChanged();
+    }
+}

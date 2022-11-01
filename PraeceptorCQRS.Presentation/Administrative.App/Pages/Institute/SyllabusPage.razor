@@ -1,0 +1,476 @@
+﻿@page "/course/details/{InstituteId:guid}/{courseId:guid}"
+@page "/course/details/{InstituteId:guid}/{courseId:guid}/{curriculum:int}"
+
+@inherits AuthenticatedPage
+
+@using Administrative.App.Components
+@using Administrative.App.Dialogs
+@using Administrative.App.Interfaces
+@using Administrative.App.Models
+@using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.Component
+
+<!-- Modal: Editar entidade -->
+@if (CreateDialogIsOpen && selectedSeason is not null)
+{
+    <CreateComponentDialog InstituteId="@instituteId"
+                       Components="@selectedSeason.Components"
+                       CourseId="@courseId"
+                       Curriculum="@curriculum"
+                       Season="@selectedSeason.Order"
+                       OnClose="@OnEditClose" />
+}
+@if (EditDialogIsOpen)
+{
+    <EditComponentDialog InstituteId="@instituteId"
+                     Component="@selectedComponent"
+                     OnClose="@OnEditClose" />
+}
+
+@if (waiting)
+{
+    <div class="spinner-grow text-primary m-5" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+}
+else
+{
+    <section class="p-1">
+
+        <!--
+        <PageHeaderComponent Title="@courseModel?.Name" Text="@($"Você está visualizando a estrutura curricular do currículo {curriculum}")" />
+        -->
+        <article class="content px-4">
+
+            <table class="table table-sm" cellpadding="1" cellspacing="1">
+                <thead>
+                    <tr>
+                        <th colspan="5">
+                            <div class="my-md-4 text-primary align-content-center">
+                                @courseModel?.Name.ToUpper()
+                            </div>
+                        </th>
+                        <th colspan="4">
+                            <div class="my-md-3">
+                                <label for="recipient-curriculum" class="col-form-label">Currículo: </label>
+                                <select id="recipient-curriculum" 
+                                        class="form-select" 
+                                        aria-label="Default select example" 
+                                        style="background-color:aliceblue;"
+                                        @onchange="OnCurriculumChanged">
+                                    @foreach (var item in curriculumList)
+                                    {
+                                        @if (curriculum == item.Curriculum)
+                                        {
+                                            <option value="@item.Curriculum" selected>@item.Curriculum</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Curriculum">@item.Curriculum</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+
+                @foreach (var season in seasons)
+                {
+                    <thead class="text-white bg-primary table-striped">
+                        <tr>
+                            <th>
+                                <div style="font-weight:600">
+                                    @season.ToString()
+                                </div>
+                            </th>
+                            <th style="font-weight:normal!important;">
+                                Código
+                            </th>
+                            <th style="font-weight:normal!important;">
+                                Nome
+                            </th>
+                            <th style="text-align:center; font-weight:normal!important;">
+                                Eixo
+                            </th>
+                            <th style="text-align:center; font-weight:normal!important;">
+                                Opt.
+                            </th>
+                            <th style="text-align:center; font-weight:normal!important;">
+                                CH.T
+                            </th>
+                            <th style="text-align:center; font-weight:normal!important;">
+                                CH.P
+                            </th>
+                            <th style="text-align:center; font-weight:normal!important;">
+                                Editar
+                            </th>
+                            <th style="text-align:center; font-weight:normal!important;">
+                                Excluir
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var component in season.Components)
+                        {
+                            <tr>
+                                <td colspan="1">
+                                    <!-- Célula vazia -->
+                                </td>
+
+                                <td style="font-size:smaller; vertical-align:central;">@component.Class.Code</td>
+                                <td style="font-size:smaller; vertical-align:central;">@component.Class.Name</td>
+                                <td style="text-align:center; vertical-align:central; font-size:smaller;">@component.Axis.Code</td>
+                                <td style="text-align:center; vertical-align:central;">
+                                    @if (component.Optative)
+                                    {
+                                        <i class="bi bi-check"></i>
+                                    }
+                                </td>
+                                <td style="text-align:center; vertical-align:central; font-size:smaller;">@component.Class.Theory</td>
+                                <td style="text-align:center; vertical-align:central; font-size:smaller;">@component.Class.Practice</td>
+
+                                <td align="center">
+                                    <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Editar"
+                                disabled="@(!CanEdit(courseModel))"
+                                @onclick="@(() => Edit(component))"
+                                style="border: none;">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+
+                                <td align="center">
+                                    <button type="button"
+                                class="btn btn-sm btn-outline-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                title="Editar"
+                                disabled="@(!CanEdit(courseModel))"
+                                @onclick="@(() => Delete(component))"
+                                style="border: none;">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        <tr style="background-color:aliceblue">
+                            <td style="text-align:left; font-weight:normal!important;" colspan="4">
+                                <button type="button"
+                                class="btn btn-sm btn-primary"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                title="Inserir componente no período"
+                                disabled="@(waiting || !CanEdit(courseModel))"
+                                @onclick="() => OnAddComponent(season)">
+                                    <i class="bi bi-plus-lg"></i>
+                                    Inserir componente no @season.ToString()
+                                </button>
+                            </td>
+                            <td class="text-primary" style="text-align:right; font-weight:normal!important;">
+                                Total do Período:
+                            </td>
+                            <td class="text-primary" style="text-align:center; font-weight:normal!important;">
+                                @season.Theory
+                            </td>
+                            <td class="text-primary" style="text-align:center; font-weight:normal!important;">
+                                @season.Practice
+                            </td>
+                            <td colspan="2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="9" style="padding-bottom:30px;">
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+                <tfoot>
+                    <tr style="background-color:lightgray;">
+                        <td class="text-primary" style="text-align:right; font-weight:normal!important;" colspan="5">
+                            Total Geral:
+                        </td>
+                        <td class="text-primary" style="text-align:center; font-weight:normal!important;">
+                            @Theory()
+                        </td>
+                        <td class="text-primary" style="text-align:center; font-weight:normal!important;">
+                            @Practice()
+                        </td>
+                        <td style="text-align:center; font-weight:normal!important;" colspan="2">
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </article>
+    </section>
+}
+
+@code {
+    [Inject]
+    public ICourseService courseService { get; set; } = default!;
+    [Inject]
+    public IComponentService componentService { get; set; } = default!;
+    [Inject]
+    public IClassService classService { get; set; } = default!;
+    [Inject]
+    public IAxisTypeService axisTypeService { get; set; } = default!;
+
+    [Parameter]
+    public Guid InstituteId { get; set; } = default!;
+    [Parameter]
+    public Guid CourseId { get; set; } = default!;
+    [Parameter]
+    public int? Curriculum { get; set; }
+
+    private List<SeasonModel> seasons = default!;
+    private SeasonModel? selectedSeason;
+
+    private ComponentModel? selectedComponent;
+
+    private Guid instituteId = Guid.Empty;
+    private Guid courseId = Guid.Empty;
+
+    private CourseModel courseModel = default!;
+
+    private string Header(int i) => $"{i}º Período";
+    private string GetId(int i) => $"Season{i}";
+
+    private List<CurriculumModel> curriculumList = new();
+
+    private bool EditDialogIsOpen = false;
+    private bool CreateDialogIsOpen = false;
+
+    public int curriculum { get; set; }
+
+    private bool created = false;
+
+    private int Practice()
+    {
+        int total = 0;
+        seasons.ForEach(s => total += s.Practice);
+        return total;
+    }
+
+    public int Theory()
+    {
+        int total = 0;
+        seasons.ForEach(s => total += s.Theory);
+        return total;
+    }
+
+    protected bool waiting = true;
+
+    protected override void OnInitialized()
+    {
+        instituteId = InstituteId;
+        courseId = CourseId;
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            var result = await courseService.GetCourseById(courseId);
+            Guard.Against.Null(result);
+            courseModel = result;
+
+            var curList = await componentService.GetCurriculumsByCourseId(courseId);
+            Guard.Against.Null(curList);
+
+            curriculumList = curList;
+
+            curriculum = Curriculum ?? curriculumList.Max(o => o.Curriculum);
+
+            await InitializeSeasons();
+
+            waiting = false;
+
+            StateHasChanged();
+        }
+    }
+
+    protected override bool CanEdit(Entity? course)
+    {
+        if (course is null)
+            return false;
+        if (_isCourseAdmin && _userCourseId == course.Id)
+            return true;
+        if (_isInstituteAdmin && _userInstituteId == InstituteId)
+            return true;
+        if (_isHoldingAdmin)
+            return true;
+        return base.CanCreate();
+    }
+
+    private async Task InitializeSeasons()
+    {
+        seasons = new();
+
+        for (int season = 0; season < courseModel.NumberOfSeasons; season++)
+            seasons.Add(await InitializeSeason(courseId, curriculum, season));
+    }
+
+    private async Task<SeasonModel> InitializeSeason(Guid courseId, int curriculum, int season)
+    {
+        var components = await componentService.GetComponentListByCourseAndCurriculumAndSeason(courseId, curriculum, season);
+        Guard.Against.Null(components);
+
+        var seasonModel = new SeasonModel { Order = season, Components = components.ToList() };
+        foreach (var component in seasonModel.Components)
+        {
+            var cls = await classService.GetClassById(component.ClassId);
+            Guard.Against.Null(cls);
+            component.Class = cls;
+            var axis = await axisTypeService.GetAxisTypeById(component.AxisTypeId);
+            Guard.Against.Null(axis);
+            component.Axis = axis;
+        }
+
+        return seasonModel;
+    }
+
+    private void Edit(ComponentModel component)
+    {
+        created = false;
+        selectedComponent = component;
+        EditDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    private void OnAddComponent(SeasonModel season)
+    {
+        created = true;
+        selectedSeason = season;
+        CreateDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    private async Task OnCurriculumChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        var str = (string)args.Value;
+        int tmp;
+
+        if (int.TryParse(str, out tmp))
+        {
+            if (tmp != curriculum)
+            {
+                waiting = true;
+                await InitializeSeasons();
+                waiting = false;
+            }
+        }
+    }
+
+    private async Task Delete(ComponentModel component)
+    {
+        Guard.Against.Null(Curriculum);
+        var response = await componentService.DeleteComponent(courseId, (int)Curriculum, component.ClassId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var season = seasons.FirstOrDefault(o => o.Order == component.Season);
+            Guard.Against.Null(season);
+            season.Components.Remove(component);
+            _toasterService?.AddToastWarning($"O componente {component.Class.Code} foi excluído");
+            StateHasChanged();
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+    }
+
+    private async Task OnEditClose(ComponentModel? component)
+    {
+        if (component is not null)
+        {
+            waiting = true;
+
+            HttpResponseMessage response;
+
+            if (created)
+            {
+                response = await componentService.CreateComponent(
+                    new CreateComponentRequest(
+                        courseId,
+                        Curriculum ?? 0,
+                        component.Season,
+                        component.ClassId,
+                        component.AxisTypeId,
+                        component.Optative
+                        )
+                    );
+            }
+            else
+            {
+                response = await componentService.UpdateComponent(
+                    new UpdateComponentRequest(
+                        courseId,
+                        Curriculum ?? 0,
+                        component.Season,
+                        component.ClassId,
+                        component.AxisTypeId,
+                        component.Optative
+                        )
+                    );
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                if (created)
+                {
+                    var createdComponent = JsonConvert.DeserializeObject<ComponentModel>(result);
+                    Guard.Against.Null(createdComponent);
+                    createdComponent.Class = component.Class;
+                    createdComponent.Axis = component.Axis;
+                    var season = seasons.FirstOrDefault(o => o.Order == component.Season);
+                    Guard.Against.Null(season);
+                    season.Components.Add(createdComponent);
+                }
+                else
+                {
+                    var season = seasons.FirstOrDefault(o => o.Order == component.Season);
+                    Guard.Against.Null(season);
+                    var c = season.Components.FirstOrDefault(o => o.ClassId == component.ClassId);
+                    Guard.Against.Null(c);
+                    // Atualização das propriedades possivelmente modificadas
+                    c.Optative = component.Optative;
+                    c.AxisTypeId = component.AxisTypeId;
+                    c.Axis = component.Axis;
+                }
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+            }
+
+
+            waiting = false;
+        }
+
+        CreateDialogIsOpen = false;
+        EditDialogIsOpen = false;
+        StateHasChanged();
+    }
+}

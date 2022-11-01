@@ -1,0 +1,57 @@
+@PEA [H119315]
+  @Ementa
+     [A Definir...]
+
+  @Competencias
+     [A Definir...]
+
+  @Objetivos
+     [A Definir...]
+
+  @Unidade1
+    @Chave[A Definir...]
+      [A Definir...]
+
+  @Unidade2
+    @Chave[A Definir...]
+      [A Definir...]
+
+  @Procedimentos
+      [A Definir...]
+
+  @Avaliacao
+      [A Definir...]
+
+  @Basica
+    @Autor[Sobre nome][Nome]
+    @Tradutor[Sobre nome][Nome]
+    @Organizador[Sobre nome][Nome]
+    @Titulo[...]
+    @Volume[...][...]
+    @Edicao[1]
+    @Editor[...]
+    @Editora[Nome][Endereço]
+    @Detalhe[Detalhes]
+    @Serie[...]
+    @Ano[2020]
+    @Exemplares[1]
+    @Nota[...]
+    @ISBN[...]
+
+  @Complementar
+    @Autor[Sobre nome][Nome]
+    @Tradutor[Sobre nome][Nome]
+    @Organizador[Sobre nome][Nome]
+    @Titulo[...]
+    @Volume[...][...]
+    @Edicao[1]
+    @Editor[...]
+    @Editora[Nome][Endereço]
+    @Detalhe[Detalhes]
+    @Serie[...]
+    @Ano[2020]
+    @Exemplares[1]
+    @Nota[...]
+    @ISBN[...]
+
+

@@ -1,0 +1,59 @@
+﻿@using Administrative.App.Components.Toaster
+@using Administrative.App.Models
+@using Microsoft.AspNetCore.Components.Authorization
+
+@code {
+    [CascadingParameter]
+    protected Task<AuthenticationState> authenticationStateTask { get; set; } = default!;
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
+
+    protected bool _isSystemAdmin = false;
+    protected bool _isHoldingAdmin = false;
+    protected Guid _userHoldingId = Guid.Empty;
+    protected bool _isInstituteAdmin = false;
+    protected Guid _userInstituteId = Guid.Empty;
+    protected bool _isCourseAdmin = false;
+    protected Guid _userCourseId = Guid.Empty;
+    protected bool _isVisitor = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        var principal = authState.User;
+
+        _isSystemAdmin = principal.IsInRole("SystemAdmin");
+        _isHoldingAdmin = principal.IsInRole("HoldingAdmin");
+        var holdingClaim = principal.Claims.FirstOrDefault(x => x.Type == "holdingid");
+        if (holdingClaim is not null)
+            _userHoldingId = Guid.Parse(holdingClaim.Value);
+        _isInstituteAdmin = principal.IsInRole("InstituteAdmin");
+        var instituteClaim = principal.Claims.FirstOrDefault(x => x.Type == "instituteid");
+        if (instituteClaim is not null)
+            _userInstituteId = Guid.Parse(instituteClaim.Value);
+        _isCourseAdmin = principal.IsInRole("CourseAdmin");
+        var courseClaim = principal.Claims.FirstOrDefault(x => x.Type == "courseid");
+        if (courseClaim is not null)
+            _userCourseId = Guid.Parse(courseClaim.Value);
+        _isVisitor = principal.IsInRole("Visitor");
+    }
+
+    protected virtual bool CanCreate()
+    {
+        if (_isSystemAdmin)
+            return true;
+        return false;
+    }
+
+    protected virtual bool CanViewDetails(Entity entity)
+    {
+        return true;
+    }
+
+    protected virtual bool CanEdit(Entity entity)
+    {
+        if (_isSystemAdmin)
+            return true;
+        return false;
+    }
+}

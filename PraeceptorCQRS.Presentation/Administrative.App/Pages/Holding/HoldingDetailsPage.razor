@@ -1,0 +1,513 @@
+﻿@page "/holding/details/{holdingId:guid}"
+
+@attribute [Authorize]
+
+@using Administrative.App.Components
+@using Administrative.App.Components.Toaster
+@using Administrative.App.Dialogs
+@using Administrative.App.Interfaces
+@using Administrative.App.Models
+@using Ardalis.GuardClauses
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.Holding
+@using PraeceptorCQRS.Contracts.Entities.Institute
+
+@inject IInstituteService instituteService
+@inject IHoldingService holdingService
+@inject NavigationManager navigationManager
+
+@implements IDisposable
+
+@inherits AuthenticatedPage
+
+<!-- Modal: Editar entidade -->
+@if (EditDialogIsOpen)
+{
+    <EditInstituteDialog Acronym="@previousAcronym" Name="@previousName" Address="@previousAddress" HoldingId="@holdingId" Create="@created" IsInstituteAdmin="@_isInstituteAdmin" OnClose="@OnEditDialogClose" />
+}
+<!-- Modal: Editar entidade -->
+<!--
+@if (EditHoldingDialogIsOpen)
+{
+    <EditHoldingDialog Acronym="@holding.Acronym" Name="@holding.Name" Address="@holding.Address" Create="@created" IsHoldingAdmin="@_isHoldingAdmin" OnClose="@OnEditHoldingDialogClose" />
+}
+-->
+
+@if (waiting)
+{
+    <div class="spinner-grow text-primary m-5" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+}
+else
+{
+    <section class="p-1">
+
+        <PageHeaderComponent Title="@holding?.Name" Text="@($"Você está visualizando as INSTITUIÇÕES da {holding?.Acronym}")" />
+
+        <article class="content px-4">
+            <table class='table'>
+                <thead>
+                    <tr>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Acrônimo" SortBy="Acronym" OnClick="@(() => SortBy("Acronym"))" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Nome" SortBy="Name" OnClick="@(() => SortBy("Name"))" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Endereço" SortBy="Address" OnClick="@(() => SortBy("Address"))" />
+                        </td>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <!---->
+                    <tr>
+                        <td align="center">
+                            <ClearableInputTextComponent Filter="@acronymFilter" Waiting="@waiting" OnTextChange="@OnAcronymChanged"></ClearableInputTextComponent>
+                        </td>
+                        <td align="center">
+                            <ClearableInputTextComponent Filter="@nameFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
+                        </td>
+                        <td align="center">
+                            <ClearableInputTextComponent Filter="@addressFilter" Waiting="@waiting" OnTextChange="@OnAddressChanged"></ClearableInputTextComponent>
+                        </td>
+                        <td align="center"></td>
+                        <td align="center"></td>
+                    </tr>
+                    <!---->
+                </thead>
+                <tbody>
+                    @foreach (var entity in instituteList)
+                    {
+                        <tr>
+                            <td>@entity.Acronym</td>
+                            <td>@entity.Name</td>
+                            <td>@entity.Address</td>
+                            <td align="center">
+                                <button type="button"
+                                class="btn btn-outline-info"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Ver detalhes"
+                                disabled="@(!CanViewDetails(entity))"
+                                @onclick="@(() => Details(entity))"
+                                style="border: none;">
+                                    <i class="bi bi-diagram-3"></i>
+                                </button>
+                            </td>
+                            <td align="center">
+                                <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editChapterModal"
+                                title="Editar"
+                                disabled="@(!CanEdit(entity))"
+                                @onclick="@(() => Edit(entity))"
+                                style="border: none;">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                    <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@(waiting || !CanCreate())"
+                        title="Criar uma nova instituição"
+                        @onclick="() => OnCreate()">
+                        <i class="bi bi-plus-slash-minus"></i>
+                        Criar uma nova instituição
+                    </button>
+                </div>
+                <!--
+                <div class="btn-group" role="group" aria-label="First group">
+                    <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@(waiting || !_isInstituteAdmin)"
+                        title="Editar a holding"
+                        @onclick="() => EditHolding()">
+                        <i class="bi bi-plus-slash-minus"></i>
+                        Editar a holding @holding!.Acronym
+                    </button>
+                </div>
+                -->
+                <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+
+            </div>
+        </article>
+    </section>
+}
+
+@code {
+    [Inject]
+    protected IAdminService adminService { get; set; } = default!;
+    [Parameter]
+    public Guid HoldingId { get; set; }
+
+    protected List<InstituteModel> instituteList = new List<InstituteModel>();
+    protected bool _viewDetails = false;
+    protected InstituteModel entitySelected = new();
+    protected string previousAcronym = string.Empty;
+    protected string previousName = string.Empty;
+    protected string previousAddress = string.Empty;
+    protected string previousAdmin = string.Empty;
+    protected string previousAdminEmail = string.Empty;
+
+    private Guid holdingId = default!;
+    private HoldingModel holding = default!;
+
+    protected bool EditDialogIsOpen = false;
+    protected bool EditHoldingDialogIsOpen = false;
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool waiting = true;
+    protected bool created = false;
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? acronymFilter = "";
+    protected string? nameFilter = "";
+    protected string? addressFilter = "";
+    protected string? createdFilter = "";
+    protected string? createdByFilter = "";
+    protected string? lastModifiedFilter = "";
+    protected string? lastModifiedByFilter = "";
+
+
+    protected string TextToDisplay(string? text, int maxLength = 200)
+        => text is not null && text.Length < maxLength ? text : text?.Substring(0, maxLength) + "...";
+
+    protected override void OnInitialized()
+    {
+        holdingId = HoldingId;
+        Guard.Against.Null(holdingId);
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            var h = await holdingService.GetHoldingById(holdingId);
+            Guard.Against.Null(h);
+            holding = h;
+            await PageRequest(currentPage);
+        }
+    }
+
+    protected override bool CanCreate()
+    {
+        if (_isHoldingAdmin && _userHoldingId == HoldingId)
+            return true;
+        return base.CanCreate();
+    }
+
+    protected override bool CanEdit(Entity? institute)
+    {
+        if (institute is null)
+            return false;
+        if (_isInstituteAdmin && _userInstituteId == institute.Id)
+            return true;
+        if (_isHoldingAdmin && _userHoldingId == HoldingId)
+            return true;
+        return base.CanCreate();
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
+    }
+
+    protected async Task PageRequest(int page)
+    {
+        waiting = true;
+
+        var message = await instituteService.PostPage(
+            new GetInstitutePageRequest(
+                holdingId,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                acronymFilter,
+                nameFilter,
+                addressFilter,
+                createdFilter,
+                createdByFilter,
+                lastModifiedFilter,
+                lastModifiedByFilter
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfInstituteModel>(content);
+            Guard.Against.Null(tmp);
+            instituteList = tmp.Entities.Select(o => (InstituteModel)o).ToList();
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    protected void Edit(InstituteModel entity)
+    {
+        created = false;
+
+        entitySelected = entity;
+        previousAcronym = entitySelected.Acronym;
+        previousName = entitySelected.Name;
+        previousAddress = entitySelected.Address ?? default!;
+        previousAdmin = entitySelected.Administrator;
+        previousAdminEmail = entitySelected.Email;
+
+        EditDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected void EditHolding()
+    {
+        created = false;
+        EditHoldingDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+
+    protected virtual void OnCreate()
+    {
+        created = true;
+
+        entitySelected = new InstituteModel() { HoldingId = holdingId };
+        previousAcronym = "";
+        previousName = "";
+        previousAddress = "";
+        previousAdmin = "";
+        previousAdminEmail = "";
+        EditDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected async Task OnEditDialogClose(InstituteModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            waiting = true;
+
+            Guard.Against.Null(entitySelected);
+            entitySelected.Acronym = modifiednewEntity.Acronym;
+            entitySelected.Name = modifiednewEntity.Name;
+            entitySelected.Address = modifiednewEntity.Address;
+            entitySelected.Administrator = modifiednewEntity.Administrator;
+            entitySelected.Email = modifiednewEntity.Email;
+            HttpResponseMessage response;
+            string? result = default!;
+
+            if (created)
+            {
+                response = await instituteService.CreateInstitute(
+                    new CreateInstituteRequest(
+                        entitySelected.Acronym,
+                        entitySelected.Name,
+                        entitySelected.Address,
+                        holdingId)
+                    );
+                if (response.IsSuccessStatusCode)
+                    result = await response.Content.ReadAsStringAsync();
+            }
+            else if (_isInstituteAdmin || _isVisitor)
+            {
+                response = await instituteService.UpdateInstitute(
+                    new UpdateInstituteRequest(
+                        entitySelected.Id,
+                        entitySelected.Name,
+                        entitySelected.Address
+                        )
+                    );
+                if (response.IsSuccessStatusCode)
+                    result = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                response = new(System.Net.HttpStatusCode.OK);
+                response.EnsureSuccessStatusCode();
+                result = JsonConvert.SerializeObject(entitySelected);
+            }
+
+            waiting = false;
+
+            EditDialogIsOpen = false;
+
+            if (response.IsSuccessStatusCode)
+            {
+                Guard.Against.Null(result);
+                var instituteCreated = JsonConvert.DeserializeObject<InstituteModel>(result);
+                Guard.Against.Null(instituteCreated);
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+                previousAcronym = entitySelected.Acronym;
+                previousName = entitySelected.Name;
+                previousAddress = entitySelected.Address ?? default!;
+                previousAdmin = entitySelected.Administrator;
+                previousAdminEmail = entitySelected.Email;
+                await PageRequest(currentPage);
+
+                if (!string.IsNullOrWhiteSpace(modifiednewEntity.Administrator) && !string.IsNullOrWhiteSpace(modifiednewEntity.Email))
+                {
+                    var r = await CreateAdmin(instituteCreated.Id.ToString(), modifiednewEntity.Administrator, modifiednewEntity.Email, "InstituteAdmin");
+
+                    if (r)
+                        _toasterService?.AddToastSuccess($"Um email para confirmação de senha foi enviado para {modifiednewEntity.Email}");
+                    else
+                        _toasterService?.AddToastError($"Não foi possível enviar email para {modifiednewEntity.Email}");
+                }
+            }
+            else
+            {
+                // var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastError(result);
+                entitySelected.Acronym = previousAcronym;
+                entitySelected.Name = previousName;
+                entitySelected.Address = previousAddress;
+            }
+        }
+        else
+            EditDialogIsOpen = false;
+
+        StateHasChanged();
+    }
+
+    protected async Task OnEditHoldingDialogClose(HoldingModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            waiting = true;
+
+            // Guard.Against.Null(entitySelected);
+            holding.Acronym = modifiednewEntity.Acronym;
+            holding.Name = modifiednewEntity.Name;
+            holding.Address = modifiednewEntity.Address;
+            HttpResponseMessage response;
+
+            response = await holdingService.UpdateHolding(
+                new UpdateHoldingRequest(
+                    holding.Id,
+                    holding.Name,
+                    holding.Address
+                )
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastError(result);
+            }
+
+            waiting = false;
+        }
+
+        EditHoldingDialogIsOpen = false;
+
+        StateHasChanged();
+    }
+
+
+
+#pragma warning disable CS8602
+    protected async Task OnAcronymChanged(ChangeEventArgs args)
+    {
+        acronymFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnNameChanged(ChangeEventArgs args)
+    {
+        nameFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnAddressChanged(ChangeEventArgs args)
+    {
+        addressFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnCreatedChanged(ChangeEventArgs args)
+    {
+        createdFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnCreatedByChanged(ChangeEventArgs args)
+    {
+        createdByFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedChanged(ChangeEventArgs args)
+    {
+        lastModifiedFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedByChanged(ChangeEventArgs args)
+    {
+        lastModifiedByFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+#pragma warning restore CS8602
+
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+    private async Task<bool> CreateAdmin(string id, string admin, string email, string role)
+    {
+        var result = await adminService.CreateAdmin(new PraeceptorCQRS.Contracts.Entities.Admin.CreateAdminRequest(
+            admin,
+            email,
+            'M', // GENDER
+            default!, // PHONENUMBER
+            id,
+            role
+        ));
+
+        return result.IsSuccessStatusCode;
+    }
+
+    protected void Details(InstituteModel? entity)
+    {
+        Guard.Against.Null(entity);
+        navigationManager.NavigateTo($"/institute/details/{entity.Id}");
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+    }
+}

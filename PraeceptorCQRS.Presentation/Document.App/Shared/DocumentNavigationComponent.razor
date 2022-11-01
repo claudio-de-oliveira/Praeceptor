@@ -1,0 +1,136 @@
+﻿@using Ardalis.GuardClauses
+@using Document.App.Notifiers
+
+@inject NavigationManager navigationManager
+
+@implements IDisposable
+
+<div class="container-fluid px-4 py-5"
+     id="featured-3"
+     style="padding-top: 0px!important; padding-left: 0px!important; padding-right: 0px!important; padding-bottom: 0rem!important;">
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-5">
+        @if (Document is not null)
+        {
+            <div class="feature col" @onclick="GotoDocument">
+                <EntityHistoryComponent Type="Documento" Title="@Document.Title" Entity="@Document"></EntityHistoryComponent>
+            </div>
+        }
+        @if (Chapter is not null)
+        {
+            <div class="feature col" @onclick="GotoChapter">
+                <EntityHistoryComponent Type="Capítulo" Title="@Chapter.Title" Entity="@Chapter"></EntityHistoryComponent>
+            </div>
+        }
+        @if (Section is not null)
+        {
+            <div class="feature col" @onclick="GotoSection">
+                <EntityHistoryComponent Type="Seção" Title="@Section.Title" Entity="@Section"></EntityHistoryComponent>
+            </div>
+        }
+        @if (SubSection is not null)
+        {
+            <div class="feature col" @onclick="GotoSubSection">
+                <EntityHistoryComponent Type="Subseção" Title="@SubSection.Title" Entity="@SubSection"></EntityHistoryComponent>
+            </div>
+        }
+        @if (SubSubSection is not null)
+        {
+            <div class="feature col" @onclick="GotoSubSubSection">
+                <EntityHistoryComponent Type="Sub-Subseção" Title="@SubSubSection.Title" Entity="@SubSubSection"></EntityHistoryComponent>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private DocumentNavigationComponentNotifier updateNotifier { get; set; } = null!;
+
+    private static BookEntity? Document { get; set; } = null!;
+    private static BookEntity? Chapter { get; set; } = null!;
+    private static BookEntity? Section { get; set; } = null!;
+    private static BookEntity? SubSection { get; set; } = null!;
+    private static BookEntity? SubSubSection { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        updateNotifier.UpdateDocumentNavigationWithDocumentChanged += DocumentChanged;
+        updateNotifier.UpdateDocumentNavigationWithChapterChanged += ChapterChanged;
+        updateNotifier.UpdateDocumentNavigationWithSectionChanged += SectionChanged;
+        updateNotifier.UpdateDocumentNavigationWithSubSectionChanged += SubSectionChanged;
+        updateNotifier.UpdateDocumentNavigationWithSubSubSectionChanged += SubSubSectionChanged;
+    }
+
+    private void DocumentChanged(BookEntity? model)
+    {
+        Document = model;
+        Chapter = null;
+        Section = null;
+        SubSection = null;
+        SubSubSection = null;
+        StateHasChanged();
+    }
+    private void ChapterChanged(BookEntity? model)
+    {
+        Chapter = model;
+        Section = null;
+        SubSection = null;
+        SubSubSection = null;
+        StateHasChanged();
+    }
+    private void SectionChanged(BookEntity? model)
+    {
+        Section = model;
+        SubSection = null;
+        SubSubSection = null;
+        StateHasChanged();
+    }
+    private void SubSectionChanged(BookEntity? model)
+    {
+        SubSection = model;
+        SubSubSection = null;
+        StateHasChanged();
+    }
+    private void SubSubSectionChanged(BookEntity? model)
+    {
+        SubSubSection = model;
+        StateHasChanged();
+    }
+
+    private void GotoDocument()
+    {
+        Guard.Against.Null(Document);
+        navigationManager.NavigateTo($"/document/details/{Document.Id}");
+    }
+    private void GotoChapter()
+    {
+        Guard.Against.Null(Chapter);
+        navigationManager.NavigateTo($"/chapter/details/{Chapter.Id}");
+    }
+    private void GotoSection()
+    {
+        Guard.Against.Null(Section);
+        navigationManager.NavigateTo($"/section/details/{Section.Id}");
+    }
+    private void GotoSubSection()
+    {
+        Guard.Against.Null(SubSection);
+        navigationManager.NavigateTo($"/subsection/details/{SubSection.Id}");
+    }
+    private void GotoSubSubSection()
+    {
+        Guard.Against.Null(SubSubSection);
+        navigationManager.NavigateTo($"/subsubsection/details/{SubSubSection.Id}");
+    }
+
+    public void Dispose()
+    {
+        updateNotifier.UpdateDocumentNavigationWithDocumentChanged -= DocumentChanged;
+        updateNotifier.UpdateDocumentNavigationWithChapterChanged -= ChapterChanged;
+        updateNotifier.UpdateDocumentNavigationWithSectionChanged -= SectionChanged;
+        updateNotifier.UpdateDocumentNavigationWithSubSectionChanged -= SubSectionChanged;
+        updateNotifier.UpdateDocumentNavigationWithSubSubSectionChanged -= SubSubSectionChanged;
+
+        GC.SuppressFinalize(this);
+    }
+}

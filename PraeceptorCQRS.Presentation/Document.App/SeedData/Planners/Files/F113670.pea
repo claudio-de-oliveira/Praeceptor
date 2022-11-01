@@ -1,0 +1,58 @@
+@PEA [F113670]
+
+  @Ementa
+    [Sistema de coordenadas cartesianas no plano: distância entre pontos, ponto médio. Vetores no plano e suas operações. Estudo da reta no plano: equações da reta; condições de paralelismo e perpendicularismo. Estudo das cônicas no plano: equação da circunferência; equação da elipse; equação da hipérbole; equação da parábola. Sistema de coordenadas cartesianas no espaço: distância entre pontos, ponto médio. Vetores no espaço e suas operações. Estudo da reta no espaço: equações da reta; condições de paralelismo e perpendicularismo. Estudo do plano: equação do plano. Posições relativas: entre retas; entre retas e planos; entre planos. Ângulos: entre retas; entre reta e plano; entre planos. Distâncias: entre ponto e reta; entre ponto e plano; entre duas retas; entre reta e plano; entre dois planos. Estudo da esfera: equação da esfera.]
+
+  @OBJETIVO
+    [Compreender os conceitos básicos da geometria analítica e dos vetores, a saber: Sistema de Coordenadas Bidimensionais e Tridimensionais, Vetores no plano e no espaço; Cônicas e Quádricas, e aplicá-los no desenvolvimento de estudos relacionados às Engenharias, especialmente na resolução de problemas relacionados com o cotidiano do engenheiro.]
+
+  @Competencias
+    [Conhecer os sistemas de coordenadas cartesianas em duas e três dimensões.]
+    [Definir e representar os elementos nos sistemas de coordenadas.]
+    [Interpretar resultados a partir de dados obtidos a partir de experimentos ou gráficos.]
+    [Organizar argumentos matemáticos numa sequência lógica.]
+
+  @UNIDADE1
+    @Chave[Sistema de coordenadas bidimensionais]
+        [Ponto.]
+        [Vetor.]
+        [Reta.]
+    @Chave[Cônicas]
+        [Circunferência.]
+        [Elipse.]
+        [Hipérbole.]
+        [Parábola.]
+
+  @UNIDADE2
+    @Chave[Sistema de coordenadas tridimensionais]
+        [Ponto.]
+        [Vetor.]
+        [Reta.]
+        [Plano.]
+    @Chave[Quádricas]
+        [Esfera.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. O procedimento metodológico adotado nesta disciplina será baseado na proposta de problemas envolvendo modelos matemáticos da área de engenharia e afins. A aquisição de conhecimento de cada conceito chave também terá apoio de recomendações de conjuntos de problemas na plataforma Google for education. O software livre Geogebra também será utilizado na aquisição de conhecimentos referentes à construção de gráficos e sua interpretação.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. A avaliação terá como base os objetivos de aprendizagem e evidenciará o desenvolvimento das competências pelos alunos conforme orientação da matriz de referência. Assim,  o processo avaliativo da disciplina  será mediante aplicação de uma prova contextualizada (PC) e  individual correspondente a 80% da nota da unidade e de uma série de atividades com apoio da plataforma Google for education e Geogebra, correspondentes a medida de eficiência (ME) que correspondem a 20% da nota em cada unidade.]
+
+  @BASICA
+    @Autor[BOULOS][Paulo] @Autor[CAMARGO][Ivan de] @Titulo[Geometria analítica: um tratamento vetorial] @Edicao[3] @Editora[Editora McGraw Hill do Brasil LTDA][]    @Ano[2013]
+  @BASICA
+    @Autor[MACHADO][Antônio dos S.] @Titulo[Álgebra Linear e Geometria Analítica] @Editora[Atual][São Paulo: SP] @Ano[1982]
+  @BASICA
+    @AUTOR[JULIANELLI][José Roberto] @TITULO[Cálculo vetorial e geometria analítica] @EDITORA[Ciência Moderna][Rio de Janeiro: RJ] @ANO[2008]
+  @COMPLEMENTAR
+    @Autor[LORETO][Ana Cecília da Costa] @Autor[LORETO JR.][Armando Pereira] @Titulo[Vetores Geometria Analítica] @Editora[LCTE][São Paulo: SP] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[CORREA][Paulo Sergio Quitelli] @Titulo[Álgebra Linear e Geometria Analítica] @Editora[Interciência][]@Ano[2006]
+  @COMPLEMENTAR
+    @Autor[SANTOS][Fabiano José dos] @Autor[FERREIRA][Silvimar Fábio] @Titulo[Geometria Analítica] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[MELLO][Dorival A. de] @Autor[Watanabe][Renate G.] @Titulo[Vetores e uma Iniciação a Geometria Analítica] @Editora[Editora Livraria da Física LTDA][] @Ano[2009]
+  @COMPLEMENTAR
+    @Autor[REIS][Genésio L. dos] @Titulo[Geometria Analítica] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2016]
+  @COMPLEMENTAR
+    @Autor[CONDE][Antônio] @Titulo[Geometria Analítica] @Editora[Editora Atlas LTDA (Atlas)][São Paulo: SP] @Ano[2004]

@@ -1,0 +1,67 @@
+@PEA [F113662]
+
+  @Ementa
+    [Grandezas Físicas, Unidades de Medidas; Leis de Newton do Movimento, Equilíbrio de Corpos Rígidos e Suas Aplicações; Trabalho e Energia; Centro de Massa, Centroides; Momento de uma Força e Momento de Inércia.]
+
+  @OBJETIVO
+    [Garantir através de atividades teóricas e práticas uma formação básica em fenômenos mecânicos direcionados à sua área de formação de engenharia, relacionando-a através de problemas contextualizados e interligando com a geometria analítica, cálculo, modelagem e simulação.]
+
+  @Competencias
+    [Ser capaz de recordar, compreender e aplicar os conceitos de força oriundo das Leis de Newton em problemas de engenharia.]
+    [Capacidade de aplicar softwares de simulação e modelagem sobre os conceitos Equilíbrio de corpos rígidos, momento de uma força, centro de massa, centroides e momento de inércia em problemas de engenharia.]
+    [Ser capaz de projetar, conduzir experimentos e interpretar estudo de caso de problemas reais, a partir de textos, gráficos e outras formas de representações.]
+
+  @UNIDADE1
+    @Chave[Sistema de unidades e grandezas físicas]
+        [Medidas e Unidades.]
+        [Quantidades Fundamentais em Mecânica.]
+        [Sistemas de Unidades.]
+        [Unidades derivadas e dimensões.]
+    @Chave[Leis de Newton do movimento, equilíbrio dos corpos rígidos e suas aplicações]
+        [Leis de Movimento.]
+        [Lei da Inércia, Massa e Leis de Newton.]
+        [Aplicações básicas das leis de Newton.]
+        [Equilíbrio de corpos rígidos, decomposição das forças.]
+        [Resultante por componente no plano e no espaço.]
+    @Chave[Trabalho e energia]
+        [Trabalho, Energia Cinética e Teorema do Trabalho-Energia.]
+        [Trabalho, Energia com Forças Variáveis e Potência.]
+        [Energia Potencial Gravitacional.]
+        [Energia Potencial Elástica.]
+
+  @UNIDADE2
+    @Chave[Momento de uma força, centro de massa, centróides/baricentro]
+        [Momento de uma força (produto vetorial e produto escalar entre dois vetores).]
+        [Momento de uma força em relação a um eixo.]
+        [Momento de um binário.]
+        [Centro de Massa de um corpo.]
+        [Centroides de superfícies e curvas, momentos de primeira ordem, corpos com simetria, placas e fios compostos.]
+        [Determinação de centroides por áreas compostas.]
+    @Chave[Momento de inércia]
+        [Momento de inércia: Definição e determinação por integração.]
+        [Raio de giração.]
+        [Teorema dos eixos paralelos.]
+        [Seções compostas.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. Roteiro de questões contextualizadas, pesquisas, metodologias ativas, serão utilizadas com o objetivo de levar o aluno a recordar, compreender e aplicar os saberes inerentes a disciplina, relacionando com a prática profissional. Softwares de simulação e modelagem serão utilizados para que o discente aplique conceitos tais como: Equilíbrio de corpos rígidos, momento de uma força, centro de massa, centroides e momento de inércia em problemas de engenharia. Por fim, atividades práticas em laboratório, montagem e apresentação de projetos experimentais darão  suporte para o discente projetar, conduzir experimentos e interpretar estudo de caso de problemas reais.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. As Unidades de Ensino serão divididas em duas Unidades Avaliativas. A primeira Unidade Avaliativa será composta pelos conceitos-chave 1, 2, 3 e a segunda pelos conceitos-chave 4 e 5. O processo avaliativo na UNIT será desenvolvido mediante a aplicação de uma Prova Contextualizada Individual e de Medida de Eficiência em cada uma das duas unidades avaliativas. Cada Unidade Avaliativa será composta por prova teórica individual com valor de até 8,0 pontos, o que corresponde a 80 % da nota de cada Unidade e a Medida de Eficiência valerá até 2,0 pontos (20 % da nota), onde poderão ser realizadas atividades individuais ou em grupo. Em algumas atividades serão utilizados dispositivos pedagógicos tais como metodologias ativas e/ou ferramentas tecnológicas.]
+
+  @BASICA
+    @Autor[JEWETT JR.][John W.]    @Autor[SERWAY][Raymond A.]    @Titulo[Física para cientistas e engenheiros: Mecânica]    @Edicao[9]    @Editora[Cengage Learning Edições LTDA (Editora Pioneira)][São Paulo: SP]    @Ano[2017]
+  @BASICA
+    @Autor[YOUNG][H. D]    @Autor[FREEDMAN][R. A.]    @Titulo[Física I: Mecânica]    @Edicao[14]    @Editora[Editora Pearson Addison Wesley][São Paulo: SP]    @Ano[2016]
+  @BASICA
+    @Autor[HIBBELER][R. C.]    @Titulo[Estática: Mecânica para Engenharia]    @Editora[Pearson Education do Brasil LTDA][Upper Saddle]    @Ano[2017]
+  @COMPLEMENTAR
+    @Autor[MERIAM][James L.]    @Autor[KRAIGE][Glenn]    @Titulo[Mecânica para Engenharia]    @Volume[1][Estática]    @Edicao[7]    @Editora[Livros Técnicos E Científicos Editora LTDA(LTC)][Rio de Janeiro: RJ]    @Ano[2016]
+  @COMPLEMENTAR
+    @Autor[BEER][Ferdinand P.]    @Autor[JOHNSTON][E.Russel]    @Autor[MAZUREK][David F.]    @Autor[EISENBERG][Elliot R.]    @Titulo[Mecânica Vetorial para Engenheiros: Estática]    @Edicao[11]    @Editora[Amgh Editora LTDA(Amgh)][]    @Ano[2019]
+  @COMPLEMENTAR
+    @Autor[HALLIDAY][David]    @Autor[RESNICK][Robert]    @Autor[WALKER][Jearl]    @Titulo[Fundamentos de Física: Mecânica]    @Edicao[10]    @Editora[Livros Técnicos E Científicos Editora LTDA(LTC)][Rio de Janeiro: RJ]    @Ano[2016]
+  @COMPLEMENTAR
+    @Autor[BAUER][W.]    @Autor[WESTFALL][Gary D.]    @Autor[DIAS][Hélio] @Titulo[Física para universitários: Mecânica]@Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS]@Ano[2012]
+  @COMPLEMENTAR
+    @Autor[BAUER][Wolfgang]@Autor[WESTFALL][Gary D.]@Autor[DIAS][Hélio]@Titulo[Física para Universitários: Mecânica]@Editora[Minha Biblioteca][]@Ano[2012]

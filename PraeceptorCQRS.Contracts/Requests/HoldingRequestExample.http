@@ -1,0 +1,66 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7000
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+## C R E A T E ###########################################
+POST {{host}}/holding/create
+Content-Type: {{contentType}}
+
+{
+	"acronym": "SPCA",
+	"name": "Sociedade Paranaense de Cultura",
+	"address": "Desconhecido"
+}
+# TODO: add above the CreateHoldingRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=2375636a-b69d-45c9-02c2-08da7add233c
+@idToUpd=2375636a-b69d-45c9-02c2-08da7add233c
+@idToDel=2375636a-b69d-45c9-02c2-08da7add233c
+
+## G E T #################################################
+GET {{host}}/holding/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/holding/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+	"name": "Pontifícia Universidade Católica do Paraná",
+	"address": "Imaculada Conceição, 1000"
+}
+# TODO: add above the UpdateHoldingRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/holding/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+
+## G E T #################################################
+GET {{host}}/holding/get/count
+Content-Type: {{contentType}}
+
+
+## P A G E ###############################################
+POST {{host}}/holding/get/page
+Content-Type: {{contentType}}
+
+{
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "titlefilter": "2",
+    "textfilter": "1",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

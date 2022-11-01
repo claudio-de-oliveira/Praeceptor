@@ -1,0 +1,61 @@
+@PEA [F113620]
+
+  @Ementa
+    [Lógica de programação e programação estruturada. Algoritmos. Entrada e saída de dados. Estruturas de seleção e repetição. Linguagem de programação Phyton. Variáveis compostas (vetores e matrizes). Subrotinas, funções e bibliotecas.]
+
+  @OBJETIVO
+    [Proporcionar ao aluno o desenvolvimento do raciocínio com sequenciamento lógicomatemático aplicado à solução de problemas profissionais em nível computacional.]
+
+  @Competencias
+    [Dominar a estruturação do raciocínio logico matemático.]
+    [Ter conhecimento para a concepção, edição, execução e teste do software para resolução de problemas relacionados às Engenharias em que atua.]
+    [Capacitar o discente no processo de análise.]
+    [Desenvolver a crítica e autocritica.]
+    [Modelar e solucionar problemas vinculados às Engenharias utilizando a fundamentos de programação.]
+    [Capacidade interpretação de textos em segundo idioma.]
+    [Promover à ética e interdisciplinaridade.]
+
+  @UNIDADE1
+    @Chave[Raciocínio lógico]
+        [Estrutura de concatenação de ideias.]
+        [Lógica de programação.]
+    @Chave[Algoritmo]
+        [Algoritmos: propriedades e aplicações iniciais.]
+        [Representações de algoritmo: descrição narrativa, fluxograma e pseudocódigo.]
+        [Entrada e saída de dados – leitura e escrita.]
+        [Tipos de dados: declaração de variáveis.]
+        [Operadores: aritméticos, relacionais e lógicos.]
+        [Estruturas básicas de um algoritmo: seleção, repetição e sequencial.]
+
+  @UNIDADE2
+    @Chave[Programação]
+        [Introdução ao ambiente Python.]
+        [Comandos específicos em Python.]
+        [Principais funções matemáticas especificas em Python.]
+        [Variáveis compostas (vetores e matrizes).]
+        [Noções de subrotinas e funções complexas.]
+        [Construção de bibliotecas.]
+        [Aplicações contextualizadas de programação na engenharia.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. A disciplina será trabalhada de forma a possibilitar a participação ativa e crítica dos alunos de acordo com os conceitos-chave a serem trabalhados por unidade de ensino, proporcionando sempre a intervenção, debates, no qual o professor atue como mediador da aprendizagem. Trabalhar-se-á numa perspectiva crítica utilizando-se de metodologias de aprendizagem. A problematização dos saberes será realizada por meio de analogias com situações do cotidiano profissional e desenvolvimento de estudos de casos com ênfase na atuação do profissional da Engenharia.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. A avaliação deve considerar o domínio teórico, aplicabilidade do conhecimento e a problematização do conteúdo através da interdisciplinaridade, e será computada por meio de medida de eficiência (ME), correspondente a 20% da nota da unidade, através das metodologias de aprendizagem. Acrescentando a esse processo o aluno será submetido a uma prova escrita e computacional. A prova será individual e contextualizada e corresponderá a 80% da nota da unidade.]
+
+  @BASICA
+    @Autor[MANZANO][José A. N. G,] @Autor[OLIVEIRA][Jayr F. de] @Titulo[Algoritmos: lógica para desenvolvimento de programação de computadores] @Edicao[26] @Editora[Érica][São Paulo: SP] @Ano[2013]
+  @BASICA
+    @Autor[DE SOUZA][Marco A. F.] @Autor[GOMES][Marcelo M.] @Autor[SOARES][Marcio V.] @Autor[CONCILIO][Ricardo] @Titulo[Algoritmos e Lógica de Programação] @Editora[Pioneira Thomson Learning][São Paulo: SP] @Ano[2011]
+  @BASICA
+    @Autor[BORGES][Luiz E.] @Titulo[Python para desenvolvedores] @Editora[NOVATEC][São Paulo: SP] @Ano[2015]
+  @COMPLEMENTAR
+    @Autor[DASGUPTA][Sanjoy] @Autor[PAPADIMITRIOU][Christos] @Autor[VAZIRANI][Umesh] @Titulo[Algoritmos] @Editora[McGraw–Hill do Brasil LTDA][Porto Alegre: RS] @Ano[2011]
+  @COMPLEMENTAR
+    @Autor[GUIMARÃES][Ângelo de M.] @Autor[LAGES][Newton A. de C.] @Titulo[Algoritmos e estruturas de dados] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[ASCENCIO][Ana F. G.] @Autor[CAMPOS][Edilene A. V. de] @Titulo[Fundamentos da Programação de Computadores] @Editora[Pearson Education do Brasil][São Paulo: SP] @Ano[2013]
+  @COMPLEMENTAR
+    @Autor[MANZANO][José A. N. G.] @Autor[OLIVEIRA][Jayr F. de] @Titulo[Estudo dirigido de algoritmos] @Edicao[15] @Editora[Érica][São Paulo: SP] @Ano[2013]
+  @COMPLEMENTAR
+    @Autor[NEY][Nilo C. M.] @Titulo[Introdução à Programação com Python – algoritmos e lógica de Programação] @Edicao[2] @Editora[NOVATEC][São Paulo: SP] @Ano[2014]

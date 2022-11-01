@@ -1,0 +1,60 @@
+﻿@inject TokenProvider TokenProvider
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <AuthorizeView>
+        <Authorized>
+            <div class="container-fluid m-2 px-2">
+                <!--
+                <a class="navbar-brand text-warning" href="document/list">Planos Pedagógicos</a>
+                -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+                    <span class="navbar-toggler-icon "></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navmenu">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a href="document/list" class="nav-link">Documentos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="chapter/list" class="nav-link">Capítulos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="section/list" class="nav-link">Seções</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="subsection/list" class="nav-link">Subseções</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="subsubsection/list" class="nav-link">Sub-Subseções</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="file/list" class="nav-link">Arquivos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="group/list" class="nav-link">Variáveis</a>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/Logout" method="post" style="color:white;">
+                                <a href="logout" class="nav-link" onclick="this.closest('form').submit();return false;">
+                                    <span class="oi oi-list-rich" aria-hidden="true"></span> Sair
+                                </a>
+                                <input name="__RequestVerificationToken" type="hidden" value="@TokenProvider.XsrfToken" />
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </Authorized>
+
+        <NotAuthorized>
+            <li class="nav-item px-3">
+                <a href="login" class="nav-link" Match="NavLinkMatch.All">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Login
+                </a>
+            </li>
+        </NotAuthorized>
+
+    </AuthorizeView>
+</nav>
+

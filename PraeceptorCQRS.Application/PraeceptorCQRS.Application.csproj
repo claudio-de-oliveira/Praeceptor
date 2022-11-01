@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\PraeceptorCQRS.Domain\PraeceptorCQRS.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
+		<PackageReference Include="ErrorOr" Version="1.0.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.1.0" />
+		<PackageReference Include="MediatR" Version="10.0.1" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Serilog" Version="2.11.0" />
+		<PackageReference Include="Scrutor" Version="4.2.0" />
+		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Entities\AxisType\Events\" />
+	  <Folder Include="Entities\Holding\Events\" />
+	</ItemGroup>
+
+</Project>
+

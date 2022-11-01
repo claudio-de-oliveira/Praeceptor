@@ -1,0 +1,66 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7000
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@instituteId=45abe6c5-9843-4997-5a09-08da8cee938b
+
+## C R E A T E ###########################################
+POST {{host}}/classtype/create
+Content-Type: {{contentType}}
+
+{
+    "Code":"NORMAL",
+    "InstituteId": "{{instituteId}}"
+}
+# TODO: add above the CreateClassTypeRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=12ee015b-a040-4537-1db5-08da8ad1c8b9
+@idToUpd=12ee015b-a040-4537-1db5-08da8ad1c8b9
+@idToDel=12ee015b-a040-4537-1db5-08da8ad1c8b9
+
+## G E T #################################################
+GET {{host}}/classtype/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/classtype/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+    "code": "ANORMAL"
+}
+# TODO: add above the UpdateClassTypeRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/classtype/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+
+## G E T #################################################
+GET {{host}}/classtype/get/count/{{instituteId}}
+Content-Type: {{contentType}}
+
+## P A G E ###############################################
+POST {{host}}/classtype/get/page
+Content-Type: {{contentType}}
+
+{
+    "instituteid": "{{instituteId}}",
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "titlefilter": "2",
+    "textfilter": "1",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

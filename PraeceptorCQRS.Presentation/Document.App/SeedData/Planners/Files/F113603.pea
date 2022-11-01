@@ -1,0 +1,54 @@
+@PEA [F113603]
+
+  @Ementa
+    [XXX Intervalos e inequações envolvendo números reais. Conceito de valor absoluto. Funções Elementares. Gráficos de funções reais. Introdução às funções exponenciais e logarítmicas. Introdução às funções trigonométricas.  Introdução ao conceito de limite e continuidade de funções reais.]
+
+  @OBJETIVO
+    [Compreender os conceitos básicos do pré-cálculo, a saber: Simplificação de Frações Algébricas. Valor Absoluto. Funções Elementares e seus Gráficos aplicando os conceitos de Limites e Continuidade de Funções, necessários à resolução de problemas matemáticos inerentes ao cálculo.]
+
+  @Competencias
+    [Conhecer as principais funções matemáticas e correlaciona-las a problemas da área de engenharia e afins.]
+    [Articular conhecimentos das principais funções matemáticas com suas aplicações nas engenharias.]
+    [Interpretar resultados a partir de dados obtidos a partir de experimentos ou gráficos.]
+    [Organizar argumentos matemáticos numa sequência lógica.]
+
+  @UNIDADE1
+    @Chave[Funções reais]
+        [Problemas envolvendo intervalos e inequações reais.]
+        [Frações algébricas.]
+        [Módulo de um número e suas propriedades.]
+        [Funções: polinomiais, racionais, exponenciais, e logarítmicas.]
+    @Chave[gráficos de funções]
+        [Domínio e Imagem de uma função real.]
+        [Gráficos de funções reais.]
+
+  @UNIDADE2
+    @Chave[limite e continuidade de funções reais]
+        [limite de uma função real.]
+        [comportamento de uma função real.]
+        [limites de funções trigonométricas e exponenciais.]
+        [Teorema de valor intermediário.]
+        [Limites envolvendo o infinito.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. O procedimento metodológico adotado nesta disciplina será baseado na proposta de problemas envolvendo modelos matemáticos da área de engenharia e afins. A aquisição de conhecimento de cada conceito chave também terá apoio de recomendações de conjuntos de problemas na plataforma Khan Academy. O software livre Geogebra também será utilizado na aquisição de conhecimentos referentes à construção de gráficos e sua interpretação.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. A avaliação terá como base os objetivos de aprendizagem e evidenciará o desenvolvimento das competências pelos alunos conforme orientação da matriz de referência. Assim,  o processo avaliativo da disciplina  será mediante aplicação de uma prova contextualizada (PC) e  individual correspondente a 80% da nota da unidade e de uma série de atividades com apoio das plataformas Khan Academy e Geogebra, correspondentes a medida de eficiência (ME) que correspondem a 20% da nota em cada unidade.]
+
+  @BASICA
+    @Autor[IEZZI][Gelson] @Autor[MURAKAMI][Carlos] @Titulo[Fundamentos de Matemática Elementar] @Volume[1][Conjuntos e Funções] @Edicao[9] @Ano[2013]
+  @BASICA
+    @Autor[BASSANEZI][Rodney Carlos] @Titulo[Introdução ao Cálculo e Aplicações] @Editora[Contexto][] @Ano[2015]
+  @BASICA
+    @Autor[STEWART][J.] @Titulo[Cálculo] @Volume[1] @Edicao[7] @Editora[Editora Cengage Learning][São Paulo: SP] @Ano[2014]
+  @COMPLEMENTAR
+    @Autor[BOULOS][Paulo] @Titulo[Introducao Ao Calculo] @Volume[I][] @Editora[Editora Edgard Blücher LTDA][São Paulo: SP]
+  @COMPLEMENTAR
+    @Autor[AYRES][Frank] @Autor[MENDELSON][Elliott] @Titulo[Cálculo – Coleção Schaum] @Edicao[5] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[FLEMMING][Diva M.] @Autor[GONÇALVES][Mirian B.] @Titulo[Cálculo A] @Volume[1] @Edicao[6] @Editora[Pearson][São Paulo: SP] @Ano[2006]
+  @COMPLEMENTAR
+    @Autor[HOFFMANN][Laurence D.] @Autor[BRADLEY][Gerald L.] @Titulo[Cálculo: Um Curso Moderno e suas Aplicações] @Edicao[10] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[THOMAS][George B.] @Titulo[Cálculo] @Volume[1] @Edicao[12] @Editora[Pearson – Addison Wesley][São Paulo: SP] @Ano[2012]

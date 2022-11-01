@@ -1,0 +1,730 @@
+﻿@page "/group/list"
+
+@using Ardalis.GuardClauses
+@using Document.App.Components
+@using Document.App.Components.Toaster
+@using Document.App.Dialogs
+@using Document.App.Requests
+@using Microsoft.AspNetCore.Mvc
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.Group
+@using PraeceptorCQRS.Contracts.Entities.GroupValue
+@using PraeceptorCQRS.Contracts.Entities.Variable
+@using PraeceptorCQRS.Contracts.Entities.VariableValue
+@using System.Net
+
+@attribute [Authorize]
+
+@inherits AuthenticatedPage
+
+<!-- Modal: Editar entidade -->
+@if (EditVariableValueDialogIsOpen)
+{
+    <EditVariableValueDialog VariableValue="@selectedVariableValue" OnClose="@OnEditVariableValueDialogClose" />
+}
+@if (CreateGroupValueDialogIsOpen)
+{
+    <CreateGroupValueDialog Group="@groupSelected" OnClose="@OnCreateGroupValueDialogClose" />
+}
+@if (CreateGroupDialogIsOpen)
+{
+    <CreateGroupDialog Code="@previousGroupCode" OnClose="@OnCreateGroupDialogClose" />
+}
+@if (CreateVariableDialogIsOpen)
+{
+    <CreateVariableDialog Code="@previousVariableCode" OnClose="@OnCreateVariableDialogClose" />
+}
+
+<section class="p-1">
+
+    <PageHeaderComponent Institute="@institute" Text="VARIÁVEIS" />
+
+    <article class="content px-4">
+        <div>
+            <ClearableInputTextComponent Placeholder="Filtrar por Grupo de variáveis" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
+        </div>
+
+        @foreach (var group in entityList)
+        {
+            <ConfirmDialog Title="Atenção"
+                       Message=@($"Tem certeza que deseja excluir o grupo de variáveis {group.Code}, seus valores, todas as suas variáveis e valores?")
+                       OnConfirmEvent="@OnDeleteGroup"
+                       ParameterId="group.Id" />
+            @foreach (var groupValue in group.GroupValues)
+            {
+                <ConfirmDialog Title="Atenção"
+                       Message=@($"Tem certeza que deseja excluir o valor '{groupValue.Value}' e os valores das variáveis correspondentes?")
+                       OnConfirmEvent="@OnDeleteGroupValue"
+                       ParameterId="groupValue.Key" />
+            }
+            @foreach (var variable in group.Variables)
+            {
+                <ConfirmDialog Title="Atenção"
+                       Message=@($"Tem certeza que deseja excluir a variável {variable.Code} e todos os seus valores?")
+                       OnConfirmEvent="@OnDeleteVariable"
+                       ParameterId="@variable.Id" />
+            }
+        }
+
+        <table class="table table-borderless table-sm" cellpadding="1" cellspacing="1">
+            <thead>
+                <!---->
+                <tr>
+                    <td colspan="6"></td>
+                </tr>
+                <tr>
+                    <th>
+                        <ButtonSortComponent Waiting="@waiting" Text="Código do grupo" SortBy="Code" OnClick="@SortBy" />
+                    </th>
+                    <th class="text-primary" style="font-weight:normal!important;">
+                        Valores do grupo
+                    </th>
+                    <th class="text-primary" style="font-weight:normal!important;">
+                        Variáveis do grupo
+                    </th>
+                    <th class="text-primary" style="font-weight:normal!important;">
+                        Valores das variáveis do grupo
+                    </th>
+                    <th class="text-primary" style="font-weight:normal!important;">
+                        Editar
+                    </th>
+                    <th class="text-primary" style="font-weight:normal!important;">
+                        Excluir
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="6"></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var group in entityList)
+                {
+                    <tr style="background-color:darkmagenta">
+                        <td colspan="6"></td>
+                    </tr>
+
+                    <tr style="background-color:aliceblue">
+
+                        <td>
+                            <div style="font-weight:600">
+                                @group.Code
+                            </div>
+                        </td>
+
+                        <td align="left">
+                            <select bind="@group.GroupValueSelectedId" class="form-select form-select-sm" aria-label=".form-select-sm example" @onchange="@((args) => OnGroupValueChange(args))">
+                                @if (group.GroupValueSelectedId == Guid.Empty)
+                                {
+                                    <option value=@Guid.Empty selected>Selecione um valor para o grupo...</option>
+                                }
+                                else
+                                {
+                                    <option value=@Guid.Empty>Selecione um valor para o grupo...</option>
+                                }
+                                @foreach (var pair in group.GroupValues)
+                                {
+                                    @if (group.GroupValueSelectedId == pair.Key)
+                                    {
+                                        <option value=@pair.Key selected>@pair.Value</option>
+                                    }
+                                    else
+                                    {
+                                        <option value=@pair.Key>@pair.Value</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+
+                        <td align="left" colspan="2">
+                            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                                <div class="btn-group" role="group" aria-label="First group">
+                                    <button type="button"
+                                        class="btn btn-warning btn-sm"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Criar novo grupo"
+                                        style="margin:0;"
+                                        @onclick="@(() => OnCreateGroupValue(group))">
+                                        Novo Valor
+                                    </button>
+                                    <button type="button"
+                                        class="btn btn-info btn-sm"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Criar nova variável"
+                                        style="margin:0;"
+                                        @onclick="@(() => OnCreateVariable(group))">
+                                        Nova Variável
+                                    </button>
+                                </div>
+                                <div class="input-group">
+                                    <button type="button"
+                                        class="btn btn-danger btn-sm"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Excluir valor selecionado"
+                                        style="margin:0;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
+                                        disabled=@(group.GroupValueSelectedId == Guid.Empty)>
+                                        Excluir Valor
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <!-- Coluna EDITAR -->
+                        </td>
+
+                        <td align="center">
+                            <button type="button"
+                                class="btn btn-outline-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Excluir grupo"
+                                data-bs-toggle="modal"
+                                data-bs-target="#@($"A{group.Id.ToString("N")}")"
+                                style="border: none;">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    @foreach (var variable in group.Variables)
+                    {
+                        <tr>
+                            <td colspan="2">
+                                <!-- Célula vazia -->
+                            </td>
+
+                            <td>
+                                <div style="font-size: smaller">
+                                    @variable.Code
+                                </div>
+                            </td>
+
+                            <td>
+                                <div style="font-size: smaller">
+                                    <i>@VariableValueOf(group, variable)</i>
+                                </div>
+                            </td>
+
+                            <td align="center">
+                                <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Editar valor da variável"
+                                disabled=@(group.GroupValueSelectedId == Guid.Empty)
+                                @onclick="@(() => OnEditVariableValue(group, variable))"
+                                style="border: none;">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+
+                            <td align="center">
+                                <button type="button"
+                                class="btn btn-sm btn-outline-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                title="Excluir variável"
+                                data-bs-target="#@($"A{variable.Id.ToString("N")}")"
+                                style="border: none;">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@waiting"
+                        title="Criar um novo grupo de variáveis"
+                        @onclick="() => OnCreateGroupDialog()">
+                    <i class="bi bi-plus-lg"></i>
+                    Criar um novo grupo de variáveis
+                </button>
+            </div>
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+        </div>
+    </article>
+</section>
+
+@code {
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
+    [Inject]
+    protected IGroupService GroupService { get; set; } = default!;
+    [Inject]
+    protected IGroupValueService GroupValueService { get; set; } = default!;
+    [Inject]
+    protected IVariableService VariableService { get; set; } = default!;
+    [Inject]
+    protected IVariableValueService VariableValueService { get; set; } = default!;
+
+    protected List<GroupModel> entityList = new();
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+
+    protected GroupModel? groupSelected = null!;
+    protected string previousGroupCode = string.Empty;
+    protected VariableModel? variableSelected = null!;
+    protected string previousVariableCode = string.Empty;
+
+    private Guid selectedGroupId = Guid.Empty;
+    private VariableValueModel? selectedVariableValue = default!;
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool waiting = true;
+
+    private string? codeFilter = "";
+
+    private bool CreateGroupDialogIsOpen = false;
+    private bool CreateVariableDialogIsOpen = false;
+    private bool CreateGroupValueDialogIsOpen = false;
+    private bool EditVariableValueDialogIsOpen = false;
+
+    private bool createVariableValue = false;
+
+    Dictionary<Guid, string> options = new();
+
+    private InstituteModel? institute;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
+            Guard.Against.Null(institute);
+            await PageRequest(currentPage);
+        }
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
+    }
+
+    private string VariableValueOf(GroupModel group, VariableModel variable)
+    {
+        if (group.GroupValueSelectedId == Guid.Empty)
+            return "...";
+        var v = group.Variables.Find(o => o.Id == variable.Id);
+        Guard.Against.Null(v);
+        if (v.VariableValue is null)
+            return "...";
+        return v.VariableValue.Value;
+    }
+
+    #region Manutenção da tabela
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+    protected async Task OnCodeChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        codeFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+
+    protected virtual async Task PageRequest(int page)
+    {
+        waiting = true;
+        var message = await GroupService.GetGroupPage(
+            new GetGroupPageRequest(
+                _userInstituteId,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                codeFilter
+            )
+        );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfGroup>(content);
+            Guard.Against.Null(tmp);
+            var newEntityList = tmp.Entities.Select(o => (GroupModel)o).ToList();
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+
+            foreach (var group in newEntityList)
+            {
+                var response1 = await VariableService.GetVariablePage(
+                    new GetVariablePageRequest(
+                        group.Id,
+                        0,
+                        int.MaxValue,
+                        null,
+                        true,
+                        null
+                    )
+                );
+
+                if (response1.IsSuccessStatusCode)
+                {
+                    var content1 = await response1.Content.ReadAsStringAsync();
+                    var tmp1 = JsonConvert.DeserializeObject<PageOfVariable>(content1);
+                    Guard.Against.Null(tmp1);
+                    group.Variables = tmp1.Entities.Select(o => (VariableModel)o).ToList();
+                }
+
+                var list = await GroupValueService.GetGroupValuesByGroup(group.Id);
+
+                if (list is null)
+                    list = new();
+
+                group.GroupValues = new();
+
+                list.ForEach(o => group.GroupValues.Add(o.Id, o.Value));
+            }
+
+            foreach (var entity in entityList)
+            {
+                var index = newEntityList.FindIndex(o => o.Id == entity.Id);
+
+                if (index >= 0)
+                {
+                    newEntityList[index].GroupValueSelectedId = entity.GroupValueSelectedId;
+                    newEntityList[index].Variables = entity.Variables;
+                }
+            }
+
+            entityList = newEntityList;
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    public async Task OnGroupValueChange(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        var groupValueId = Guid.Parse((string)args.Value);
+
+        if (groupValueId != Guid.Empty)
+        {
+            var groupValue = await GroupValueService.GetGroupValueById(groupValueId);
+            Guard.Against.Null(groupValue);
+            groupSelected = entityList.Find(o => o.Id == groupValue.GroupId);
+            Guard.Against.Null(groupSelected);
+            groupSelected.GroupValueSelectedId = groupValue.Id;
+            foreach (var variable in groupSelected.Variables)
+                variable.VariableValue = await VariableValueService.GetVariableValueByVariableAndGroupValue(groupSelected.GroupValueSelectedId, variable.Id);
+        }
+        else
+        {
+            Guard.Against.Null(groupSelected);
+            groupSelected.GroupValueSelectedId = Guid.Empty;
+            foreach (var variable in groupSelected.Variables)
+                variable.VariableValue = null;
+        }
+    }
+    #endregion
+
+
+    #region Criação e deleção de GRUPOS
+    protected virtual void OnCreateGroupDialog()
+    {
+        groupSelected = new GroupModel();
+        previousGroupCode = "";
+        CreateGroupDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected virtual async Task OnCreateGroupDialogClose(GroupModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            waiting = true;
+
+            Guard.Against.Null(groupSelected);
+            groupSelected.Code = modifiednewEntity.Code;
+            HttpResponseMessage response;
+
+            response = await GroupService.CreateGroup(
+                new CreateGroupRequest(
+                    groupSelected.Code,
+                    _userInstituteId
+                )
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                groupSelected = JsonConvert.DeserializeObject<GroupModel>(await response.Content.ReadAsStringAsync());
+                Guard.Against.Null(groupSelected);
+                _toasterService?.AddToastSuccess($"O grupo {groupSelected.Code} foi criado.");
+                previousGroupCode = groupSelected.Code;
+                await PageRequest(currentPage);
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
+                groupSelected.Code = previousGroupCode;
+            }
+
+            waiting = false;
+        }
+
+        CreateGroupDialogIsOpen = false;
+        StateHasChanged();
+    }
+
+    private async void OnDeleteGroup(object? source, Guid groupId)
+    {
+        // await _deleteGroupValues(groupId);
+        var response = await GroupService.DeleteGroup(groupId);
+        response.EnsureSuccessStatusCode();
+        var index = entityList.FindIndex(o => o.Id == groupId);
+        entityList.RemoveAt(index);
+
+        _toasterService?.AddToastSuccess("O grupo foi excluído com sucesso.");
+
+        StateHasChanged();
+    }
+    #endregion
+
+
+    #region Criação e deleção de VARIÁVEIS
+    protected virtual void OnCreateVariable(GroupModel group)
+    {
+        groupSelected = group;
+        previousGroupCode = groupSelected.Code;
+
+        variableSelected = new VariableModel();
+        variableSelected.GroupId = group.Id;
+        previousVariableCode = "";
+        CreateVariableDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected virtual async Task OnCreateVariableDialogClose(VariableModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            waiting = true;
+
+            Guard.Against.Null(variableSelected);
+            variableSelected.Code = modifiednewEntity.Code;
+            HttpResponseMessage response;
+
+            Guard.Against.Null(groupSelected);
+            response = await VariableService.CreateVariable(
+                new CreateVariableRequest(
+                    groupSelected.Id,
+                    modifiednewEntity.Code
+                )
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                variableSelected = JsonConvert.DeserializeObject<VariableModel>(await response.Content.ReadAsStringAsync());
+                Guard.Against.Null(variableSelected);
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+                previousVariableCode = variableSelected.Code;
+                groupSelected.Variables.Add(variableSelected);
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
+                variableSelected.Code = previousVariableCode;
+            }
+
+            waiting = false;
+        }
+
+        CreateVariableDialogIsOpen = false;
+        StateHasChanged();
+    }
+
+    private async void OnDeleteVariable(object? source, Guid variableId)
+    {
+        var response = await VariableService.DeleteVariable(variableId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _toasterService?.AddToastSuccess($"A variável e seus valores foram excluídos.");
+            foreach (var grp in entityList)
+            {
+                var index = grp.Variables.FindIndex(o => o.Id == variableId);
+                if (index >= 0)
+                    grp.Variables.RemoveAt(index);
+            }
+            StateHasChanged();
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+    }
+    #endregion
+
+
+    #region Criação e deleção de VALORES DE GRUPO
+    public async Task OnCreateGroupValue(GroupModel group)
+    {
+        groupSelected = group;
+        CreateGroupValueDialogIsOpen = true;
+        await Task.CompletedTask;
+    }
+
+    protected virtual async Task OnCreateGroupValueDialogClose(GroupValueModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            var response = await GroupValueService.CreateGroupValue(
+                new CreateGroupValueRequest(
+                    modifiednewEntity.GroupId,
+                    modifiednewEntity.Value
+                )
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                var groupValue = JsonConvert.DeserializeObject<GroupValueModel>(await response.Content.ReadAsStringAsync());
+                Guard.Against.Null(groupValue);
+                var group = entityList.Find(o => o.Id == modifiednewEntity.GroupId);
+                Guard.Against.Null(group);
+                group.GroupValues.Add(groupValue.Id, groupValue.Value);
+                await OnGroupValueChange(new ChangeEventArgs { Value = groupValue.Id.ToString() });
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+            }
+        }
+
+        CreateGroupValueDialogIsOpen = false;
+        StateHasChanged();
+    }
+
+    private async void OnDeleteGroupValue(object? source, Guid groupValueId)
+    {
+        var response = await GroupValueService.DeleteGroupValue(groupValueId);
+        response.EnsureSuccessStatusCode();
+
+        Guard.Against.Null(groupSelected);
+        groupSelected.GroupValues.Remove(groupValueId);
+
+        if (groupSelected.GroupValues.Count == 0)
+            await OnGroupValueChange(new ChangeEventArgs { Value = Guid.Empty.ToString() });
+        else
+            await OnGroupValueChange(new ChangeEventArgs { Value = groupSelected.GroupValues.Keys.ElementAt(0).ToString() });
+
+        StateHasChanged();
+    }
+    #endregion
+
+
+    #region Edição de VALORES DE VARIÁVEIS
+    private async void OnEditVariableValue(GroupModel group, VariableModel variable)
+    {
+        Guard.Against.Null(group.GroupValueSelectedId);
+        selectedVariableValue = await VariableValueService.GetVariableValueByVariableAndGroupValue(group.GroupValueSelectedId, variable.Id);
+        if (selectedVariableValue is null)
+        {
+            selectedVariableValue = new VariableValueModel { GroupValueId = group.GroupValueSelectedId, VariableId = variable.Id, Value = "" };
+            createVariableValue = true;
+        }
+        else
+        {
+            createVariableValue = false;
+        }
+        EditVariableValueDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected virtual async Task OnEditVariableValueDialogClose(VariableValueModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            HttpResponseMessage response;
+
+            if (createVariableValue)
+            {
+                response = await VariableValueService.CreateVariableValue(
+                    new CreateVariableValueRequest(
+                        modifiednewEntity.GroupValueId,
+                        modifiednewEntity.VariableId,
+                        modifiednewEntity.Value
+                    )
+                );
+            }
+            else
+            {
+                response = await VariableValueService.UpdateVariableValue(
+                    new UpdateVariableValueRequest(
+                        modifiednewEntity.Id,
+                        modifiednewEntity.Value
+                    )
+                );
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                var variableValue = JsonConvert.DeserializeObject<VariableValueModel>(await response.Content.ReadAsStringAsync());
+                Guard.Against.Null(variableValue);
+                Guard.Against.Null(groupSelected);
+                var index = groupSelected.Variables.FindIndex(o => o.Id == variableValue.VariableId);
+                groupSelected.Variables[index].VariableValue = variableValue;
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+            }
+        }
+
+        EditVariableValueDialogIsOpen = false;
+        StateHasChanged();
+    }
+    #endregion
+}

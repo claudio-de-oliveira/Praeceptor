@@ -1,0 +1,55 @@
+@PEA [F113654]
+
+  @Ementa
+    [Derivadas e Aplicações. Integral . Técnicas de Integração. Aplicações da integral.]
+
+  @OBJETIVO
+    [Compreender os conceitos básicos do cálculo, como derivadas e integrais e suas aplicações, necessários à resolução de problemas matemáticos inerentes às disciplinas correlatas.]
+
+  @Competencias
+    [Articular conhecimentos das principais funções matemáticas com suas aplicações nas engenharias.]
+    [Interpretar resultados a partir de dados obtidos a partir de experimentos ou gráficos.]
+    [Organizar argumentos matemáticos numa sequência lógica.]
+    [Desenvolver a capacidade investigativa dentro dos princípios teóricos do cálculo.]
+
+  @UNIDADE1
+    @Chave[Derivadas e Aplicações]
+        [Taxa de variação.]
+        [Regras de derivação.]
+        [Máximos e Mínimos.]
+        [Problemas de otimização.]
+    @Chave[Integral]
+        [Integral de Riemann; Antiderivada; Teorema Fundamental do Cálculo; Area; Regra da Substituição.]
+
+  @UNIDADE2
+    @Chave[Técnicas de Integração]
+        [Integração por partes.]
+        [Integrais Trigonométricas.]
+        [Técnica de Frações Parciais.]
+    @Chave[Aplicações da integral]
+        [Sólidos de Revolução.]
+        [Comprimento de Arco.]
+        [Área de Superfície.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. O procedimento metodológico adotado nesta disciplina será baseado na proposta de problemas envolvendo modelos matemáticos da área de engenharia e afins. A aquisição de conhecimento de cada conceito chave também terá apoio de recomendações de conjuntos de problemas na plataforma Google for Education. O software livre Geogebra também será utilizado na aquisição de conhecimentos referentes à construção de gráficos e sua interpretação.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. A avaliação terá como base os objetivos de aprendizagem e evidenciará o desenvolvimento das competências pelos alunos conforme orientação da matriz de referência. Assim,  o processo avaliativo da disciplina  será mediante aplicação de uma Prova Contextualizada (PC) e  individual, correspondente a 80% da nota da unidade, e de uma série de atividades correspondentes a Medida de Eficiência (ME), que correspondem a 20% da nota em cada unidade.]
+
+  @BASICA
+    @Autor[ANTON][Howard] @Autor[Bivens][Irl] @Autor[Davis][Stephen] @Titulo[Cálculo] @Edicao[10] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2014]
+  @BASICA
+    @Autor[STEWART][J.] @Titulo[Cálculo] @Volume[1][] @Edicao[7] @Editora[Cengage Learning Edições LTDA (Editora Pioneira)][São Paulo: SP] @Ano[2016]
+  @BASICA
+    @Autor[THOMAS][George B.] @Titulo[Cálculo] @Volume[1][] @Edicao[12] @Editora[Editora Pearson Addison Wesley][São Paulo: SP] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[ARFKEN][George] @Autor[Weber][Hans J.] @Autor[Harris][Frank E.] @Titulo[Física Matemática: Métodos Matemáticos para Engenharia e Física] @Edicao[7] @Editora[Elsevier Editora LTDA (Campus)][Rio de Janeiro: RJ] @Ano[2017]
+  @COMPLEMENTAR
+    @Autor[AYRES][Frank] @Autor[MENDELSON][Elliott] @Titulo[Cálculo – Coleção Schaum] @Edicao[5] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2013]
+  @COMPLEMENTAR
+    @Autor[FLEMMING][Diva M.] @Autor[GONÇALVES][Mirian B.] @Titulo[Cálculo A] @Volume[1][] @Edicao[6] @Editora[Editora Pearson Addison Wesley][São Paulo: SP] @Ano[2007]
+  @COMPLEMENTAR
+    @Autor[GUIDORIZZI][Hamilton Luiz] @Titulo[Um Curso de Cálculo] @Volume[1][Aplicações] @Edicao[6] @Editora[Livros Técnicos E Científicos Editora LTDA (LTC)][Rio de Janeiro: RJ] @Ano[2018]
+  @COMPLEMENTAR
+    @Autor[HOFFMANN][Laurence D.] @Autor[BRADLEY][Gerald L.] @Titulo[Cálculo: Um Curso Moderno e suas Aplicações] @Edicao[11] @Editora[Livros Técnicos E Científicos Editora LTDA (LTC)][Rio de Janeiro: RJ] @Ano[2015]

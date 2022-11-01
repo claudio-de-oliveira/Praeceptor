@@ -1,0 +1,71 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7000
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@instituteId=2DC66113-D6F4-4A18-771F-08DA896D3A86
+
+## C R E A T E ###########################################
+POST {{host}}/class/create
+Content-Type: {{contentType}}
+
+{
+    "Code": "X123456",
+    "Name": "Matemática Básica",
+    "Practice": 2,
+    "Theory": 2,
+    "PR": 0,
+    "InstituteId": "2DC66113-D6F4-4A18-771F-08DA896D3A86",
+    "TypeId": "EF54F360-A5C2-42BE-1DB6-08DA8AD1C8B9"
+}
+# TODO: add above the CreateClassRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=00000000-0000-0000-0000-000000000000
+@idToUpd=00000000-0000-0000-0000-000000000000
+@idToDel=00000000-0000-0000-0000-000000000000
+
+## G E T #################################################
+GET {{host}}/class/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/class/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+
+}
+# TODO: add above the UpdateClassRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/class/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+
+## G E T #################################################
+GET {{host}}/class/get/count/{{instituteId}}
+Content-Type: {{contentType}}
+
+## P A G E ###############################################
+POST {{host}}/class/get/page
+Content-Type: {{contentType}}
+
+{
+    "instituteid": "{{instituteId}}",
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "titlefilter": "2",
+    "textfilter": "1",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

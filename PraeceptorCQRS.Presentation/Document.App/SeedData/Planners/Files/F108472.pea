@@ -1,0 +1,57 @@
+@PEA [F108472]
+
+  @Ementa
+    [Matrizes. Espaços vetoriais. Subespaços Vetoriais. Base e Dimensão. Matriz mudança de base. Transformações lineares. Matriz associada a uma transformação linear. Autovalores e Autovetores. Aplicações das transformações lineares.]
+
+  @OBJETIVO
+    [Compreender os conteúdos fundamentais da álgebra linear suas aplicações nos mais diversos tipos de problemas aplicados as engenharias, enfatizando sempre as aplicações e as demonstrações pertinentes.]
+
+  @Competencias
+    [Aplicar os conceitos estudados na resolução de problemas voltados as engenharias.]
+    [Desenvolver a capacidade investigativa dentro dos princípios teóricos e das aplicações da álgebra linear.]
+    [Despertar o trabalho em equipe e individual de forma oral e/ou escrita com planejamento do tempo.]
+
+  @UNIDADE1
+    @Chave[Unidade 1]
+        [Espaço Vetorial.]
+        [Revisão do cálculo matricial.]
+        [Definição e exemplos de espaços vetoriais.]
+        [Definição e exemplos de subespaços vetoriais.]
+        [Combinação linear.]
+        [Geradores de um espaço vetorial.]
+        [Dependência e independência linear.]
+        [Base e dimensão de um espaço vetorial.]
+        [Matriz mudança de base e suas aplicações.]
+
+  @UNIDADE2
+    @Chave[UNIDADE II – Transformações Lineares]
+        [Definição e exemplos de transformações lineares.]
+        [Isomorfismo entre espaços vetoriais.]
+        [Núcleo e imagem de uma transformação linear.]
+        [Operações com transformações lineares.]
+        [Autovalores e autovetores associados a uma transformação linear.]
+        [Matriz associada a uma transformação linear.]
+        [Aplicações das transformações lineares.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. A disciplina será trabalhada de forma a possibilitar a participação ativa e crítica dos alunos de acordo com os conteúdos a serem trabalhados, proporcionando sempre a intervenção, debates, no qual o professor atue como mediador da aprendizagem. Trabalhar-se-á numa perspectiva crítica utilizando-se de metodologias ativas.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O processo avaliativo será continuo, ou seja, será mediante a aplicação de uma prova contextualizada, a medida de eficiência tem como princípio o acompanhamento dos alunos nas aulas através de suas participações no processo de ensino-aprendizagem.]
+
+  @BASICA
+    @Autor[ESPINOSA][Et. Al] @Titulo[Álgebra Linear para Computação] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2007]
+  @BASICA
+    @Autor[SANTOS][N. M.] @Autor[ANDRADE][D.] @Autor[GARCIA][N. M.] @Titulo[Vetores e Matrizes: Uma introdução à álgebra linear] @Editora[Thomson][São Paulo: SP] @Ano[2007]
+  @BASICA
+    @Autor[ANTON][Howard] @Autor[RORRES][Chris] @Titulo[Álgebra Linear com Aplicações] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[LIMA][Elon Lages] @Titulo[Álgebra Linear] @Edicao[7] @Editora[IMPA][Rio de Janeiro: RJ] @Ano[2006]
+  @COMPLEMENTAR
+    @Autor[LANG][Serge] @Titulo[Álgebra linear] @Editora[Ciência Moderna][Rio de Janeiro: RJ] @Ano[2003]
+  @COMPLEMENTAR
+    @Autor[SANTOS][N. M.] @Autor[ANDRADE][D.] @Autor[GARCIA][N. M.] @Titulo[Vetores e Matrizes: Uma introdução a álgebra linear] @Editora[Thomson][São Paulo: SP] @Ano[2007]
+  @COMPLEMENTAR
+    @Autor[LIPSCHUTZ][Seymour] @Titulo[Álgebra linear: teoria e problemas] @Edicao[3] @Editora[Makron][São Paulo: SP] @Ano[2006]
+  @COMPLEMENTAR
+    @Autor[POOLE][David] @Titulo[Álgebra linear] @Editora[Thomson][São Paulo: SP] @Ano[2006]

@@ -1,0 +1,68 @@
+@PEA [F113689]
+
+  @Ementa
+    [Tipos de Dados; Vetores; Listas, Pilhas; Filas; Deques; Algoritmos de Ordenação e Pesquisa de Dados e Árvores.]
+
+  @OBJETIVO
+    [Compreender as diversas estruturas de dados, sua manipulação e suas aplicações, como ferramenta para solução de problemas de engenharia.]
+
+  @Competencias
+    [Dominar a estruturação dos algoritmos e estruturas de dados.]
+    [Conceber, editar, executar e testar software resolvendo problemas relacionados ao campo de atuação das Engenharias.]
+    [Desenvolver a crítica e autocritica.]
+    [Modelar orientado a objetos e solucionar problemas vinculados às Engenharias utilizando programação.]
+    [Capacidade interpretação de textos em segundo idioma.]
+    [Promover à ética e interdisciplinaridade.]
+
+  @UNIDADE1
+    @Chave[Tipos de Dados]
+        [Primitivos.]
+        [Derivados.]
+    @Chave[Listas Lineares]
+        [Alocação em Arranjo (sequencial).]
+        [Alocação Encadeada.]
+        [Pilhas.]
+        [Filas.]
+        [Deques.]
+    @Chave[Algoritmos de ordenação de dados]
+        [Inserção.]
+        [Seleção.]
+        [Troca.]
+        [Distribuição.]
+        [Intercalação.]
+
+  @UNIDADE2
+    @Chave[Algoritmos de pesquisa de dados]
+        [Sequencial.]
+        [Binária.]
+        [Interpolação.]
+        [Cálculo de endereço (hashing).]
+    @Chave[Árvore]
+        [Definição.]
+        [Árvores binárias.]
+        [Árvores binárias de busca.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. A disciplina será trabalhada de forma a possibilitar a participação ativa e crítica dos alunos de acordo com os conceitos-chave a serem trabalhados por unidade de ensino, proporcionando sempre a intervenção, debates, no qual o professor atue como mediador da aprendizagem. Trabalhar-se-á numa perspectiva crítica utilizando-se de metodologias de aprendizagem. A problematização dos saberes será realizada por meio de analogias com situações do cotidiano profissional e desenvolvimento de estudos de casos com ênfase na atuação do profissional da Engenharia.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. A avaliação deve considerar o domínio teórico, aplicabilidade do conhecimento e a problematização do conteúdo através da interdisciplinaridade, e será computada por meio de medida de eficiência (ME), correspondente a 20% da nota da unidade, através das metodologias de aprendizagem. Acrescentando a esse processo o aluno será submetido a uma prova escrita e computacional. A prova será individual e contextualizada e corresponderá a 80% da nota da unidade.]
+
+  @BASICA
+    @Autor[GOODRICH][Michael T.] @Autor[TAMASSIA][Roberto] @Titulo[Estruturas de dados e algorítmos em Java] @Edicao[2] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2002]
+  @BASICA
+    @Autor[PREISS][Bruno R.] @Titulo[Estruturas de dados e algorítmos: padrões de projetos orientados a objetos com Java] @Editora[Campus][Rio de Janeiro: RJ] @Ano[2001]
+  @BASICA
+    @Autor[Cormen][T. H.] @Autor[Leiserson][C. E.] @Autor[Rivest][R. L.] @Autor[Stein][C.] @Titulo[Introduction to Algorithms] @Edicao[2] @Editora[McGraw-Hill][] @Ano[2001]
+  @BASICA
+    @Autor[Cormen][T. H.] @Autor[Leiserson][C. E.] @Autor[Rivest][R. L.] @Autor[Stein][C.] @Titulo[Algoritmos - Teoria e Prática] @Editora[Campus][Rio de Janeiro: RJ] @Ano[2002]
+  @COMPLEMENTAR
+    @Autor[DASGUPTA][Sanjoy] @Autor[PAPADIMITRIOU][Christos] @Autor[VAZIRANI][Umesh] @Titulo[Algoritmos] @Editora[McGraw–Hill do Brasil LTDA][Porto Alegre: RS] @Ano[2011]
+  @COMPLEMENTAR
+    @Autor[GUIMARÃES][Ângelo de M.] @Autor[LAGES][Newton A.de C.] @Titulo[Algoritmos e estruturas de dados] @Editora[Livros Técnicos E Científicos Editora LTDA(LTC)][Rio de Janeiro: RJ] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[FURTADO][Antônio Luz] @Titulo[Teoria dos grafos: algoritmos] @Editora[Livros Técnicos E Científicos Editora LTDA(LTC)][Rio de Janeiro: RJ] @Ano[1973]
+  @COMPLEMENTAR
+    @Autor[Villas][Marcos Vianna] @Autor[Ferreira][Andréa Gomes de Mattos] @Autor[Leroy][Patrick Georges] @Autor[Miranda][Claudio] @Autor[Bockman][Christine Lefévre]@Titulo[Estruturas de dados: conceitos e técnicas de implementação] @Editora[Campus][Rio de Janeiro: RJ] @Ano[1993]
+  @COMPLEMENTAR
+    @Autor[NEY][Nilo C. M.] @Titulo[Introdução à Programação com Python – algoritmos e lógica de Programação] @Edicao[2] @Editora[NOVATEC][São Paulo: SP] @Ano[2014]

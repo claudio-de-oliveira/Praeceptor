@@ -1,0 +1,60 @@
+@PEA [F113638]
+
+  @Ementa
+    [Metodologia para solução de problemas: formulação e análise, escolha e especificação das soluções. (2)Modelagem e Simulação de dados. (3)Modelos conceituais, experimentais e matemáticos. (4)Verificação e validação de modelos de simulação. (5)Otimização e sua relevância na solução de problemas de Engenharia.]
+
+  @OBJETIVO
+    [Desenvolver a capacidade de formulação, estruturação e solução de problemas matemáticos como instrumentos auxiliares no processo de tomada de decisão em Engenharia.]
+
+  @Competencias
+    [Comunicar-se efetivamente de forma oral, escrita e gráfica.]
+    [Compreender aspectos políticos, sociais, culturais, éticos, ambientais, econômicos, tendo em vista a atuação profissional ao atendimento às demandas da sociedade.]
+    [Aprender conceitos de administração e economia e atuar em equipes multidisciplinares.]
+    [Dominar conhecimentos de matemática, fenômenos físicos, químicos, ambientais, científicos, tecnológicos e instrumentais para resolver problemas de Engenharia.]
+
+  @UNIDADE1
+    @Chave[Metodologia para solução de problemas]
+        [Conceito de Problema.]
+        [Formulação de um Problema.]
+        [Análise e Solução de Problemas.]
+    @Chave[Modelagem e Simulação de dados]
+        [Tipos de Modelos.]
+        [Modelagem de Dados.]
+        [Análise e Simulação de Dados.]
+        [Números Aleatórios.]
+        [Simulação de eventos aleatórios.]
+    @Chave[Modelos conceituais, experimentais e matemáticos]
+        [Modelagem conceitual.]
+        [Modelagem Experimental.]
+        [Modelagem Matemática.]
+
+  @UNIDADE2
+    @Chave[Verificação e validação de modelos de simulação]
+        [Utilização de Verificação de modelos em computador.]
+        [Validação de Modelos em Computador.]
+    @Chave[Otimização]
+        [Conceitos de Otimização.]
+        [Otimização de Modelos.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. Para atingir os propósitos da disciplina, serão desenvolvidas aulas expositivas dialogadas, com ampla discussão dos diversos aspectos que compõem a realidade do ambiente de trabalho e desenvolvimento técnico-científico. Serão privilegiados, ainda, os debates, trabalhos intra e extraclasse individuais e em equipe, leitura dirigida de textos e artigos selecionados, elaboração e apresentação de resumos de matérias publicadas em revistas e jornais especializados sobre o conteúdo programático e outras atividades que busquem desenvolver as competências e habilidades do profissional.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. Serão aplicadas duas avaliações escritas individuais, sem consulta, obedecendo ao calendário de provas da instituição. Fará parte da nota de cada unidade uma Medida de Eficiência, totalizando até 20% da quantidade mínima de pontos para aprovação na disciplina.]
+
+  @BASICA
+    @Autor[Brockman][JAY B.] @Titulo[Introdução à Engenharia – Modelagem e Solução de Problemas] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2010]
+  @BASICA
+    @Autor[Holtzapple][Mark Thomas] @Autor[REECE][W. Dan] @Titulo[Introdução à Engenharia] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2014]
+  @BASICA
+    @Autor[BAZZO][Walter António] @Titulo[Introdução à engenharia: conceitos, ferramentas e comportamentos] @Editora[Editora da UFSC][Florianópolis: SC] @Ano[2006]
+  @COMPLEMENTAR
+    @Autor[Dym][Clive L.] @Autor[Little][Patrick] @Autor[Orwin][Elizabeth J.] @Autor[Spjut][R. Erik] @Titulo[Introdução à Engenharia: Uma Abordagem Baseada Em Projeto] @Edicao[3] @Editora[Bookman Companhia Editora LTDA][Porto Alegre: RS] @Ano[2010]
+  @COMPLEMENTAR
+    @Autor[BOGHI][Cláudio] @Titulo[Aplicações prática com Microsoft Office Excel 2003 e Solver: ferramentas computacionais para tomada de decisão] @Editora[Érica][São Paulo: SP] @Ano[2005]
+  @COMPLEMENTAR
+    @Autor[GOLDBARG][Marco Cesar] @Autor[LUNA][Henrique Pacca L.] @Titulo[Otimização combinatória e programação linear: modelos e algoritmos] @Edicao[2] @Editora[Elsevier][Rio de Janeiro: RJ] @Ano[2005]
+  @COMPLEMENTAR
+    @Autor[BOAVENTURA NETTO][Paulo Oswaldo] @Titulo[Grafos: teoria: modelos: algoritmos] @Edicao[5] @Editora[Editora Edgard Blücher LTDA][São Paulo: SP] @Ano[2012]
+  @COMPLEMENTAR
+    @Autor[LACHTERMACHER][Gerson] @Titulo[Pesquisa operacional na tomada de decisões: modelagem em excel] @Editora[Campus][Rio de Janeiro: RJ] @Ano[2003]

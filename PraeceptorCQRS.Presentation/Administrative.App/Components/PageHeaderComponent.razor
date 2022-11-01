@@ -1,0 +1,21 @@
+﻿@using Administrative.App.Models
+
+<div class="container-fluid px-0 py-0">
+    <div class="row g-0 py-2 row-cols-1">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6><b>@Title</b></h6>
+                <p style="font-size: smaller; font-stretch: condensed; margin-top: 0; margin-bottom: 0;">
+                    @Text
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = default!;
+    [Parameter]
+    public string Text { get; set; } = default!;
+}

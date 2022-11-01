@@ -1,0 +1,506 @@
+﻿@using Administrative.App.Components
+@using Administrative.App.Components.Toaster
+@using Administrative.App.Interfaces
+@using Administrative.App.Models
+@using Administrative.App.Dialogs
+@using Ardalis.GuardClauses
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.Course
+
+@implements IDisposable
+
+@inherits AuthenticatedPage
+
+<!-- Modal: Editar entidade -->
+@if (EditDialogIsOpen)
+{
+    <EditCourseDialog Code="@previousCode"
+                  Name="@previousName" CEO="@previousCEO"
+                  AC="@previousAC" NumberOfSeasons="@previousSeasons" MinimumWorkload="@previousMinimumWorkload" Telephone="@previousTelephone"
+                  Email="@previousEmail" Image="@previousImage"
+                  IsCourseAdmin="@_isCourseAdmin"
+                  Create="@created"
+                  OnClose="@OnEditDialogClose" />
+}
+
+<section class="p-1">
+
+    <article class="content px-4">
+        <table class='table'>
+            <thead>
+                <tr>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Código" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Nome" Filter="@nameFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por C.E.O." Filter="@ceoFilter.ToString()" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Atividades Complementares" Filter="@acFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Períodos" Filter="@seasonsFilter" Waiting="@waiting" OnTextChange="@OnSeasonsChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Carga Horária Mínima" Filter="@minimumWorkloadFilter" Waiting="@waiting" OnTextChange="@OnMinimumWorkloadChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Código" SortBy="Code" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Nome" SortBy="Name" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="CEO" SortBy="CEO" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="AC" SortBy="AC" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Módulos" SortBy="Seasons" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="C.H.M" SortBy="MinimumWorkload" OnClick="@SortBy" />
+                    </td>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <!---->
+            </thead>
+            <tbody>
+                @foreach (var entity in courseList)
+                {
+                    <tr>
+                        <td>@entity.Code</td>
+                        <td>@entity.Name</td>
+                        <td>@entity.CEO</td>
+                        <td>@entity.AC</td>
+                        <td>@entity.NumberOfSeasons</td>
+                        <td>@entity.MinimumWorkload</td>
+                        <td align="center">
+                            <button type="button"
+                                class="btn btn-outline-info"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Ver detalhes"
+                                disabled="@(!CanViewDetails(entity))"
+                                @onclick="@(() => Details(entity))"
+                                style="border: none;">
+                                <i class="bi bi-diagram-3"></i>
+                            </button>
+                        </td>
+                        <td align="center">
+                            <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editChapterModal"
+                                title="Editar"
+                                disabled="@(!CanEdit(entity))"
+                                @onclick="@(() => Edit(entity))"
+                                style="border: none;">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@(waiting || !CanCreate())"
+                        title="Criar um novo curso"
+                        @onclick="() => OnCreate()">
+                    <i class="bi bi-plus-slash-minus"></i>
+                    Criar um novo curso
+                </button>
+            </div>
+
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+
+        </div>
+    </article>
+</section>
+
+@code {
+    [Inject]
+    private IInstituteService instituteService { get; set; } = default!;
+    [Inject]
+    protected NavigationManager navigationManager { get; set; } = default!;
+    [Inject]
+    private IPreceptorService preceptorService { get; set; } = default!;
+    [Inject]
+    protected IAdminService adminService { get; set; } = default!;
+    [Inject]
+    private ICourseService courseService { get; set; } = default!;
+    [Parameter]
+    public Guid InstituteId { get; set; } = default!;
+
+    protected List<CourseModel> courseList = new();
+    protected bool _viewDetails = false;
+    protected CourseModel entitySelected = new();
+    protected string previousCode = string.Empty;
+    protected string previousName = string.Empty;
+
+    protected PreceptorModel? previousCEO = default!;
+    protected Guid? previousCEOId;
+    protected int previousAC;
+    protected int previousSeasons;
+    protected int previousMinimumWorkload;
+    protected string? previousTelephone;
+    protected string? previousEmail;
+    protected string? previousImage;
+    protected string? previousCEOEmail;
+
+    private Guid instituteId;
+    private InstituteModel? institute;
+
+    protected bool EditDialogIsOpen = false;
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool waiting = true;
+    protected bool created = false;
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? codeFilter = "";
+    protected string? nameFilter = "";
+    protected Guid? ceoFilter;
+    protected string? acFilter = "";
+    protected string? seasonsFilter = "";
+    protected string? minimumWorkloadFilter = "";
+    protected string? createdFilter = "";
+    protected string? createdByFilter = "";
+    protected string? lastModifiedFilter = "";
+    protected string? lastModifiedByFilter = "";
+
+
+    protected string TextToDisplay(string? text, int maxLength = 200)
+        => text is not null && text.Length < maxLength ? text : text?.Substring(0, maxLength) + "...";
+
+    protected override void OnInitialized()
+    {
+        instituteId = InstituteId;
+        Guard.Against.Null(instituteId);
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            institute = await instituteService.GetInstituteById(instituteId);
+            await PageRequest(currentPage);
+        }
+    }
+
+    protected override bool CanCreate()
+    {
+        if (_isInstituteAdmin && _userInstituteId == InstituteId)
+            return true;
+        if (_isHoldingAdmin)
+            return true;
+        return base.CanCreate();
+    }
+
+    protected override bool CanEdit(Entity? course)
+    {
+        if (course is null)
+            return false;
+        if (_isCourseAdmin && _userCourseId == course.Id)
+            return true;
+        if (_isInstituteAdmin && _userInstituteId == InstituteId)
+            return true;
+        if (_isHoldingAdmin)
+            return true;
+        return base.CanCreate();
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
+    }
+
+    protected async Task PageRequest(int page)
+    {
+        waiting = true;
+        var message = await courseService.PostPage(
+        new GetCoursePageRequest(
+                instituteId,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                codeFilter,
+                nameFilter,
+                ceoFilter,
+                !string.IsNullOrWhiteSpace(acFilter) ? int.Parse(acFilter) : -1,
+                !string.IsNullOrWhiteSpace(seasonsFilter) ? int.Parse(seasonsFilter) : -1,
+                !string.IsNullOrWhiteSpace(minimumWorkloadFilter) ? int.Parse(minimumWorkloadFilter) : -1,
+                createdFilter,
+                createdByFilter,
+                lastModifiedFilter,
+                lastModifiedByFilter
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfCourseModel>(content);
+            Guard.Against.Null(tmp);
+            courseList = tmp.Entities.Select(o => (CourseModel)o).ToList();
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    protected void Edit(CourseModel entity)
+    {
+        created = false;
+
+        entitySelected = entity;
+        previousCode = entitySelected.Code;
+        previousName = entitySelected.Name;
+        // previousCEO = entitySelected.CEO;
+        previousCEOId = entitySelected.CEO;
+        previousAC = entitySelected.AC;
+        previousSeasons = entitySelected.NumberOfSeasons;
+        previousMinimumWorkload = entitySelected.MinimumWorkload;
+        previousTelephone = entitySelected.Telephone;
+        previousEmail = entitySelected.Email;
+        previousImage = entitySelected.Image;
+        previousCEOId = entitySelected.CEO;
+        previousCEOEmail = entitySelected.CEO_Email;
+
+        EditDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected virtual void OnCreate()
+    {
+        created = true;
+
+        entitySelected = new CourseModel() { InstituteId = instituteId };
+        previousCode = "";
+        previousName = "";
+        previousCEO = null;
+        previousAC = 0;
+        previousSeasons = 0;
+        previousMinimumWorkload = 0;
+        previousTelephone = "";
+        previousEmail = "";
+        previousImage = "";
+        EditDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected async Task OnEditDialogClose(CourseModel? modifiednewEntity)
+    {
+        if (modifiednewEntity is not null)
+        {
+            waiting = true;
+
+            Guard.Against.Null(entitySelected);
+            entitySelected.Code = modifiednewEntity.Code;
+            entitySelected.Name = modifiednewEntity.Name;
+            entitySelected.CEO = modifiednewEntity.CEO;
+            entitySelected.AC = modifiednewEntity.AC;
+            entitySelected.NumberOfSeasons = modifiednewEntity.NumberOfSeasons;
+            entitySelected.MinimumWorkload = modifiednewEntity.MinimumWorkload;
+            entitySelected.Telephone = modifiednewEntity.Telephone;
+            entitySelected.Email = modifiednewEntity.Email;
+            entitySelected.Image = modifiednewEntity.Image;
+            HttpResponseMessage response;
+
+            if (created)
+            {
+                response = await courseService.CreateCourse(
+                    new CreateCourseRequest(
+                        entitySelected.Code,
+                        entitySelected.Name,
+                        entitySelected.CEO,
+                        entitySelected.AC,
+                        entitySelected.NumberOfSeasons,
+                        entitySelected.MinimumWorkload,
+                        entitySelected.Telephone,
+                        entitySelected.Email,
+                        entitySelected.Image,
+                        instituteId
+                        )
+                    );
+            }
+            else
+            {
+                response = await courseService.UpdateCourse(
+                    new UpdateCourseRequest(
+                        entitySelected.Id,
+                        // entitySelected.Code,
+                        entitySelected.Name,
+                        entitySelected.CEO,
+                        entitySelected.AC,
+                        entitySelected.NumberOfSeasons,
+                        entitySelected.MinimumWorkload,
+                        entitySelected.Telephone,
+                        entitySelected.Email,
+                        entitySelected.Image
+                        )
+                    );
+            }
+
+            waiting = false;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var courseCreated = JsonConvert.DeserializeObject<CourseModel>(result);
+                Guard.Against.Null(courseCreated);
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+                previousCode = entitySelected.Code;
+                previousName = entitySelected.Name;
+                // previousCEO = entitySelected.CEO;
+                previousCEOId = entitySelected.CEO;
+                previousAC = entitySelected.AC;
+                previousSeasons = entitySelected.NumberOfSeasons;
+                previousMinimumWorkload = entitySelected.MinimumWorkload;
+                previousTelephone = entitySelected.Telephone;
+                previousEmail = entitySelected.Email;
+                previousImage = entitySelected.Image;
+                await PageRequest(currentPage);
+
+                if (modifiednewEntity.CEO is not null && modifiednewEntity.CEO != Guid.Empty)
+                {
+                    Guard.Against.Null(modifiednewEntity.CEO);
+                    var preceptor = await preceptorService.GetPreceptorById((Guid)modifiednewEntity.CEO);
+                    Guard.Against.Null(preceptor);
+                    var r = await CreateAdmin(courseCreated.Id.ToString(), preceptor.Code, preceptor.Email, "CourseAdmin");
+                    if (r)
+                        _toasterService?.AddToastSuccess($"Um email para confirmação de senha foi enviado para {modifiednewEntity.Email}");
+                    else
+                        _toasterService?.AddToastError($"Não foi possível enviar email para {modifiednewEntity.Email}");
+                }
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastError(result);
+                entitySelected.Code = previousCode;
+                entitySelected.Name = previousName;
+                entitySelected.CEO = previousCEO is not null ? previousCEO.Id : Guid.Empty;
+                entitySelected.AC = previousAC;
+                entitySelected.NumberOfSeasons = previousSeasons;
+                entitySelected.MinimumWorkload = previousMinimumWorkload;
+                entitySelected.Telephone = previousTelephone;
+                entitySelected.Email = previousEmail;
+                entitySelected.Image = previousImage;
+            }
+        }
+
+        EditDialogIsOpen = false;
+
+        StateHasChanged();
+    }
+
+#pragma warning disable CS8602
+    protected async Task OnCodeChanged(ChangeEventArgs args)
+    {
+        codeFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnNameChanged(ChangeEventArgs args)
+    {
+        nameFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnSeasonsChanged(ChangeEventArgs args)
+    {
+        seasonsFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnMinimumWorkloadChanged(ChangeEventArgs args)
+    {
+        minimumWorkloadFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnCreatedChanged(ChangeEventArgs args)
+    {
+        createdFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnCreatedByChanged(ChangeEventArgs args)
+    {
+        createdByFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedChanged(ChangeEventArgs args)
+    {
+        lastModifiedFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedByChanged(ChangeEventArgs args)
+    {
+        lastModifiedByFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+#pragma warning restore CS8602
+
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+    private async Task<bool> CreateAdmin(string id, string admin, string email, string role)
+    {
+        var result = await adminService.CreateAdmin(new PraeceptorCQRS.Contracts.Entities.Admin.CreateAdminRequest(
+            admin,
+            email,
+            'M', // GENDER
+            default!, // PHONENUMBER
+            id,
+            role
+        ));
+
+        return result.IsSuccessStatusCode;
+    }
+
+    protected void Details(CourseModel? entity)
+    {
+        int Curriculum = 2022;
+        Guard.Against.Null(entity);
+        navigationManager.NavigateTo($"/course/details/{instituteId}/{entity.Id}/{Curriculum}");
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+    }
+}

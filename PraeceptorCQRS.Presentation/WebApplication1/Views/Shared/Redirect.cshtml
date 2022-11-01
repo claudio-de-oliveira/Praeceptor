@@ -1,0 +1,11 @@
+@model RedirectViewModel
+
+<div class="redirect-page">
+    <div class="lead">
+        <h1>Você está sendo redirecionado para a aplicação</h1>
+        <p>Uma vez completado o redirecionamento, você pode fechar esta tabulação.</p>
+    </div>
+</div>
+
+<meta http-equiv="refresh" content="0;url=@Model.RedirectUrl" data-url="@Model.RedirectUrl">
+<script src="~/js/signin-redirect.js"></script>

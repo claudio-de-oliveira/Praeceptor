@@ -1,0 +1,196 @@
+﻿@using Administrative.App.Interfaces
+@using Administrative.App.Models
+@using Ardalis.GuardClauses
+
+<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <form>
+                            <div class="mb-3">
+                                <label for="recipient-code" class="col-form-label">Code</label>
+                                <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="false" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Nome</label>
+                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="false" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-ac" class="col-form-label">Atividades Complementares</label>
+                                <input type="text" class="form-control" @bind-value="@ac" id="recipient-ac" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-seasons" class="col-form-label">Módulos</label>
+                                <input type="text" class="form-control" @bind-value="@seasons" id="recipient-seasons" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-minimum" class="col-form-label">Carga Horária Mínima</label>
+                                <input type="text" class="form-control" @bind-value="@minimumWorkload" id="recipient-minimum" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-telephone" class="col-form-label">Telefone</label>
+                                <input type="text" class="form-control" @bind-value="@telephone" id="recipient-telephone" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-email" class="col-form-label">Email</label>
+                                <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-image" class="col-form-label">Imagem</label>
+                                <input type="text" class="form-control" @bind-value="@image" id="recipient-image" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                            </div>
+                            @if (!IsCourseAdmin)
+                            {
+                                <div class="mb-3">
+                                    <label for="recipient-ceo" class="col-form-label">Coordenador</label>
+                                    <input type="text" class="form-control" @onchange="@ChangeECO" id="recipient-ceo" contenteditable="true" style="background-color:aliceblue;">
+                                </div>
+                                <div class="mb-3">
+                                    <!-- Tem que ser um endereço válido -->
+                                    <label for="message-email-ceo" class="col-form-label">Email do coordenador</label>
+                                    <input type="text" class="form-control" @bind-value="@email_ceo" id="recipient-email_coordenador" contenteditable="true" style="background-color:aliceblue;">
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editCourseModal"
+                        title="Cuidado: As modificações serão perdidas"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" class="btn btn-outline-primary" @onclick="@(async () => await Ok())">Salvar alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private IPreceptorService preceptorService { get; set; } = default!;
+    [Parameter]
+    public string Code { get; set; } = default!;
+    [Parameter]
+    public string Name { get; set; } = default!;
+    [Parameter]
+    public PreceptorModel? CEO { get; set; }
+    [Parameter]
+    public int AC { get; set; }
+    [Parameter]
+    public int NumberOfSeasons { get; set; }
+    [Parameter]
+    public int MinimumWorkload { get; set; }
+    [Parameter]
+    public string? Telephone { get; set; } = default!;
+    [Parameter]
+    public string? Email { get; set; } = default!;
+    [Parameter]
+    public string? Image { get; set; } = default!;
+    [Parameter]
+    public bool IsCourseAdmin { get; set; }
+    [Parameter]
+    public bool Create { get; set; }
+    [Parameter]
+    public EventCallback<CourseModel?> OnClose { get; set; }
+
+    private string _code = default!;
+    private string name = default!;
+    private PreceptorModel? ceo;
+    public int ac;
+    public int seasons;
+    public int minimumWorkload;
+    public string? telephone;
+    public string? email;
+    public string? image;
+    private string email_ceo = "";
+
+    private bool ceo_changed = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ceo = CEO;
+            if (ceo is not null)
+                email_ceo = ceo.Email;
+            _code = Code;
+            name = Name;
+            ac = AC;
+            seasons = NumberOfSeasons;
+            minimumWorkload = MinimumWorkload;
+            telephone = Telephone;
+            email = Email;
+            image = Image;
+
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task ChangeECO(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        var code = (string)args.Value;
+
+        if (!string.IsNullOrWhiteSpace(code))
+            ceo = await preceptorService.GetPreceptorByCode(code);
+        else
+            ceo = null!;
+
+        if (ceo is not null && CEO is not null)
+            ceo_changed = ceo.Id != CEO.Id;
+        else if (ceo is null && CEO is null)
+            ceo_changed = true;
+        else
+            ceo_changed = false;
+
+        StateHasChanged();
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+
+    private Task Ok()
+    {
+        if (string.Compare(_code, Code) != 0 || string.Compare(name, Name) != 0 ||
+            ac != AC || seasons != NumberOfSeasons || minimumWorkload != MinimumWorkload ||
+            string.Compare(telephone, Telephone) != 0 || string.Compare(email, Email) != 0 || string.Compare(image, Image) != 0 ||
+            ceo_changed
+            )
+            return OnClose.InvokeAsync(new CourseModel
+                {
+                    Code = _code,
+                    Name = name,
+                    CEO = ceo is not null ? ceo.Id : Guid.Empty,
+                    CEO_Email = ceo?.Email,
+                    AC = ac,
+                    NumberOfSeasons = seasons,
+                    MinimumWorkload = minimumWorkload,
+                    Telephone = telephone,
+                    Email = email,
+                    Image = image
+                });
+        else
+            return OnClose.InvokeAsync(null);
+    }
+}

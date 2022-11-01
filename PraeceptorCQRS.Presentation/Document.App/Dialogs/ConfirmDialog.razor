@@ -1,0 +1,33 @@
+﻿<div class="modal fade" id="@($"A{ParameterId.ToString("N")}")" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">@Title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+            </div>
+            <div class="modal-body">
+                @Message
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cancelar</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="@(() => Confirmation())">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = default!;
+    [Parameter]
+    public string Message { get; set; } = default!;
+    [Parameter]
+    public Guid ParameterId { get; set; } = default!;
+    [Parameter]
+    public EventHandler<Guid> OnConfirmEvent { get; set; } = default!;
+
+    public void Confirmation()
+    {
+        OnConfirmEvent.Invoke(this, ParameterId);
+    }
+}

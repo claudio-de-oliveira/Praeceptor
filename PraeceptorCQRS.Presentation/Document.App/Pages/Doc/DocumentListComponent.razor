@@ -1,0 +1,165 @@
+﻿@page "/document/list"
+
+@attribute [Authorize]
+
+@using Ardalis.GuardClauses
+@using Document.App.Components
+@using Document.App.Dialogs
+@using PraeceptorCQRS.Utilities
+
+@inject NavigationManager navigationManager
+
+@inherits AbstractListPage<IDocumentListService>
+
+<!-- Modal: Editar entidade -->
+@if (EditEntityDialogIsOpen)
+{
+    <EditEntityDialog Title="@previousTitle" Text="@previousText" OnClose="@OnEditEntityDialogClose" />
+}
+
+<section class="p-1">
+
+    <PageHeaderComponent Institute="@institute" Text="PLANOS PEDAGÓGICOS DE CURSO" />
+
+    <article class="content px-4">
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+            <thead>
+                <tr>
+                    <td align="center" colspan="4">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center" colspan="2">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Criador" Filter="@createdByFilter" Waiting="@waiting" OnTextChange="@OnCreatedByChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center" colspan="2">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Modificador" Filter="@lastModifiedByFilter" Waiting="@waiting" OnTextChange="@OnLastModifiedByChanged"></ClearableInputTextComponent>
+                    </td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
+                    </td>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="Created" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Criado por ..." SortBy="CreatedBy" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Modificado por ..." SortBy="LastModifiedBy" OnClick="@SortBy" />
+                    </td>
+                </tr>
+                <!---->
+            </thead>
+            <tbody>
+                @foreach (var entity in entityList)
+                {
+                    <tr>
+                        <td>
+                            <div style="font-size: smaller">
+                                @TextToDisplay(entity.Title, 50)
+                            </div>
+                        </td>
+                        <td align="center">
+                            <button type="button"
+                                class="btn btn-outline-info"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Ver detalhes"
+                                @onclick="@(() => Details(entity))"
+                                style="border: none;">
+                                <i class="bi bi-diagram-3"></i>
+                            </button>
+                        </td>
+                        <td align="center">
+                            <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editDocumentModal"
+                                title="Editar"
+                                @onclick="@(() => Edit(entity))"
+                                style="border: none;">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                        <td align="center">
+                            <button type="button"
+                                class="btn btn-outline-success"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Imprimir"
+                                @onclick="@(() => Print(entity))"
+                                style="border: none;">
+                                <i class="bi bi-printer"></i>
+                            </button>
+                        </td>
+                        <td align="center">
+                            <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.Created)</div>
+                        </td>
+                        <td align="center">
+                            <div style="font-size: smaller">@entity.CreatedBy</div>
+                        </td>
+                        <td align="center">
+                            <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</div>
+                        </td>
+                        <td align="center">
+                            <div style="font-size: smaller">@entity.LastModifiedBy</div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@waiting"
+                        title="Criar um novo documento"
+                        @onclick="() => OnCreate()">
+                    <i class="bi bi-plus-lg"></i>
+                    Criar um novo documento
+                </button>
+            </div>
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+        </div>
+    </article>
+</section>
+
+@code {
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
+
+    private InstituteModel? institute;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
+            Guard.Against.Null(institute);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void Print(BookEntity doc)
+    {
+    }
+
+    private void Details(BookEntity doc)
+    {
+        navigationManager.NavigateTo($"/document/details/{doc.Id}");
+    }
+}

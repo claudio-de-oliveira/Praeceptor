@@ -1,0 +1,163 @@
+﻿@using Ardalis.GuardClauses
+@using Document.App.Components.Toaster
+@using ErrorOr
+
+<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <form>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Nome</label>
+                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="true">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-title" class="col-form-label">Título</label>
+                                <input type="text" class="form-control" @bind-value="@title" id="recipient-title" contenteditable="true">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message-source" class="col-form-label">Fonte</label>
+                                <textarea type="text" class="form-control" @bind="@source" wrap="soft" id="message-source" rows="3" contenteditable="true"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message-description" class="col-form-label">Descrição</label>
+                                <textarea type="text" class="form-control" @bind="@description" wrap="soft" id="message-description" rows="3" contenteditable="true"></textarea>
+                            </div>
+                            @for (int i = 0; i < numberOfInputFiles; i++)
+                            {
+                                <InputFile @key="i" OnChange="OnFileChanged" multiple style="@GetInputFileStyle(i)"></InputFile>
+                            }
+                            <div style="font-size:small;">
+                                <pre>@status</pre>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editChapterModal"
+                        title="Cuidado: As modificações serão perdidas"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" class="btn btn-outline-primary" @onclick="@(async () => await Ok())">Salvar alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
+    [Parameter]
+    public EventCallback<List<FileModel>> OnClose { get; set; }
+
+    private string name = default!;
+    private string? title;
+    private string? source;
+    private string? description;
+
+    private List<FileModel> fileList = new();
+
+    int numberOfInputFiles = 1;
+    string? status = "";
+
+    private string GetInputFileStyle(int index)
+    {
+        return index == numberOfInputFiles - 1 ? "" : "display: none";
+    }
+
+    private static async Task<byte[]> ReadTemplateFile(IBrowserFile file)
+    {
+        Stream fileStream = file.OpenReadStream(2 * 1024 * 1024);
+
+        var data = new byte[fileStream.Length];
+        var buffer = new byte[32000];
+        int offset = 0;
+        int count = await fileStream.ReadAsync(buffer);
+
+        do
+        {
+            Array.Copy(buffer, 0, data, offset, count);
+            offset += count;
+            count = await fileStream.ReadAsync(buffer);
+        }
+        while (count > 0);
+
+        fileStream.Close();
+
+        return data;
+    }
+
+    private async Task OnFileChanged(InputFileChangeEventArgs e)
+    {
+        // Create a new InputFile component
+        numberOfInputFiles++;
+
+        // Handle selected files
+        try
+        {
+            foreach (var file in e.GetMultipleFiles(e.FileCount))
+            {
+                if (file.Size < 2 * 1024 * 1024)
+                {
+                    var buffer = await ReadTemplateFile(file);
+
+                    string contentType;
+
+                    contentType = (string.IsNullOrWhiteSpace(file.ContentType))
+                        ? $"unknow/{file.Name.Split('.')[^1]}"
+                        : contentType = file.ContentType;
+
+                    fileList.Add(new FileModel
+                        {
+                            Name = file.Name,
+                            Title = title,
+                            Source = source,
+                            Description = description,
+                            DateCreated = DateTime.Now,
+                            ContentType = contentType,
+                            Data = buffer
+                        });
+                    status += $"\nO arquivo {file.Name} foi selecionado.";
+                }
+                else
+                {
+                    status += $"\n*** ERRO: O arquivo {file.Name} é muito grande. Tamanho máximo é de 2MB.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            status += "\nERRO: " + ex.Message;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+
+    private Task Ok()
+    {
+        return OnClose.InvokeAsync(fileList);
+    }
+}

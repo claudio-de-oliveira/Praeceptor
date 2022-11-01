@@ -1,0 +1,41 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7001
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+## C R E A T E ###########################################
+POST {{host}}/subsection/create
+Content-Type: {{contentType}}
+
+{
+	
+}
+# TODO: add above the CreateSubSectionRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=00000000-0000-0000-0000-000000000000
+@idToUpd=00000000-0000-0000-0000-000000000000
+@idToDel=00000000-0000-0000-0000-000000000000
+
+## G E T #################################################
+GET {{host}}/subsection/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/subsection/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+
+}
+# TODO: add above the UpdateSubSectionRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/subsection/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+

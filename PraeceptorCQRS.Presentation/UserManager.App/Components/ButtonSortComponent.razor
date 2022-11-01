@@ -1,0 +1,27 @@
+﻿@if (Waiting)
+{
+    <button type="button" class="btn btn-outline-primary" disabled style="border: none;">
+        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+        @Text
+    </button>
+}
+else
+{
+    <button type="button" class="btn btn-outline-primary"
+        @onclick="@(async () => await OnClick.InvokeAsync(SortBy))"
+        style="border: none;">
+        <i class="bi bi-arrow-down-up"></i>
+        @Text
+    </button>
+}
+
+@code {
+    [Parameter]
+    public bool Waiting { get; set; }
+    [Parameter]
+    public string Text { get; set; } = null!;
+    [Parameter]
+    public string SortBy { get; set; } = null!;
+    [Parameter]
+    public EventCallback<string?> OnClick { get; set; }
+}

@@ -1,0 +1,67 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7000
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@instituteId=4B34DEB4-47F1-4A74-254E-08DA8CE95C37
+
+## C R E A T E ###########################################
+POST {{host}}/preceptordegreetype/create
+Content-Type: {{contentType}}
+
+{
+    "Code":"GRADUATE",
+    "InstituteId": "{{instituteId}}"
+}
+# TODO: add above the CreatePreceptorDegreeTypeRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=00000000-0000-0000-0000-000000000000
+@idToUpd=00000000-0000-0000-0000-000000000000
+@idToDel=00000000-0000-0000-0000-000000000000
+
+## G E T #################################################
+GET {{host}}/preceptordegreetype/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/preceptordegreetype/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+
+}
+# TODO: add above the UpdatePreceptorDegreeTypeRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/preceptordegreetype/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+
+## G E T #################################################
+GET {{host}}/preceptordegreetype/get/count/{{instituteId}}
+Content-Type: {{contentType}}
+
+
+## P A G E ###############################################
+POST {{host}}/preceptordegreetype/get/page
+Content-Type: {{contentType}}
+
+{
+    "instituteid": "{{instituteId}}",
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "titlefilter": "2",
+    "textfilter": "1",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

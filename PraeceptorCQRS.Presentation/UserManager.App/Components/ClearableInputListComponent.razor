@@ -1,0 +1,22 @@
+﻿@using Ardalis.GuardClauses
+
+<form>
+    <select class="form-select" @onchange="@OnSelectionChange" disabled="@Waiting" style="background-color:aliceblue;">
+        <option Filter></option>
+        @foreach (var option in Options)
+        {
+            <option value=@option.Key>@option.Value</option>
+        }
+    </select>
+</form>
+
+@code {
+    [Parameter]
+    public bool Waiting { get; set; }
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnSelectionChange { get; set; }
+    [Parameter]
+    public Dictionary<Guid, string> Options { get; set; } = default!;
+    [Parameter]
+    public Guid Filter { get; set; } = default!;
+}

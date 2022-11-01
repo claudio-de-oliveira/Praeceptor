@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>1F0E232C-C537-4249-AA15-33C78EBDF48A</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\.dockerignore" Link=".dockerignore">
+			<DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="Mapster" Version="7.3.0" />
+		<PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
+		<PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\PraeceptorCQRS.Application\PraeceptorCQRS.Application.csproj" />
+		<ProjectReference Include="..\..\PraeceptorCQRS.Contracts\PraeceptorCQRS.Contracts.csproj" />
+		<ProjectReference Include="..\..\PraeceptorCQRS.Infrastructure\PraeceptorCQRS.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\PraeceptorCQRS.Utilities\PraeceptorCQRS.Utilities.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+</Project>
+

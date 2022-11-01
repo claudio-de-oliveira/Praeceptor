@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Document.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "document.api",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:7001",
+      "dotnetRunMessages": true
+    }
+  }
+} 
+

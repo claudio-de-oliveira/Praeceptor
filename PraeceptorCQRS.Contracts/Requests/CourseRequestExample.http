@@ -1,0 +1,75 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7000
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@instituteId=2DC66113-D6F4-4A18-771F-08DA896D3A86
+
+## C R E A T E ###########################################
+POST {{host}}/course/create
+Content-Type: {{contentType}}
+
+{
+    "Acronym": "Mecatronica",
+    "Code": "8135",
+    "Name": "Engenharia Mecatrônica",
+    "CEO": "8124",
+    "AC": "12",
+    "Seasons": "10",
+    "MinimumWorkload": "3600",
+    "Telephone": "(79) 3218-2100",
+    "Email": "mecatronica@unit.br",
+    "Image": "",
+    "InstituteId": "2DC66113-D6F4-4A18-771F-08DA896D3A86"
+}
+# TODO: add above the CreateCourseRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=00000000-0000-0000-0000-000000000000
+@idToUpd=00000000-0000-0000-0000-000000000000
+@idToDel=00000000-0000-0000-0000-000000000000
+
+## G E T #################################################
+GET {{host}}/course/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/course/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+
+}
+# TODO: add above the UpdateCourseRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/course/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+## G E T #################################################
+GET {{host}}/course/get/count/{{instituteId}}
+Content-Type: {{contentType}}
+
+
+## P A G E ###############################################
+POST {{host}}/course/get/page
+Content-Type: {{contentType}}
+
+{
+    "instituteid": "{{instituteId}}",
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "titlefilter": "2",
+    "textfilter": "1",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

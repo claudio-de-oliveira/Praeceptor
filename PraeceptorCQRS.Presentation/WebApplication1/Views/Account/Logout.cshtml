@@ -1,0 +1,14 @@
+﻿@model LogoutViewModel
+
+<div class="logout-page">
+    <div class="lead">
+        <p>Você gostaria de sair do sistema Praeceptor?</p>
+    </div>
+
+    <form asp-action="Logout">
+        <input type="hidden" name="logoutId" value="@Model.LogoutId" />
+        <div class="form-group">
+            <button class="btn btn-primary">Sim</button>
+        </div>
+    </form>
+</div>

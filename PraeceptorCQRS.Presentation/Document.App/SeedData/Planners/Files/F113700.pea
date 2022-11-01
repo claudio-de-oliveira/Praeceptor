@@ -1,0 +1,75 @@
+@PEA [F113700]
+
+  @Ementa
+    [Propriedades termodinâmicas e de transporte. Conceito de massa e volume de controle. Equações de estado. Relações constitutivas. Equações fundamentais na forma integral para sistemas e volumes de controle: continuidade, primeira e segunda leis da Termodinâmica. Equação de Bernoulli. Introdução à perda de carga em condutos.]
+
+  @OBJETIVO
+    [Capacitar o discente a descrever as propriedades de sistemas em equilíbrio. Tem-se como meta na disciplina que o discente seja capaz de empregar conceitos teóricos da termodinâmica e mecânica dos fluidos para equacionar e entender problemas de equilíbrio em sistemas.]
+
+  @Competencias
+    [Conhecer os conceitos básicos da termodinâmica clássica.]
+    [Compreender o significado dos potenciais termodinâmicos.]
+    [Explorar dos postulados e leis fundamentais da termodinâmica.]
+    [Entender da aplicação dos conceitos básicos da termodinâmica dentro da engenharia de Produção.]
+    [Calcular as propriedades físico-químicas de sistemas.]
+    [Interpretar a estrutura e o formalismo do equilíbrio de fases.]
+    [Equacionar o problema do equilíbrio entre fases em situações práticas relacionadas engenharia.]
+    [Analisar as distribuições de pressão em fluidos em repouso.]
+    [Estudar o escoamento ideal e real no interior de dutos.]
+
+  @UNIDADE1
+    @Chave[Unidade I]
+        [Termodinâmica: Conceitos e Princípios Básicos.]
+        [Energia, Crescimento Populacional e Poluição.]
+        [Termodinâmica no Contexto da Engenharia e suas Aplicações.]
+        [Conceitos da Termodinâmica Clássica.]
+        [Postulados da Termodinâmica e Condições de Equilíbrio.]
+        [Potenciais Termodinâmicos: entalpia, entropia e energia livre de 1.6 Gibbs e energia livre de Helmholtz.]
+        [Equação de Euler e Gibbs Duhem.]
+        [Fluidos Ideais e não Ideais: Modelos de Potencial Intermolecular.]
+        [Descrição da Fase Vapor.]
+        [Fator de Compressibilidade, Propriedades Residuais e Coeficiente de fugacidade.]
+        [Equações do Virial.]
+        [Princípio dos Estados Correspondentes.]
+        [Equações de Estado Cúbicas.]
+        [Misturas de Gases.]
+
+  @UNIDADE2
+    @Chave[Unidade II]
+        [Descrição das Fases Líquida e Sólida.]
+        [Propriedades em Excesso, Atividade e Coeficiente de Atividade.]
+        [Estados Padrões.]
+        [Modelos de Coeficiente de Atividade.]
+        [Equilíbrio de Fases em Sistemas Multicomponentes da Engenharia.]
+        [Solubilidade de Gases em Líquidos.]
+        [Equilíbrio Líquido-Vapor: aspectos teóricos e experimentais.]
+        [Equilíbrio Líquido-Líquido: aspectos teóricos e experimentais.]
+        [Equilíbrio Sólido-Gás e Líquido-Gás.]
+        [Resolução de Exemplos relacionados a Engenharia.]
+        [Equação de Bernoulli.]
+        [Introdução à perda de carga em condutos.]
+
+  @PROCEDIMENTOS
+    [No desenvolvimento da disciplina será promovida a interação de atividades síncronas e assíncronas com a utilização de recursos tecnológicos priorizando as ferramentas Google e do Ambiente Virtual de Aprendizagem – AVA. Em todo o tipo de atividades o professor procurará desenvolver, introduzir e promover a utilização de metodologias ativas, ferramentas indispensáveis na aquisição de habilidades que constituem o paradigma nuclear do currículo.  Estas preconizam a participação ativa do aluno, na pesquisa, raciocínio e resolução de problemas. A metodologia a ser utilizada consiste majoritariamente de aulas expositivas teóricas. Em cada unidade são realizadas duas aulas práticas para melhor fixação dos conteúdos vistos em sala de aula.]
+
+  @AVALIACAO
+    [Excepcionalmente, poderão ser adotadas estratégias virtuais de avaliação, desde que estejam alinhados aos objetivos de aprendizagem e primem pela integralização das competências previstas no componente curricular. O processo de avaliação da disciplina de termodinâmica é composto de duas etapas em cada unidade: uma prova escrita contextualizada e uma medida de eficiência. A prova escrita contempla aspectos teóricos e interpretações de problemas físicos reais, ao passo que a medida de eficiência envolve listas de exercícios individuais e relatórios das atividades práticas em laboratório.]
+
+  @BASICA
+    @Autor[ÇENGEL][Yunus A.] @Autor[CIMBALA][John M.] @Titulo[Mecânica dos fluidos: fundamentos e aplicações] @Edicao[3] @Editora[AMGH][Porto Alegre: RS] @Ano[2015]
+  @BASICA
+    @Autor[FOX][R. W.] @Autor[PRITCHARD][P. J.] @Autor[MACDONALD][A. T.] @Titulo[Introdução à Mecânica dos Fluidos] @Edicao[8] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2014]
+  @BASICA
+    @Autor[LEVENSPIEL][Octave] @Titulo[Termodinâmica amistosa para engenheiros] @Editora[Editora Edgard Blücher LTDA][São Paulo: SP] @Ano[2009]
+  @COMPLEMENTAR
+    @Autor[BRAGA FILHO][W. B.] @Titulo[Fenômenos de Transporte para Engenharia] @Editora[Livros Técnicos e Científicos][Rio de Janeiro: RJ] @Ano[2016]
+  @COMPLEMENTAR
+    @Autor[BISTAFA][Sylvio R.] @Titulo[Mecânica dos fluidos: noções e aplicações] @Edicao[2] @Editora[Editora Edgard Blücher LTDA][São Paulo: SP] @Ano[2016]
+  @COMPLEMENTAR
+    @Autor[BRUNETTI][Franco] @Titulo[Mecânica dos fluidos] @Edicao[2] @Editora[Prentice Hall][São Paulo: SP] @Ano[2015]
+  @COMPLEMENTAR
+    @Autor[PÁDUA][Antônio Bráz de] @Autor[PÁDUA][Cléia Guiotti de] @Titulo[Termodinâmica: uma coletânea de problemas] @Editora[Livraria da Física][São Paulo: SP] @Ano[2006]
+  @COMPLEMENTAR
+    @Autor[Young][Hugh D.] @Autor[Freedman][Roger A.] @Titulo[Física de Sears & Zemansky: Volume II: Termodinâmica e Ondas] @Volume[2] @Edicao[12] @Editora[Addison Wesley][São Paulo: SP] @Ano[2011]
+  @COMPLEMENTAR
+    @Autor[WHITE][F. M.] @Titulo[Mecânica dos Fluidos] @Editora[McGraw-Hill][] @Ano[2015]

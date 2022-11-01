@@ -1,0 +1,67 @@
+﻿@inherits LayoutComponentBase
+
+@using Ardalis.GuardClauses
+
+<PageTitle>UserManager.App</PageTitle>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu UserName="@authenticatedUserName" Gender="@authenticatedUserGender" />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = default!;
+
+    private string authenticatedUserName = "";
+    private string authenticatedUserRole = "";
+    private char authenticatedUserGender = 'X';
+
+    private string header2 =>
+        (!string.IsNullOrEmpty(authenticatedUserName))
+        ? (!string.IsNullOrEmpty(authenticatedUserRole))
+            ? $"{authenticatedUserName} ({authenticatedUserRole})"
+            : $"{authenticatedUserName}"
+        : "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+
+        var principal = authState.User;
+
+        if (principal.Identity is not null && principal.Identity.IsAuthenticated)
+        {
+            var name = principal.Claims.FirstOrDefault(c => c.Type == "name");
+            Guard.Against.Null(name);
+            var claimName = name;
+            var role = principal.Claims.FirstOrDefault(c => c.Type == "role");
+            Guard.Against.Null(role);
+            var claimRole = role;
+            var gender = principal.Claims.FirstOrDefault(c => c.Type == "gender");
+            Guard.Against.Null(gender);
+            var claimGender = gender;
+
+            authenticatedUserName = claimName.Value;
+            authenticatedUserRole = claimRole.Value;
+            authenticatedUserGender = claimGender?.Value[0] ?? 'X';
+        }
+        else
+        {
+            authenticatedUserName = "";
+        }
+
+        StateHasChanged();
+    }
+}

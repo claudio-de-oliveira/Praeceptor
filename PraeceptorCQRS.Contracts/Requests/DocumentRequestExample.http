@@ -1,0 +1,47 @@
+# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7001
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+## C R E A T E ###########################################
+POST {{host}}/document/create
+Content-Type: {{contentType}}
+
+{
+	"title": "Plano Pedagógico de Curso",
+	"text": "Claudio de Oliveira",
+	"instituteid": "d6abb3f3-5e5f-4f2f-ab6f-08da7c6346f3"
+}
+# TODO: add above the CreateDocumentRequest values
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=00000000-0000-0000-0000-000000000000
+@idToUpd=00000000-0000-0000-0000-000000000000
+@idToDel=00000000-0000-0000-0000-000000000000
+
+## G E T #################################################
+GET {{host}}/document/get/all/d6abb3f3-5e5f-4f2f-ab6f-08da7c6346f3
+Content-Type: {{contentType}}
+
+## G E T #################################################
+GET {{host}}/document/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/document/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+
+}
+# TODO: add above the UpdateDocumentRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/document/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+

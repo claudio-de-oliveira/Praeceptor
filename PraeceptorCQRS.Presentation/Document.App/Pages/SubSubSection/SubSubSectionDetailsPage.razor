@@ -1,0 +1,48 @@
+﻿@page "/subsubsection/details/{EntityId:guid}"
+
+@attribute [Authorize]
+
+@using Ardalis.GuardClauses
+@using Document.App.Notifiers
+
+@inject DocumentNavigationComponentNotifier updateNotifier
+
+@implements IDisposable
+
+<DocumentNavigationComponent></DocumentNavigationComponent>
+
+<h5>Sub-Subsection Details</h5>
+
+@code {
+    [Inject]
+    private ISubSubSectionListService FirstEntityService { get; set; } = default(ISubSubSectionListService)!;
+
+    [Parameter]
+    public Guid InstituteId { get; set; }
+    [Parameter]
+    public Guid EntityId { get; set; }
+
+    protected BookEntity _entity = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var entity = await FirstEntityService.GetEntity(EntityId);
+            Guard.Against.Null(entity);
+            _entity = entity;
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            updateNotifier.CallUpdateDocumentNavigationWithSubSubSectionChanged(_entity);
+        }
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+    }
+}

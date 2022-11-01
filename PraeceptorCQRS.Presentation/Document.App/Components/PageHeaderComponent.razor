@@ -1,0 +1,22 @@
+﻿<div class="container-fluid px-0 py-0">
+    <div class="row g-0 py-2 row-cols-1">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6>Instituição: <b>@InstituteName</b></h6>
+                <p style="font-size: smaller; font-stretch: condensed; margin-top: 0; margin-bottom: 0;">Você está visualizando a tabela de <b><span class="text-primary">@Text</span></b> da <b>@InstituteAcronym</b></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public InstituteModel? Institute { get; set; }
+    [Parameter]
+    public string Text { get; set; } = default!;
+
+    private string InstituteName
+        => Institute is not null ? Institute.Name : "...";
+    private string InstituteAcronym
+        => Institute is not null ? Institute.Acronym : "...";
+}

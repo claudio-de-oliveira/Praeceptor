@@ -1,0 +1,24 @@
+﻿# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7001
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@holdingId=305172B9-5DC9-4B27-514A-08DA9021E48D
+@instituteId=DFB9BD58-8D63-4392-648A-08DA9021F6F6
+
+## C R E A T E ###########################################
+POST {{host}}/authentication/register
+Content-Type: {{contentType}}
+
+{
+    "UserName": "laisD",
+    "Email": "laismbo@hotmail.com",
+    "Gender": "F",
+    "PhoneNumber": "",
+    "PasswordHash": "AQAAAAEAACcQAAAAEAPTAxw36iSTiJo+H8GHhktNMwxYQYrpV90TDolUNkwSwJUGuP9gLdr1a4gXCLsqag==",
+    "HoldingId": "{{holdingId}}",
+    "InstituteId": "{{instituteId}}",
+    "CourseId": ""
+}

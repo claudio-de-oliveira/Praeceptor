@@ -1,0 +1,16 @@
+﻿@using Administrative.App.Models
+
+<div class="card" color="Color.Primary" style="border:none">
+    <div class="card-body">
+        <h6><b>@Title</b></h6>
+        <p style="font-size: smaller; font-stretch: condensed; margin-top: 0; margin-bottom: 0;">@Institute.Acronym</p>
+        <p style="font-size: smaller; font-stretch: condensed; margin-top: 0; margin-bottom: 0;">@Institute.Name</p>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = null!;
+    [Parameter]
+    public InstituteModel Institute { get; set; } = null!;
+}
