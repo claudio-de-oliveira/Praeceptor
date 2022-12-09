@@ -1,0 +1,138 @@
+﻿@if (Reference.Autores.Nomes.Count == 0 && Reference.Tradutores.Nomes.Count == 0 && Reference.Organizadores.Nomes.Count == 0)
+{
+    <text>
+        @EmptyListOfNamesToText()
+    </text>
+}
+else
+{
+    @if (Reference.Autores.Nomes.Count > 0)
+    {
+        <text>
+            @ListOfNamesToText(Reference.Autores.Nomes)
+        </text>
+    }
+    else if (Reference.Tradutores.Nomes.Count > 0)
+    {
+        <text>
+            @ListOfNamesToText(Reference.Autores.Nomes, "Tradutor(es)")
+        </text>
+    }
+    else if (Reference.Organizadores.Nomes.Count > 0)
+    {
+        <text>
+            @ListOfNamesToText(Reference.Autores.Nomes, "Organizador(es)")
+        </text>
+    }
+}
+
+@if (!string.IsNullOrEmpty(Reference.Title))
+{
+    <text>
+        <b>
+            @Reference.Title.
+        </b>
+    </text>
+}
+@if (!string.IsNullOrEmpty(Reference.Series))
+{
+    <text>
+        Série:
+        <i>@Reference.Series.</i>
+    </text>
+}
+
+@if (!string.IsNullOrEmpty(Reference.Editor))
+{
+    <text>
+        @Reference.Editor (Editor).
+    </text>
+}
+
+@if (Reference.Volume is not null)
+{
+    @if (!string.IsNullOrWhiteSpace(Reference.Volume.Text1))
+    {
+        @if (!string.IsNullOrWhiteSpace(Reference.Volume.Text2))
+        {
+            <text>
+                Volume
+                @Reference.Volume.Text1
+                –
+                @Reference.Volume.Text2.
+            </text>
+        }
+        else
+        {
+            <text>
+                Volume
+                @Reference.Volume.Text1.
+            </text>
+        }
+    }
+}
+
+@if (Reference.Edition > 0)
+{
+    <text>
+        @Reference.Edition<sup>a</sup> edição.
+    </text>
+}
+
+@if (Reference.Publisher is not null)
+{
+    @if (!string.IsNullOrWhiteSpace(Reference.Publisher.Nome))
+    {
+        @if (!string.IsNullOrWhiteSpace(Reference.Publisher.Endereco))
+        {
+            <text>
+                @Reference.Publisher.Nome,
+                @Reference.Publisher.Endereco.
+            </text>
+        }
+        else
+        {
+            <text>
+                @Reference.Publisher.Nome.
+            </text>
+        }
+    }
+}
+
+@if (Reference.Year > 0)
+{
+    <text>
+        @Reference.Year.
+    </text>
+}
+
+@code {
+    [Parameter]
+    public BibItemValueModel Reference { get; set; } = default!;
+
+    private string EmptyListOfNamesToText() => "______. ";
+
+    private string ListOfNamesToText(List<NameValueModel> list, string? complement = null)
+    {
+        string str = "";
+
+        if (list.Count < 4)
+        {
+            for (int i = 0; i < list.Count - 1; i++)
+                str += $"{list[i].Sobrenome}, {list[i].Nome}; ";
+            str += $"{list[^1].Sobrenome}, {list[^1].Nome}";
+        }
+        else
+        {
+            for (int i = 0; i < 2; i++)
+                str += $"{list[i].Sobrenome}, {list[i].Nome}; ";
+            str += $"{list[^1].Sobrenome}, {list[^1].Nome} et al.,";
+        }
+        if (string.IsNullOrWhiteSpace(complement))
+            str += ". ";
+        else
+            str += $" ({complement}). ";
+
+        return str;
+    }
+}

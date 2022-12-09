@@ -15,26 +15,86 @@ namespace PraeceptorCQRS.Infrastructure.Configurations
 
             modelBuilder
                 .HasKey(x => x.Id);
+
+            modelBuilder
+                .HasOne(d => d.Holding)
+                .WithMany(p => p.Institutes)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.Documents)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.Chapters)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.Sections)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.SubSections)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.SubSubSections)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
             modelBuilder
                 .HasMany(d => d.Classes)
                 .WithOne(p => p.Institute)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.ClassTypes)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
             modelBuilder
                 .HasMany(d => d.Courses)
                 .WithOne(p => p.Institute)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
             modelBuilder
                 .HasMany(d => d.Preceptors)
                 .WithOne(p => p.Institute)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
             modelBuilder
                 .HasMany(d => d.PreceptorDegreeTypes)
                 .WithOne(p => p.Institute)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.PreceptorRegimeTypes)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.PreceptorRoleTypes)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
             modelBuilder
                 .HasMany(d => d.Groups)
                 .WithOne(p => p.Institute)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.AxisTypes)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            // .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder
+                .HasMany(d => d.AxisTypes)
+                .WithOne(p => p.Institute)
+                .OnDelete(DeleteBehavior.ClientCascade);
         }
     }
 }

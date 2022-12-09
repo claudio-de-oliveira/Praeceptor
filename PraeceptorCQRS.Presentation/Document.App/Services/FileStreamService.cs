@@ -62,10 +62,10 @@ namespace Document.App.Services
         }
         public async Task<int> GetFileStreamByInstituteCount(Guid instituteId)
             => await base.Count("get", "count", instituteId);
-        public async Task<HttpResponseMessage> GetFileStreamPage(GetFileStreamPageRequest request)
-            => await base.Create<GetFileStreamPageRequest>(request, "get", "page");
-        public async Task<HttpResponseMessage> CreateFileStream(CreateSqlFileStreamRequest request)
-            => await base.Create<CreateSqlFileStreamRequest>(request, "create");
+        public async Task<HttpResponseMessage> GetFileStreamPage(GetFilePageRequest request)
+            => await base.Create<GetFilePageRequest>(request, "get", "page");
+        public async Task<HttpResponseMessage> CreateFileStream(CreateFileRequest request)
+            => await base.Create<CreateFileRequest>(request, "create");
         public async Task<HttpResponseMessage> DeleteFileStream(Guid id)
             => await base.Delete("delete", id);
     }

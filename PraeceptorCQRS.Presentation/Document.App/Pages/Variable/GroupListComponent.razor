@@ -139,34 +139,34 @@
                             <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
                                 <div class="btn-group" role="group" aria-label="First group">
                                     <button type="button"
-                                        class="btn btn-warning btn-sm"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Criar novo grupo"
-                                        style="margin:0;"
-                                        @onclick="@(() => OnCreateGroupValue(group))">
+                                            class="btn btn-sm btn-success"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Criar novo grupo"
+                                            style="margin:0;"
+                                            @onclick="@(() => OnCreateGroupValue(group))">
                                         Novo Valor
                                     </button>
                                     <button type="button"
-                                        class="btn btn-info btn-sm"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Criar nova variável"
-                                        style="margin:0;"
-                                        @onclick="@(() => OnCreateVariable(group))">
+                                            class="btn btn-sm btn-info"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Criar nova variável"
+                                            style="margin:0;"
+                                            @onclick="@(() => OnCreateVariable(group))">
                                         Nova Variável
                                     </button>
                                 </div>
                                 <div class="input-group">
                                     <button type="button"
-                                        class="btn btn-danger btn-sm"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Excluir valor selecionado"
-                                        style="margin:0;"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
-                                        disabled=@(group.GroupValueSelectedId == Guid.Empty)>
+                                            class="btn btn-sm btn-danger"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Excluir valor selecionado"
+                                            style="margin:0;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
+                                            disabled=@(group.GroupValueSelectedId == Guid.Empty)>
                                         Excluir Valor
                                     </button>
                                 </div>
@@ -179,14 +179,14 @@
 
                         <td align="center">
                             <button type="button"
-                                class="btn btn-outline-danger"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Excluir grupo"
-                                data-bs-toggle="modal"
-                                data-bs-target="#@($"A{group.Id.ToString("N")}")"
-                                style="border: none;">
-                                <i class="bi bi-x-lg"></i>
+                                    class="btn btn-outline-danger"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Excluir grupo"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#@($"A{group.Id.ToString("N")}")"
+                                    style="border: none;">
+                                <i class="bi small bi-x-lg"></i>
                             </button>
                         </td>
                     </tr>
@@ -209,29 +209,29 @@
                                 </div>
                             </td>
 
-                            <td align="center">
+                            <td align="right" style="width: 80px;">
                                 <button type="button"
-                                class="btn btn-sm btn-outline-warning"
+                                class="btn btn-sm btn-warning"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Editar valor da variável"
                                 disabled=@(group.GroupValueSelectedId == Guid.Empty)
                                 @onclick="@(() => OnEditVariableValue(group, variable))"
                                 style="border: none;">
-                                    <i class="bi bi-pencil"></i>
+                                    Editar
                                 </button>
                             </td>
 
-                            <td align="center">
+                            <td align="right" style="width: 80px;">
                                 <button type="button"
-                                class="btn btn-sm btn-outline-danger"
+                                class="btn btn-sm btn-danger"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
-                                title="Excluir variável"
                                 data-bs-target="#@($"A{variable.Id.ToString("N")}")"
+                                title="Excluir variável"
                                 style="border: none;">
-                                    <i class="bi bi-x"></i>
+                                    Excluir
                                 </button>
                             </td>
                         </tr>
@@ -253,7 +253,9 @@
                     Criar um novo grupo de variáveis
                 </button>
             </div>
+
             <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+
         </div>
     </article>
 </section>
@@ -395,6 +397,14 @@
                     Guard.Against.Null(tmp1);
                     group.Variables = tmp1.Entities.Select(o => (VariableModel)o).ToList();
                 }
+                else
+                {
+                    var result = await response1.Content.ReadAsStringAsync();
+                    var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                    Guard.Against.Null(error);
+                    Guard.Against.Null(error.Title);
+                    _toasterService?.AddToastError(error.Title);
+                }
 
                 var list = await GroupValueService.GetGroupValuesByGroup(group.Id);
 
@@ -418,6 +428,14 @@
             }
 
             entityList = newEntityList;
+        }
+        else
+        { 
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
         }
         waiting = false;
 

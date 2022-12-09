@@ -9,7 +9,9 @@ public class PraeceptorCQRSDbContext : DbContext
     { /* Nothing more todo */ }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+    }
 
     public int ExecuteSqlRaw(string sql, params object[] parameters)
     {

@@ -4,6 +4,7 @@
 
 @using Ardalis.GuardClauses
 @using IdentityServer4.Models
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 
 @using Administrative.App.Components
@@ -43,13 +44,13 @@
                 </tr>
                 <!---->
                 <tr>
-                    <td align="center">
+                    <td>
                         <ButtonSortComponent Waiting="@waiting" Text="Acrônimo" SortBy="Acronym" OnClick="@SortBy" />
                     </td>
-                    <td align="center">
+                    <td>
                         <ButtonSortComponent Waiting="@waiting" Text="Nome" SortBy="Name" OnClick="@SortBy" />
                     </td>
-                    <td align="center">
+                    <td>
                         <ButtonSortComponent Waiting="@waiting" Text="Endereço" SortBy="Address" OnClick="@SortBy" />
                     </td>
                     <th></th>
@@ -70,30 +71,30 @@
                         <td>
                             <div style="font-size: smaller">@TextToDisplay(entity.Address, 200)</div>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-outline-info"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Ver detalhes"
-                                disabled="@(!CanViewDetails(entity))"
-                                @onclick="@(() => Details(entity))"
-                                style="border: none;">
-                                <i class="bi bi-diagram-3"></i>
+                                    class="btn btn-sm btn-success"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Ver detalhes"
+                                    disabled="@(!CanViewDetails(entity))"
+                                    @onclick="@(() => Details(entity))"
+                                    style="border: none;">
+                                Detalhes
                             </button>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editHoldingModal"
-                                title="Editar"
-                                disabled="@(!CanEdit(entity))"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editHoldingModal"
+                                    title="Editar"
+                                    disabled="@(!CanEdit(entity))"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                     </tr>
@@ -209,7 +210,14 @@
             previousPage = tmp.PreviousPage;
             nextPage = tmp.NextPage;
             numberOfPages = tmp.NumberOfPages;
-
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
         }
         waiting = false;
 
@@ -323,8 +331,8 @@
                         entitySelected.Address
                     )
                 );
-                if (response.IsSuccessStatusCode)
-                    result = await response.Content.ReadAsStringAsync();
+                // if (response.IsSuccessStatusCode)
+                result = await response.Content.ReadAsStringAsync();
             }
             else if (_isHoldingAdmin)
             {
@@ -335,8 +343,8 @@
                         entitySelected.Address
                     )
                 );
-                if (response.IsSuccessStatusCode)
-                    result = await response.Content.ReadAsStringAsync();
+                // if (response.IsSuccessStatusCode)
+                result = await response.Content.ReadAsStringAsync();
             }
             else
             {
@@ -374,8 +382,11 @@
             }
             else
             {
-                // var result = await response.Content.ReadAsStringAsync();
-                _toasterService?.AddToastError(result);
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
                 entitySelected.Acronym = previousAcronym;
                 entitySelected.Name = previousName;
                 entitySelected.Address = previousAddress;

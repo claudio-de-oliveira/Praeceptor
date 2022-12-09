@@ -5,9 +5,12 @@ namespace Administrative.App.Components.Toaster
     public class ToasterService : IDisposable
     {
         private readonly List<Toast> _toastList = new();
-        private System.Timers.Timer _timer = new();
+        private readonly System.Timers.Timer _timer = new();
+
         public event EventHandler? ToasterChanged;
+
         public event EventHandler? ToasterTimerElapsed;
+
         public bool HasToasts => _toastList.Count > 0;
 
         public ToasterService()
@@ -36,8 +39,10 @@ namespace Administrative.App.Components.Toaster
 
         public void AddToastError(string message, int seconds = 10)
             => AddToast(Toast.NewToast("Erro", message, MessageColour.Danger, seconds));
+
         public void AddToastSuccess(string message, int seconds = 5)
             => AddToast(Toast.NewToast("Sucesso", message, MessageColour.Success, seconds));
+
         public void AddToastWarning(string message, int seconds = 7)
             => AddToast(Toast.NewToast("Atenção", message, MessageColour.Warning, seconds));
 

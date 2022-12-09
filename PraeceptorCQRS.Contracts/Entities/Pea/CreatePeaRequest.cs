@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace PraeceptorCQRS.Contracts.Entities.Pea;
 
-namespace PraeceptorCQRS.Contracts.Entities.Pea
-{
-    public record CreatePeaRequest
-    {
-    }
-}
+public record CreatePeaRequest(
+    Guid ClassId,
+    string Text,
+    string? CreatedBy
+    );

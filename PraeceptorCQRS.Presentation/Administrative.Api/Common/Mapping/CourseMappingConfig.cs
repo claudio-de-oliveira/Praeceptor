@@ -1,3 +1,8 @@
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
+
+using ErrorOr;
+
 using Mapster;
 
 using PraeceptorCQRS.Application.Entities.Course.Commands;
@@ -16,10 +21,66 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Common.Mapping
             config.NewConfig<CreateCourseRequest, CreateCourseCommand>();
             config.NewConfig<UpdateCourseRequest, UpdateCourseCommand>();
             config.NewConfig<CourseResult, CourseResponse>()
-                .Map(dest => dest, src => src.Course);
+                .MapWith(source => MapCourseResultToCourseResponse(source));
             config.NewConfig<CoursePageResult, PageResponse<CourseResponse>>()
-                .Map(dest => dest, src => src.Page);
+                .MapWith(source => MapCoursePageResultToCourseResponse(source));
+            // .Map(dest => dest, src => src.Page);
         }
+
+        private static PageResponse<CourseResponse> MapCoursePageResultToCourseResponse(CoursePageResult source)
+        {
+            List<CourseResponse> entities = new();
+
+            foreach (var src in source.Page.Entities)
+            {
+                entities.Add(
+                    new(
+                        src.Id,
+                        src.Code,
+                        src.Name,
+                        src.CEO,
+                        src.AC,
+                        src.NumberOfSeasons,
+                        src.MinimumWorkload,
+                        src.Telephone,
+                        src.Email,
+                        src.Image,
+                        src.InstituteId,
+                        src.Created,
+                        src.CreatedBy,
+                        src.LastModified,
+                        src.LastModifiedBy
+                        )
+                    );
+            }
+
+            return new PageResponse<CourseResponse>(
+                source.Page.CurrentPage,
+                source.Page.Size,
+                source.Page.PreviousPage,
+                source.Page.NextPage,
+                source.Page.NumberOfPages,
+                entities
+                );
+        }
+
+        private static CourseResponse MapCourseResultToCourseResponse(CourseResult source)
+            => new(
+                source.Course.Id,
+                source.Course.Code,
+                source.Course.Name,
+                source.Course.CEO,
+                source.Course.AC,
+                source.Course.NumberOfSeasons,
+                source.Course.MinimumWorkload,
+                source.Course.Telephone,
+                source.Course.Email,
+                source.Course.Image,
+                source.Course.InstituteId,
+                source.Course.Created,
+                source.Course.CreatedBy,
+                source.Course.LastModified,
+                source.Course.LastModifiedBy
+                );
     }
 }
-

@@ -33,6 +33,11 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Code3")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -108,6 +113,9 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("HasPlanner")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("InstituteId")
                         .HasColumnType("uniqueidentifier");
 
@@ -160,8 +168,20 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DurationInMinutes")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("InstituteId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsEstagio")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRemote")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTCC")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -465,6 +485,41 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.ToTable("ListNodeTable", (string)null);
                 });
 
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Pea", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Printable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.ToTable("PeaTable", (string)null);
+                });
+
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Preceptor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -548,6 +603,12 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("LatoSensu")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("StrictoSensu")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("InstituteId");
@@ -588,6 +649,39 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.ToTable("PreceptorRegimeTypeTable", (string)null);
                 });
 
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.PreceptorRoleType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InstituteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstituteId");
+
+                    b.ToTable("PreceptorRoleTypeTable", (string)null);
+                });
+
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Section", b =>
                 {
                     b.Property<Guid>("Id")
@@ -622,6 +716,111 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasIndex("InstituteId");
 
                     b.ToTable("SectionTable", (string)null);
+                });
+
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SimpleTable", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Footer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Header")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InstituteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Rows")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstituteId");
+
+                    b.ToTable("SimpleTablesTable", (string)null);
+                });
+
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SocialBodyEntry", b =>
+                {
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PreceptorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CourseId", "PreceptorId", "RoleId");
+
+                    b.HasIndex("PreceptorId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("CourseSocialBodyTable", (string)null);
+                });
+
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SqlDocxStream", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<Guid>("InstituteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DocxStreamTable", (string)null);
                 });
 
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SqlFileStream", b =>
@@ -815,9 +1014,9 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.AxisType", b =>
                 {
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
-                        .WithMany()
+                        .WithMany("AxisTypes")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -826,9 +1025,9 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Chapter", b =>
                 {
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
-                        .WithMany()
+                        .WithMany("Chapters")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -839,7 +1038,7 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
                         .WithMany("Classes")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("PraeceptorCQRS.Domain.Entities.ClassType", "Type")
@@ -858,7 +1057,7 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
                         .WithMany("ClassTypes")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -896,7 +1095,7 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
                         .WithMany("Courses")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -905,9 +1104,9 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Document", b =>
                 {
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
-                        .WithMany()
+                        .WithMany("Documents")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -918,7 +1117,7 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
                         .WithMany("Groups")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -940,7 +1139,7 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Holding", "Holding")
                         .WithMany("Institutes")
                         .HasForeignKey("HoldingId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Holding");
@@ -961,6 +1160,17 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Navigation("PreviousNode");
                 });
 
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Pea", b =>
+                {
+                    b.HasOne("PraeceptorCQRS.Domain.Entities.Class", "Class")
+                        .WithMany("Peas")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+                });
+
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Preceptor", b =>
                 {
                     b.HasOne("PraeceptorCQRS.Domain.Entities.PreceptorDegreeType", "DegreeType")
@@ -972,7 +1182,7 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
                         .WithMany("Preceptors")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("PraeceptorCQRS.Domain.Entities.PreceptorRegimeType", "RegimeType")
@@ -993,7 +1203,7 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
                         .WithMany("PreceptorDegreeTypes")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -1004,7 +1214,18 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
                         .WithMany("PreceptorRegimeTypes")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Institute");
+                });
+
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.PreceptorRoleType", b =>
+                {
+                    b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
+                        .WithMany("PreceptorRoleTypes")
+                        .HasForeignKey("InstituteId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -1013,7 +1234,18 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Section", b =>
                 {
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
-                        .WithMany()
+                        .WithMany("Sections")
+                        .HasForeignKey("InstituteId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Institute");
+                });
+
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SimpleTable", b =>
+                {
+                    b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
+                        .WithMany("SimpleTables")
                         .HasForeignKey("InstituteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1021,12 +1253,39 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Navigation("Institute");
                 });
 
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SocialBodyEntry", b =>
+                {
+                    b.HasOne("PraeceptorCQRS.Domain.Entities.Course", "Course")
+                        .WithMany("CourseSocialBodyEntries")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PraeceptorCQRS.Domain.Entities.Preceptor", "Preceptor")
+                        .WithMany("CourseSocialBodyEntries")
+                        .HasForeignKey("PreceptorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PraeceptorCQRS.Domain.Entities.PreceptorRoleType", "Role")
+                        .WithMany("CourseSocialBodyEntries")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Preceptor");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SubSection", b =>
                 {
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
-                        .WithMany()
+                        .WithMany("SubSections")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -1035,9 +1294,9 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.SubSubSection", b =>
                 {
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
-                        .WithMany()
+                        .WithMany("SubSubSections")
                         .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Institute");
@@ -1059,13 +1318,13 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.HasOne("PraeceptorCQRS.Domain.Entities.GroupValue", "GroupValue")
                         .WithMany("VariableValues")
                         .HasForeignKey("GroupValueId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("PraeceptorCQRS.Domain.Entities.Variable", "Variable")
                         .WithMany("Values")
                         .HasForeignKey("VariableId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("GroupValue");
@@ -1081,6 +1340,8 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Class", b =>
                 {
                     b.Navigation("Components");
+
+                    b.Navigation("Peas");
                 });
 
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.ClassType", b =>
@@ -1091,6 +1352,8 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Course", b =>
                 {
                     b.Navigation("Components");
+
+                    b.Navigation("CourseSocialBodyEntries");
                 });
 
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Group", b =>
@@ -1112,11 +1375,17 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
 
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Institute", b =>
                 {
+                    b.Navigation("AxisTypes");
+
+                    b.Navigation("Chapters");
+
                     b.Navigation("ClassTypes");
 
                     b.Navigation("Classes");
 
                     b.Navigation("Courses");
+
+                    b.Navigation("Documents");
 
                     b.Navigation("Groups");
 
@@ -1124,7 +1393,22 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
 
                     b.Navigation("PreceptorRegimeTypes");
 
+                    b.Navigation("PreceptorRoleTypes");
+
                     b.Navigation("Preceptors");
+
+                    b.Navigation("Sections");
+
+                    b.Navigation("SimpleTables");
+
+                    b.Navigation("SubSections");
+
+                    b.Navigation("SubSubSections");
+                });
+
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Preceptor", b =>
+                {
+                    b.Navigation("CourseSocialBodyEntries");
                 });
 
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.PreceptorDegreeType", b =>
@@ -1135,6 +1419,11 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.PreceptorRegimeType", b =>
                 {
                     b.Navigation("Preceptors");
+                });
+
+            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.PreceptorRoleType", b =>
+                {
+                    b.Navigation("CourseSocialBodyEntries");
                 });
 
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Variable", b =>

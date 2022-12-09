@@ -776,7 +776,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("UserClaims")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApiResource");
@@ -787,7 +787,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("Properties")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApiResource");

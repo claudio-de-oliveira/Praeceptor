@@ -1,0 +1,340 @@
+﻿@page "/planner/list"
+
+@using Microsoft.AspNetCore.Mvc;
+@using Ardalis.GuardClauses;
+@using Newtonsoft.Json;
+
+@using PraeceptorCQRS.Contracts.Entities.Class;
+@using PraeceptorCQRS.Contracts.Entities.ClassType;
+
+@using Document.App.Components
+
+@attribute [Authorize]
+
+@inject NavigationManager navigationManager
+
+@inherits AuthenticatedPage
+
+<section class="p-1">
+
+    <PageHeaderComponent Institute="@institute" Text="PLANOS DE ENSINO E APRENDIZAGEM" />
+
+    <article class="content px-4">
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+            <thead>
+                <tr>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Código" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Nome" Filter="@nameFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Créditos Práticos" Filter="@practiceFilter" Waiting="@waiting" OnTextChange="@OnPracticeChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Créditos Teóricos" Filter="@theoryFilter" Waiting="@waiting" OnTextChange="@OnTheoryChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Créditos Pré-Requisitos" Filter="@prFilter" Waiting="@waiting" OnTextChange="@OnPRChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <SelectTextComponent Waiting="@waiting" Options="@classTypeList" OnTextChange="OnTypeChanged"></SelectTextComponent>
+                    </td>
+                    <!--
+                    <td align="center"></td>
+                    -->
+                    <td align="center"></td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Código" SortBy="Code" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Nome" SortBy="Name" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="C.P." SortBy="Practice" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="C.T." SortBy="Theory" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="PR" SortBy="PR" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Tipo" SortBy="Type" OnClick="@SortBy" />
+                    </td>
+                    <!--
+                    <th></th>
+                    -->
+                    <th></th>
+                </tr>
+                <!---->
+            </thead>
+            <tbody>
+                @foreach (var entity in classList)
+                {
+                    <tr>
+                        <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Name</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.Practice</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.Theory</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.PR</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.Type.Code</div></td>
+                        <td align="center" style="width: 90px;">
+                            <button type="button"
+                                    class="btn btn-sm btn-success"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Ver detalhes"
+                                    @onclick="@(() => Details(entity))"
+                                    style="border: none;">
+                                Detalhes
+                            </button>
+                        </td>
+                        <!--
+                        <td align="center" style="width: 90px;">
+                            <button type="button"
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editChapterModal"
+                                    title="Editar"
+                                    disabled="@(!entity.HasPlanner)"
+                                    @onclick="@(() => Print(entity))"
+                                    style="border: none;">
+                                Imprimir
+                            </button>
+                        </td>
+                        -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+            </div>
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+        </div>
+    </article>
+</section>
+
+@code {
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
+    [Inject]
+    private IClassService classService { get; set; } = default!;
+    [Inject]
+    private IClassTypeService classTypeService { get; set; } = default!;
+
+
+    protected List<ClassModel> classList = new();
+    protected Dictionary<Guid, string> classTypeList = new();
+
+    protected bool waiting = true;
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? codeFilter = "";
+    protected string? nameFilter = "";
+    protected string? practiceFilter = "";
+    protected string? theoryFilter = "";
+    protected string? prFilter = "";
+    protected Guid typeFilter = Guid.Empty;
+    protected string? createdFilter = "";
+    protected string? createdByFilter = "";
+    protected string? lastModifiedFilter = "";
+    protected string? lastModifiedByFilter = "";
+
+    private InstituteModel? institute;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
+            Guard.Against.Null(institute);
+            await GetAllClassType();
+            await PageRequest(currentPage);
+        }
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
+    }
+
+    private async Task GetAllClassType()
+    {
+        waiting = true;
+        var message = await classTypeService.PostPage(
+            new GetClassTypePageRequest(
+                _userInstituteId,
+                0,
+                int.MaxValue,
+                sort,
+                ascendingSort,
+                null,
+                null,
+                null,
+                null,
+                null
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<PageOfClassTypeModel>(await message.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.Entities.ForEach(o => classTypeList.Add(o.Id, o.Code));
+        }
+        else
+        { 
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+    }
+
+    protected async Task PageRequest(int page)
+    {
+        waiting = true;
+        var message = await classService.PostPage(
+            new GetClassPageRequest(
+                _userInstituteId,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                codeFilter,
+                nameFilter,
+                string.IsNullOrWhiteSpace(practiceFilter) ? -1 : int.Parse(practiceFilter),
+                string.IsNullOrWhiteSpace(theoryFilter) ? -1 : int.Parse(theoryFilter),
+                string.IsNullOrWhiteSpace(prFilter) ? -1 : int.Parse(prFilter),
+                typeFilter,
+                createdFilter,
+                createdByFilter,
+                lastModifiedFilter,
+                lastModifiedByFilter
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfClassModel>(content);
+            Guard.Against.Null(tmp);
+            classList = tmp.Entities.Select(o => (ClassModel)o).ToList();
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    // protected async void Print(Guid id)
+    // { 
+    // }
+
+#pragma warning disable CS8602
+    protected async Task OnCodeChanged(ChangeEventArgs args)
+    {
+        codeFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnNameChanged(ChangeEventArgs args)
+    {
+        nameFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnPracticeChanged(ChangeEventArgs args)
+    {
+        practiceFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnTheoryChanged(ChangeEventArgs args)
+    {
+        theoryFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnPRChanged(ChangeEventArgs args)
+    {
+        prFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnTypeChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        var str = (string)args.Value;
+
+        typeFilter = default;
+        foreach (var key in classTypeList.Keys)
+        {
+            if (string.Compare(classTypeList[key], str) == 0)
+            {
+                typeFilter = key;
+                break;
+            }
+        }
+        
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedChanged(ChangeEventArgs args)
+    {
+        lastModifiedFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedByChanged(ChangeEventArgs args)
+    {
+        lastModifiedByFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+#pragma warning restore CS8602
+
+    private static Guid ConvertStringToGuid(string? str)
+    {
+        Guid guid;
+
+        if (string.IsNullOrWhiteSpace(str))
+            return Guid.Empty;
+        if (Guid.TryParse(str, out guid))
+            return guid;
+        else
+            return Guid.Empty;
+    }
+
+    protected async void SortBy(string sortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = sortColumn;
+        await PageRequest(currentPage);
+    }
+
+    protected void Details(ClassModel? entity)
+    {
+        navigationManager.NavigateTo($"/planner/details/{entity?.Id}");
+    }
+}

@@ -1,5 +1,7 @@
 using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.Class.Common;
 using PraeceptorCQRS.Application.Persistence;
 
@@ -24,13 +26,9 @@ namespace PraeceptorCQRS.Application.Entities.Class.Commands
             if (entity is null)
                 return Domain.Errors.Error.Class.NotFound;
 
-            if (cancellationToken.IsCancellationRequested)
-                return Domain.Errors.Error.Class.Canceled;
-
             await _repository.DeleteClass(request.Id);
 
             return new ClassResult(entity);
         }
     }
 }
-

@@ -12,11 +12,7 @@ using PraeceptorCQRS.Application.Entities.Component.Commands.DeleteCommand;
 using PraeceptorCQRS.Application.Entities.Component.Commands.UpdateCommand;
 using PraeceptorCQRS.Application.Entities.Component.Common;
 using PraeceptorCQRS.Application.Entities.Component.Queries;
-using PraeceptorCQRS.Application.Entities.Course.Common;
 using PraeceptorCQRS.Contracts.Entities.Component;
-using PraeceptorCQRS.Contracts.Entities.Course;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
 using PraeceptorCQRS.Presentation.Administrative.Api.Controllers;
 
 namespace Administrative.Api.Controllers
@@ -34,7 +30,8 @@ namespace Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateComponent([FromBody] CreateComponentRequest request)
         {
             // var command = _mapper.Map<CreateComponentCommand>(request);

@@ -110,7 +110,7 @@ namespace Document.Api.Controllers
             ErrorOr<VariablePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<VariableResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<VariableResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }

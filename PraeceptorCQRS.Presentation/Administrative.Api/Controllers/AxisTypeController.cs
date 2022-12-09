@@ -14,8 +14,6 @@ using PraeceptorCQRS.Application.Entities.AxisType.Common;
 using PraeceptorCQRS.Application.Entities.AxisType.Queries;
 using PraeceptorCQRS.Contracts.Entities.AxisType;
 using PraeceptorCQRS.Contracts.Entities.Page;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
 {
@@ -52,23 +50,11 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         public async Task<IActionResult> GetAxisTypePage([FromBody] GetAxisTypePageRequest request)
         {
             var query = _mapper.Map<GetAxisTypePageQuery>(request);
-            // var query = new GetAxisTypePageQuery(
-            //     request.InstituteId,
-            //     request.Start,
-            //     request.Count,
-            //     request.Sort,
-            //     request.Ascending,
-            //     request.CodeFilter,
-            //     request.CreatedByFilter,
-            //     request.CreatedFilter,
-            //     request.LastModifiedFilter,
-            //     request.LastModifiedByFilter
-            //     );
 
             ErrorOr<AxisTypePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<AxisTypeResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<AxisTypeResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
@@ -121,16 +107,18 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateAxisType([FromBody] CreateAxisTypeRequest request)
         {
             // var command = _mapper.Map<CreateAxisTypeCommand>(request);
             var command = new CreateAxisTypeCommand(
                 request.Code,
+                request.Code3,
                 request.InstituteId
                 );
 
-            ErrorOr <AxisTypeResult> result = await _mediator.Send(command);
+            ErrorOr<AxisTypeResult> result = await _mediator.Send(command);
 
             return result.Match(
                 // Use CreatedAtAction to return 201 CreatedAtAction

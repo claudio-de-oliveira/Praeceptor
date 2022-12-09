@@ -12,14 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 using PraeceptorCQRS.Application.Entities.Document.Commands;
 using PraeceptorCQRS.Application.Entities.Document.Common;
 using PraeceptorCQRS.Application.Entities.Document.Queries;
+using PraeceptorCQRS.Application.Entities.ToWord.Common;
+using PraeceptorCQRS.Application.Entities.ToWord.Queries;
 using PraeceptorCQRS.Contracts.Entities;
 using PraeceptorCQRS.Contracts.Entities.Document;
 using PraeceptorCQRS.Contracts.Entities.Node;
 using PraeceptorCQRS.Contracts.Entities.Page;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
-
-using Serilog;
 
 namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
 {
@@ -85,7 +83,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
             ErrorOr<DocumentPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<DocumentResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<DocumentResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
@@ -124,6 +122,23 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
                 );
         }
 
+        [HttpGet("get/text/{id}")]
+        // [Authorize("ReadPolice")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDocumentTextById(Guid id)
+        {
+            var query = new GetDocumentTextByIdQuery(
+                id
+                );
+
+            ErrorOr<DocumentTextResult> result = await _mediator.Send(query);
+
+            return result.Match(
+                result => Ok(_mapper.Map<DocumentTextResponse>(result)),
+                errors => Problem(errors)
+                );
+        }
+
         [HttpPut("update")]
         [Authorize("UpdatePolice")]
         public async Task<IActionResult> UpdateDocument([FromBody] UpdateDocumentRequest request)
@@ -142,16 +157,15 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
         [Authorize("CreatePolice")]
         public async Task<IActionResult> CreateDocument([FromBody] CreateDocumentRequest request)
         {
-            Log.Error("CHEGOU ********************************** NO CREATE");
-            // var command = _mapper.Map<CreateDocumentCommand>(request);
-            var command = new CreateDocumentCommand(
-                request.Title,
-                request.Text,
-                request.InstituteId,
-                null
-                );
+            var command = _mapper.Map<CreateDocumentCommand>(request);
+            // var command = new CreateDocumentCommand(
+            //     request.Title,
+            //     request.Text,
+            //     request.InstituteId,
+            //     null
+            //     );
 
-            ErrorOr <DocumentResult> result = await _mediator.Send(command);
+            ErrorOr<DocumentResult> result = await _mediator.Send(command);
 
             return result.Match(
                 // Use CreatedAtAction to return 201 CreatedAtAction
@@ -175,6 +189,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
         }
 
         #region L I S T   E N D P O I N T S
+
         [HttpPost("chapter/create/first")]
         [Authorize("CreatePolice")]
         public async Task<IActionResult> CreateFirstChapter(
@@ -293,7 +308,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
                 errors => Problem(errors)
                 );
         }
-        #endregion
+
+        #endregion L I S T   E N D P O I N T S
     }
 }
-

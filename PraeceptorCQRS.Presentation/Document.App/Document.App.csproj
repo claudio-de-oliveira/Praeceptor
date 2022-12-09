@@ -4,18 +4,15 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>9FCCD049-AFAD-498A-A363-ECD590C51CB6</UserSecretsId>
+		<UserSecretsId>3C6D0123-9C5D-4469-B31A-F57A1A31DC3E</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <None Remove="Pages\Doc\uwq0bo0j.00y~" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <None Include="..\..\.dockerignore" Link=".dockerignore">
 	    <DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
 	  </None>
+	  <None Include="wwwroot\scripts\blazorDownloadFile.js" />
 	</ItemGroup>
 
 	<ItemGroup>

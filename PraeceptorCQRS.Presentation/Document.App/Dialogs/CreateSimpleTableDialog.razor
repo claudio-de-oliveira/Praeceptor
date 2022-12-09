@@ -1,0 +1,118 @@
+﻿@using Ardalis.GuardClauses;
+@using Document.App.Models;
+
+<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticSimpleTableBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticSimpleTableBackdropLabel">Edite os campos desejáveis</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <form>
+                            <div class="mb-3">
+                                <label for="recipient-code" class="col-form-label">Código</label>
+                                <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="true">
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-title" class="col-form-label">Título</label>
+                                <input type="text" class="form-control" @bind-value="@_title" id="recipient-title" contenteditable="true">
+                            </div>
+                            @*
+                            <div class="mb-3">
+                                <label for="message-header" class="col-form-label">Cabeçalhos</label>
+                                <textarea type="text" class="form-control" @bind="@_header" wrap="soft" id="message-header" rows="3" contenteditable="true"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message-rows" class="col-form-label">Linhas</label>
+                                <textarea type="text" class="form-control" @bind="@_rows" wrap="soft" id="message-rows" rows="3" contenteditable="true"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message-footer" class="col-form-label">Roda-pé</label>
+                                <textarea type="text" class="form-control" @bind="@_footer" wrap="soft" id="message-footer" rows="3" contenteditable="true"></textarea>
+                            </div>
+                            *@
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#createSimpleTableModal"
+                        title="Cuidado: As modificações serão perdidas"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" class="btn btn-outline-primary" @onclick="@(async () => await Ok())">Salvar alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<SimpleTableModel?> OnClose { get; set; }
+    [Parameter]
+    public SimpleTableModel Table { get; set; } = default!;
+    [Parameter]
+    public bool Create { get; set; }
+
+    private string _code = "";
+    private string _title = "";
+    private string _header = "";
+    private string _rows = "";
+    private string? _footer = default!;
+    // private Guid _instituteId;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Guard.Against.Null(Table);
+
+            _code = Table.Code;
+            _title = Table.Title;
+            _header = Table.Header;
+            _rows = Table.Rows;
+            _footer = Table.Footer;
+
+            StateHasChanged();
+        }
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+
+    private Task Ok()
+    {
+        if (_code != Table.Code || _title != Table.Title /*|| _header != Table.Header || _rows != Table.Rows || _footer != Table.Footer*/)
+        {
+            return OnClose.InvokeAsync(
+                new SimpleTableModel()
+                    {
+                        Id = Table.Id,
+                        Code = Table.Code,
+                        Title = Table.Title,
+                        Header = "",
+                        Rows = "",
+                        Footer = ""
+                    }
+                );
+        }
+        else
+            return OnClose.InvokeAsync(null);
+    }
+}

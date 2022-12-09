@@ -1,0 +1,173 @@
+﻿@page "/table/details/{TableId:guid}"
+
+@using Ardalis.GuardClauses;
+@using PraeceptorCQRS.Contracts.Entities.SimpleTable;
+
+<section class="p-1">
+    <article class="content px-4">
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-tab-header" data-bs-toggle="tab" data-bs-target="#nav-panel-header" type="button" role="tab" aria-controls="nav-content-ementa" aria-selected="true">
+                    Cabeçalhos
+                </button>
+                <button class="nav-link" id="nav-tab-rows" data-bs-toggle="tab" data-bs-target="#nav-panel-rows" type="button" role="tab" aria-controls="nav-content-rows" aria-selected="false">
+                    Linhas
+                </button>
+                <button class="nav-link" id="nav-tab-footer" data-bs-toggle="tab" data-bs-target="#nav-panel-footer" type="button" role="tab" aria-controls="nav-content-footer" aria-selected="false">
+                    Rodapé
+                </button>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-panel-header" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="my-4">
+                    @if (tableModel is not null)
+                    {
+                        <TableHeaderComponent @ref="@tableHeaderComponent" 
+                                          Header="@tableModel.Header" 
+                                          OnHeaderChanged="@OnHeaderChanged"
+                                          OnDeleteColumn="@OnDeleteColumn"
+                                          OnMoveToLeft="@OnMoveToLeft" 
+                                          OnMoveToRight="@OnMoveToRight"
+                                          OnHeaderCreate="@OnHeaderCreate"></TableHeaderComponent>
+                    }
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-rows" role="tabpanel" aria-labelledby="nav-tab-rows">
+                <div class="mt-4">
+                    @if (tableModel is not null)
+                    {
+                        <TableRowsComponent @ref="@tableRowsComponent" 
+                                          Rows="@tableModel.Rows" 
+                                          OnCreateRow="@OnCreateRow"
+                                          OnCellChanged="@OnCellChanged"></TableRowsComponent>
+                    }
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-footer" role="tabpanel" aria-labelledby="nav-tab-footer">
+                <div class="mt-4">
+                    @if (tableModel is not null)
+                    {
+                        <TableFooterComponent @ref="@tableFooterComponent" 
+                                          Footer="@tableModel.Footer" 
+                                          OnFooterChanged="@OnFooterChanged"></TableFooterComponent>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </article>
+
+</section>
+
+@code {
+    [Inject]
+    private ISimpleTableService simpleTableService { get; set; } = default!;
+    [Parameter]
+    public Guid TableId { get; set; }
+
+    private SimpleTableModel? tableModel;
+
+    TableHeaderComponent? tableHeaderComponent;
+    TableRowsComponent? tableRowsComponent;
+    TableFooterComponent? tableFooterComponent;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            tableModel = await simpleTableService.GetTableById(TableId);
+            StateHasChanged();
+        }
+    }
+
+    public void OnHeaderCreate()
+    {
+        tableRowsComponent?.AddColumn();
+        tableFooterComponent?.AddColumn();
+        tableHeaderComponent?.AddColumn();
+
+        StateHasChanged();
+    }
+
+    public async void OnDeleteColumn(int index)
+    {
+        tableRowsComponent?.DeleteColumn(index);
+        tableFooterComponent?.DeleteColumn(index);
+        tableHeaderComponent?.DeleteColumn(index);
+
+        await UpdateTable();
+
+        StateHasChanged();
+    }
+
+    public void OnCreateRow()
+    {
+        int numberOfColumns = 1;
+        for (int i = 0; i < tableModel?.Header.Length; i++)
+            if (tableModel.Header[i] == '&')
+                numberOfColumns++;
+        tableRowsComponent?.AddRow(numberOfColumns);
+    }
+
+    public async void OnHeaderChanged(string text, bool save)
+    {
+        Guard.Against.Null(tableModel);
+        tableModel.Header = text;
+        if (save)
+            await UpdateTable();
+    }
+
+    public async void OnCellChanged(string text, bool save)
+    {
+        Guard.Against.Null(tableModel);
+        tableModel.Rows = text;
+        if (save)
+            await UpdateTable();
+    }
+
+    public async void OnFooterChanged(string text, bool save)
+    {
+        Guard.Against.Null(tableModel);
+        tableModel.Footer = text;
+        if (save)
+            await UpdateTable();
+    }
+
+    private async Task UpdateTable()
+    {
+        Guard.Against.Null(tableModel);
+        await simpleTableService.UpdateTable(
+            new UpdateSimpleTableRequest(
+                tableModel.Id,
+                tableModel.Title,
+                tableModel.Header,
+                tableModel.Rows,
+                tableModel.Footer
+            )
+        );
+
+        StateHasChanged();
+    }
+
+    private async void OnMoveToLeft(int index)
+    {
+        if (index > 0)
+        {
+            tableRowsComponent?.MoveToLeft(index);
+            tableFooterComponent?.MoveToLeft(index);
+            tableHeaderComponent?.MoveToLeft(index);
+            await UpdateTable();
+        }
+    }
+
+    private async void OnMoveToRight(int index)
+    {
+        tableRowsComponent?.MoveToRight(index);
+        tableFooterComponent?.MoveToRight(index);
+        tableHeaderComponent?.MoveToRight(index);
+        await UpdateTable();
+    }
+}

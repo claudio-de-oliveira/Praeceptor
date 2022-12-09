@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PraeceptorCQRS.Contracts.Entities.Pea
+﻿namespace PraeceptorCQRS.Contracts.Entities.Pea
 {
     public record UpdatePeaRequest(
-        Guid Id
-
+        Guid Id,
+        string Text,
+        string? LastModifiedBy
         );
 }

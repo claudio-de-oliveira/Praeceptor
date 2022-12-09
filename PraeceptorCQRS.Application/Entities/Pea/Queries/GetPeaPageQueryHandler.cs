@@ -3,7 +3,9 @@
 using MediatR;
 
 using PraeceptorCQRS.Application.Entities.Pea.Common;
+using PraeceptorCQRS.Application.Entities.ToWord.Parser.Planner;
 using PraeceptorCQRS.Application.Persistence;
+using PraeceptorCQRS.Domain.Entities;
 
 namespace PraeceptorCQRS.Application.Entities.Pea.Queries
 {
@@ -22,7 +24,7 @@ namespace PraeceptorCQRS.Application.Entities.Pea.Queries
             if (cancellationToken.IsCancellationRequested)
                 return Domain.Errors.Error.Pea.Canceled;
 
-            var list = await _repository.GetPeaPage(
+            var page = await _repository.GetPeaPage(
                 request.ClassId,
                 request.Start,
                 request.Count,
@@ -34,10 +36,48 @@ namespace PraeceptorCQRS.Application.Entities.Pea.Queries
                 request.LastModifiedByFilter
                 );
 
-            if (list is null)
+            if (page is null)
                 return Domain.Errors.Error.Pea.NotFound;
 
-            return new PeaPageResult(list);
+            PageOf<PeaModel> modelList = new(
+                page.CurrentPage,
+                page.Size,
+                page.PreviousPage,
+                page.NextPage,
+                page.NumberOfPages,
+                new List<PeaModel>()
+                );
+
+            foreach (var entity in page.Entities)
+            {
+                Parser parser = new();
+                var result = await Task.Run(() => parser.Parse(entity.Text, null));
+                if (result is null)
+                    return Domain.Errors.Error.Pea.InvalidSyntax;
+
+                PeaModel aux = (PeaModel)result;
+                var model = new PeaModel(
+                    entity.Id,
+                    aux.Ementa,
+                    aux.Objetivos,
+                    aux.Procedimentos,
+                    aux.Avaliacao,
+                    aux.Unidade1,
+                    aux.Unidade2,
+                    aux.BibliografiaBasica,
+                    aux.BibliografiaComplementar,
+                    aux.ClassId,
+                    aux.DisciplinaId,
+                    entity.Created,
+                    entity.CreatedBy,
+                    entity.LastModified,
+                    entity.LastModifiedBy
+                    );
+
+                modelList.Entities.Add(model);
+            }
+
+            return new PeaPageResult(modelList);
         }
     }
 }

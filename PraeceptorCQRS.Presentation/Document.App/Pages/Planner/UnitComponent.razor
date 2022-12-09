@@ -1,0 +1,134 @@
+﻿@using Document.App.Components.Toaster;
+@using Document.App.Components
+@using System.Text;
+
+<div class="accordion" id="accordionPanelsStayOpenUnit">
+
+    @if (Unidade is not null)
+    {
+        @foreach (var concept in Unidade)
+        {
+            <form id="ConceptForm" class="row g-1" onsubmit="@(() => { /* Nothing todo */ })">
+
+                @if (concept.Key == editConceptKey)
+                {
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control"
+                               value="@text"
+                               @onchange="@((args) => OnConceptChanged((string)args.Value!))"
+                               @onfocusout="@FocusOut"
+                               style="background-color:aliceblue; border:none" />
+                    </div>
+                }
+                else
+                {
+                    <div class="col-lg-10">
+                        <div class="accordion-item my-2">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target=@($"#panelsStayOpen-{concept.Key}") aria-expanded="true" aria-controls=@($"panelsStayOpen-{concept.Key}") disabled="@(editConceptKey != Guid.Empty)">
+                                    @concept.Value.Description
+                                </button>
+                            </h2>
+                            <div id=@($"panelsStayOpen-{concept.Key}") class="accordion-collapse collapse" aria-labelledby=@($"panelsStayOpen-heading-{concept.Key}")>
+                                <div class="accordion-body">
+                                    <ContentsComponent ConceptId="@concept.Key" Conteudos="@concept.Value.Conteudos" OnConteudoChanged="@OnConteudoChanged" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="btn-toolbar my-2" role="toolbar" aria-label="Toolbar with button groups">
+                            <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
+                                    data-bs-target=@($"#editConceptModal-{concept.Key}") title="Editar"
+                                    disabled="@(editConceptKey != Guid.Empty)"
+                                    @onclick="@(() => Edit(concept.Key))"
+                                    style="border: none;">
+                                Editar
+                            </button>
+                            <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
+                                    title="Excluir variável"
+                                    disabled="@(editConceptKey != Guid.Empty)"
+                                    @onclick="@(() => Delete(concept.Key))"
+                                    style="border: none;">
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                }
+            </form>
+        }
+    }
+
+    <br />
+
+    <div>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-primary"
+                data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
+                title="Inserir novo conceito chave"
+                disabled="@(editConceptKey != Guid.Empty)"
+                @onclick="@CreateConceptKey">
+            <i class="bi bi-plus-slash-minus"></i>
+            Novo conceito chave
+        </button>
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public Dictionary<Guid, ConceptKeyModel> Unidade { get; set; } = default!;
+    [Parameter]
+    public Action<Guid, ConceptKeyModel?> OnConceptKeyChanged { get; set; } = default!;
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
+
+    Guid editConceptKey = Guid.Empty;
+    string text = "";
+
+
+    void OnConteudoChanged(Guid key, List<string> conteudos)
+    {
+        Unidade[key] = new ConceptKeyModel(Unidade[key].Description, conteudos);
+        OnConceptKeyChanged.Invoke(key, Unidade[key]);
+    }
+
+    void Edit(Guid key)
+    {
+        text = Unidade[key].Description;
+        editConceptKey = key;
+    }
+
+    void CreateConceptKey()
+    {
+        Guid key = Guid.NewGuid();
+        Unidade.Add(key, new ConceptKeyModel("", new List<string>()));
+        text = Unidade[key].Description;
+        editConceptKey = key;
+    }
+
+    void Delete(Guid key)
+    {
+        Unidade.Remove(key);
+        OnConceptKeyChanged.Invoke(key, null);
+    }
+
+    void OnConceptChanged(string text)
+    {
+        Unidade[editConceptKey] = new ConceptKeyModel(text, Unidade[editConceptKey].Conteudos);
+        OnConceptKeyChanged.Invoke(editConceptKey, Unidade[editConceptKey]);
+        editConceptKey = Guid.Empty;
+        text = "";
+    }
+
+    void FocusOut(FocusEventArgs args)
+    {
+        if (editConceptKey != Guid.Empty)
+        {
+            Unidade[editConceptKey] = new ConceptKeyModel(text, Unidade[editConceptKey].Conteudos);
+            OnConceptKeyChanged.Invoke(editConceptKey, Unidade[editConceptKey]);
+            editConceptKey = Guid.Empty;
+            text = "";
+        }
+    }
+}

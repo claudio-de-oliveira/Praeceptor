@@ -1,5 +1,4 @@
 ﻿using ErrorOr;
-
 using MediatR;
 
 using PraeceptorCQRS.Application.Entities.Pea.Common;

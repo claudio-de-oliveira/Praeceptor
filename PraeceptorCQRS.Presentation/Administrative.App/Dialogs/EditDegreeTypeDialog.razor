@@ -21,6 +21,14 @@
                     </div>
                 </div>
             </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input-lato" value="@_latoSensu" type="checkbox" id="flexSwitchLatoCheckChecked" checked>
+                <label class="form-check-label" for="flexSwitchLatoCheckChecked">Lato Sensu</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input-strict" value="@_strictoSensu" type="checkbox" id="flexSwitchStrictoCheckChecked" checked>
+                <label class="form-check-label" for="flexSwitchStrictoCheckChecked">Stricto Sensu</label>
+            </div>
             <div class="modal-footer">
                 <button type="button"
                         class="btn btn-outline-danger"
@@ -43,15 +51,23 @@
     [Parameter]
     public string Code { get; set; } = default!;
     [Parameter]
+    public bool LatoSensu { get; set; } = default!;
+    [Parameter]
+    public bool StrictoSensu { get; set; } = default!;
+    [Parameter]
     public EventCallback<PreceptorDegreeTypeModel?> OnClose { get; set; }
 
     private string _code = default!;
+    private bool _latoSensu = default!;
+    private bool _strictoSensu = default!;
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
             _code = Code;
+            _latoSensu = LatoSensu;
+            _strictoSensu = StrictoSensu;
 
             StateHasChanged();
         }
@@ -66,7 +82,7 @@
     private Task Ok()
     {
         if (string.Compare(_code, Code) != 0)
-            return OnClose.InvokeAsync(new PreceptorDegreeTypeModel { Code = _code });
+            return OnClose.InvokeAsync(new PreceptorDegreeTypeModel { Code = _code, LatoSensu = _latoSensu, StrictoSensu = _strictoSensu });
         else
             return OnClose.InvokeAsync(null);
     }

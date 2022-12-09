@@ -12,10 +12,6 @@ using PraeceptorCQRS.Application.Entities.Class.Common;
 using PraeceptorCQRS.Application.Entities.Class.Queries;
 using PraeceptorCQRS.Contracts.Entities.Class;
 using PraeceptorCQRS.Contracts.Entities.Page;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
-
-using Serilog;
 
 namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
 {
@@ -73,7 +69,7 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<ClassPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<ClassResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<ClassResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
@@ -94,19 +90,27 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
                 );
         }
 
+        [HttpGet("get/code/{code}")]
+        [Authorize("ReadPolice")]
+        public async Task<IActionResult> GetClassByCode(string code)
+        {
+            var query = new GetClassByCodeQuery(
+                code
+                );
+
+            ErrorOr<ClassResult> result = await _mediator.Send(query);
+
+            return result.Match(
+                result => Ok(_mapper.Map<ClassResponse>(result)),
+                errors => Problem(errors)
+                );
+        }
+
         [HttpPut("update")]
         [Authorize("UpdatePolice")]
         public async Task<IActionResult> UpdateClass([FromBody] UpdateClassRequest request)
         {
             var command = _mapper.Map<UpdateClassCommand>(request);
-            // var command = new UpdateClassCommand(
-            //     request.Id,
-            //     request.Name,
-            //     request.Practice,
-            //     request.Theory,
-            //     request.PR,
-            //     request.TypeId
-            //     );
 
             ErrorOr<ClassResult> result = await _mediator.Send(command);
 
@@ -117,19 +121,11 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateClass([FromBody] CreateClassRequest request)
         {
-            // var command = _mapper.Map<CreateClassCommand>(request);
-            var command = new CreateClassCommand(
-                request.Code,
-                request.Name,
-                request.Practice,
-                request.Theory,
-                request.PR,
-                request.InstituteId,
-                request.TypeId
-                );
+            var command = _mapper.Map<CreateClassCommand>(request);
 
             ErrorOr<ClassResult> result = await _mediator.Send(command);
 
@@ -155,4 +151,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-

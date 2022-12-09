@@ -8,7 +8,7 @@ namespace PraeceptorCQRS.Application.Entities.Preceptor.Commands
     {
         public UpdatePreceptorCommandValidator(
             IPreceptorRepository preceptorRepository,
-            IPreceptorDegreeTypeRepository preceptorDegreeTypeRepository,
+            IPreceptorRoleTypeRepository preceptorDegreeTypeRepository,
             IPreceptorRegimeTypeRepository preceptorRegimeTypeRepository)
         {
             RuleFor(x => x.Name)

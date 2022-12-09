@@ -1,5 +1,7 @@
 using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.Document.Common;
 using PraeceptorCQRS.Application.Persistence;
 using PraeceptorCQRS.Application.Services;
@@ -38,4 +40,3 @@ namespace PraeceptorCQRS.Application.Entities.Document.Commands
         }
     }
 }
-

@@ -15,10 +15,13 @@ namespace PraeceptorCQRS.Infrastructure.Configurations
 
             modelBuilder
                 .HasKey(x => x.Id);
+
+            modelBuilder
+                .HasOne(d => d.Group)
+                .WithMany(p => p.Variables);
             modelBuilder
                 .HasMany(d => d.Values)
-                .WithOne(p => p.Variable)
-                .OnDelete(DeleteBehavior.NoAction);
+                .WithOne(p => p.Variable);
         }
     }
 }

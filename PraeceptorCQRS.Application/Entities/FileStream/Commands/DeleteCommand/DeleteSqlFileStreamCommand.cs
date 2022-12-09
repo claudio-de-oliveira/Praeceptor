@@ -8,6 +8,6 @@ namespace PraeceptorCQRS.Application.Entities.FileStream.Commands
 {
     public record DeleteSqlFileStreamCommand(
         Guid Id
-        ) : IRequest<ErrorOr<SqlFileStreamResult>>;
+        ) : IRequest<ErrorOr<FileResult>>;
 }
 

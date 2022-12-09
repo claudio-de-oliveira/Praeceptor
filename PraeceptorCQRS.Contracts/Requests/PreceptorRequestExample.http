@@ -5,31 +5,35 @@
 @host=https://{{hostname}}:{{port}}
 @contentType=application/json
 
-@instituteId=2DC66113-D6F4-4A18-771F-08DA896D3A86
+@instituteId=ccb90d09-f515-4edf-e408-08dabc1fd360
 
 ## C R E A T E ###########################################
 POST {{host}}/preceptor/create
 Content-Type: {{contentType}}
 
 {
-    "Code": "8124",
+    "Code": "8126",
     "Name": "Claudio de Oliveira",
     "Email": "clalulana@gmail.com",
     "Image": null,
-    "DegreeTypeId": "136EFE32-4960-4739-7BF7-08DA8AD322A7",
-    "RegimeTypeId": "443E3899-5B06-449A-BBB7-08DA8AD32DC4",
-    "InstituteId":  "2DC66113-D6F4-4A18-771F-08DA896D3A86"
+    "DegreeTypeId": "AA8000D8-EFD0-436C-8373-08DABE6E7EBF",
+    "RegimeTypeId": "311EF3BC-17DE-40FC-0F23-08DABE6E7EF3",
+    "InstituteId":  "F6B0DBBF-893F-4683-83A0-08DABE6E7A6E"
 }
 # TODO: add above the CreatePreceptorRequest values
 
 ##########################################################
 # TODO: provide the Holding ID to GET, UPDATE and DELETE
-@idToGet=374e5117-9a46-4b42-f575-08da8ad52348
-@idToUpd=374e5117-9a46-4b42-f575-08da8ad52348
-@idToDel=374e5117-9a46-4b42-f575-08da8ad52348
+@idToGet=DA691570-BB57-4E5A-FCFF-08DAC8EC7F0A
+@idToUpd=DA691570-BB57-4E5A-FCFF-08DAC8EC7F0A
+@idToDel=DA691570-BB57-4E5A-FCFF-08DAC8EC7F0A
 
 ## G E T #################################################
 GET {{host}}/preceptor/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## G E T #################################################
+GET {{host}}/preceptor/get/code/8124
 Content-Type: {{contentType}}
 
 ## U P D A T E ###########################################
@@ -38,7 +42,7 @@ Content-Type: {{contentType}}
 
 {
 	"id": "{{idToUpd}}",
-    "Code": "8124",
+    "Code": "8125",
     "Name": "Claudio de Oliveira",
     "Email": "claudio.oliveira@unit.com",
     "Image": null,

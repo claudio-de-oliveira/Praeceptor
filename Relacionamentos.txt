@@ -1,0 +1,108 @@
+AxisType
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ICollection<Component> Components { get; set; }
+
+Chapter
+    public virtual Institute Institute { get; set; } = null!;
+
+Class
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ClassType Type { get; set; } = null!;
+    public virtual ICollection<Component> Components { get; set; }
+
+ClassType
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ICollection<Class> Classes { get; set; }
+
+Component
+    public AxisType Axis { get; set; } = default!;
+    public virtual Class Class { get; set; } = default!;
+    public virtual Course Course { get; set; } = default!;
+
+Course
+    public virtual Institute Institute { get; set; } = default!;
+    public virtual ICollection<Component> Components { get; set; } = default!;
+    public virtual ICollection<CourseSocialBodyEntry> CourseSocialBodyEntries { get; set; } = null!;
+
+CourseSocialBodyEntry
+    public virtual Preceptor Preceptor { get; set; } = default!;
+    public virtual Course Course { get; set; } = default!;
+    public virtual PreceptorRoleType Role { get; set; } = default!;
+
+Document
+    public virtual Institute Institute { get; set; } = null!;
+
+Holding
+    public virtual ICollection<Institute> Institutes { get; set; }
+
+Institute
+    public virtual Holding Holding { get; set; } = null!;
+    public virtual ICollection<AxisType> AxisTypes { get; set; }
+    public virtual ICollection<Document> Documents { get; set; }
+    public virtual ICollection<Chapter> Chapters { get; set; }
+    public virtual ICollection<Section> Sections { get; set; }
+    public virtual ICollection<SubSection> SubSections { get; set; }
+    public virtual ICollection<SubSubSection> SubSubSections { get; set; }
+    public virtual ICollection<Class> Classes { get; set; }
+    public virtual ICollection<Course> Courses { get; set; }
+    public virtual ICollection<ClassType> ClassTypes { get; set; }
+    public virtual ICollection<Preceptor> Preceptors { get; set; }
+    public virtual ICollection<PreceptorDegreeType> PreceptorDegreeTypes { get; set; }
+    public virtual ICollection<PreceptorRegimeType> PreceptorRegimeTypes { get; set; }
+    public virtual ICollection<PreceptorRoleType> PreceptorRoleTypes { get; set; }
+    public virtual ICollection<Group> Groups { get; set; }
+
+Preceptor
+    public virtual PreceptorDegreeType DegreeType { get; set; } = default!;
+    public virtual PreceptorRegimeType RegimeType { get; set; } = default!;
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ICollection<CourseSocialBodyEntry> CourseSocialBodyEntries { get; set; } = null!;
+
+PreceptorDegreeType
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ICollection<Preceptor> Preceptors { get; set; } = null!;
+
+PreceptorRegimeType
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ICollection<Preceptor> Preceptors { get; set; } = null!;
+
+PreceptorRoleType
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ICollection<CourseSocialBodyEntry> CourseSocialBodyEntries { get; set; } = null!;
+
+Section
+    public virtual Institute Institute { get; set; } = null!;
+
+SubSection
+    public virtual Institute Institute { get; set; } = null!;
+
+SubSubSection
+    public virtual Institute Institute { get; set; } = null!;
+
+Group
+    public virtual Institute Institute { get; set; } = null!;
+    public virtual ICollection<GroupValue> Values { get; set; }
+    public virtual ICollection<Variable> Variables { get; set; }
+
+GroupValue
+    public virtual Group Group { get; set; } = default!;
+    public virtual ICollection<VariableValue> VariableValues { get; set; }
+
+Variable
+    public virtual Group Group { get; set; } = default!;
+    public virtual ICollection<VariableValue> Values { get; set; }
+
+VariableValue
+    public virtual GroupValue GroupValue { get; set; } = default!;
+    public virtual Variable Variable { get; set; } = default!;
+
+Node
+        public virtual Node PreviousNode { get; set; } = null!;
+        public virtual Node NextNode { get; set; } = null!;
+        public Guid FirstEntityId { get; set; }
+        public Guid DocumentId { get; set; }
+        public Guid SecondEntityId { get; set; }
+
+Pea
+        public virtual Class Class { get; set; } = default!;
+

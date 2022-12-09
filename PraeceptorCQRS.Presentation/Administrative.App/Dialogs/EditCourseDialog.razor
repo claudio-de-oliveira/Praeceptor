@@ -157,8 +157,10 @@
 
         if (ceo is not null && CEO is not null)
             ceo_changed = ceo.Id != CEO.Id;
-        else if (ceo is null && CEO is null)
+        else if (ceo is not null && CEO is null || ceo is null && CEO is not null)
             ceo_changed = true;
+        // else if (ceo is null && CEO is null)
+        //     ceo_changed = true;
         else
             ceo_changed = false;
 

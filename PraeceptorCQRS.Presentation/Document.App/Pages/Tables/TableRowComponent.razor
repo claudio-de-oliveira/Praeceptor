@@ -1,0 +1,201 @@
+﻿@using Document.App.Dialogs
+
+@if (Cells is not null)
+{
+    <table id="table" class="table table-sm table-borderless" cellpadding="1" cellspacing="1"
+       data-search="true"
+       data-show-toggle="true"
+       data-toolbar=".toolbar"
+       data-use-row-attr-func="true"
+       data-reorderable-rows="true">
+        <tbody>
+            @{
+                columnNumber = 0;
+            }
+            @foreach (var entity in Cells)
+            {
+                <ConfirmDialog Title="Atenção"
+                       Message="Tem certeza que deseja excluir a coluna ?"
+                       OnConfirmEvent="@Delete"
+                       ParameterId="@entity.Key" />
+
+                <tr>
+                    <td width="100px">
+                        <span>
+                            Coluna @(++columnNumber)
+                        </span>
+                    </td>
+                    <td>
+                        <div class="md-form amber-textarea">
+                            <textarea id="form" type="text"
+                              class="md-textarea form-control"
+                              @onchange="@((args) => ChangeText(entity.Key, entity.Value, (string)args.Value!))"
+                              @onkeypress:preventDefault
+                              wrap="soft"
+                              rows="@(NumberOfLines(entity.Value))"
+                              contenteditable="true"
+                              style="background-color:aliceblue; font-size:small;">
+                                @entity.Value
+                                                    </textarea>
+                        </div>
+                    </td>
+                    @if (OnDeleteCell is not null)
+                    {
+                        <td align="right" style="width: 160px;">
+                            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                <button type="button" class="btn btn-sm btn-danger"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            data-bs-toggle="modal"
+                            data-bs-target="#@($"A{entity.Key.ToString("N")}")"
+                            title="Excluir"
+                            style="border: none;">
+                                    <i class="bi bi-x-lg"></i>
+                                    Excluir
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Mover para cima"
+                            @onclick="@((args) => OnNotifyMoveToLeft(args, entity.Key))"
+                            style="border: none;">
+                                    <i class="bi bi-arrow-bar-up"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Mover para baixo"
+                            @onclick="@((args) => OnNotifyMoveToRight(args, entity.Key))"
+                            style="border: none;">
+                                    <i class="bi bi-arrow-bar-down"></i>
+                                </button>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public Guid Key { get; set; } = default!;
+    [Parameter]
+    public Dictionary<Guid, string> Cells { get; set; } = default!;
+    [Parameter]
+    public Action<Guid, Guid, string> OnCellChange { get; set; } = default!;
+    [Parameter]
+    public Action<Guid, Guid>? OnDeleteCell { get; set; }
+    [Parameter]
+    public Action<int> OnMoveToLeft { get; set; } = default!;
+    [Parameter]
+    public Action<int> OnMoveToRight { get; set; } = default!;
+
+    protected string TextToDisplay(string? text, int maxLength = 1200)
+        => text is not null && text.Length < maxLength ? text : text?.Substring(0, maxLength) + "...";
+
+    int columnNumber = 0;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
+
+    private static int NumberOfLines(string str)
+    {
+        int n = 1;
+
+        foreach (var ch in str)
+            if (ch == '\n')
+                n++;
+        return n;
+    }
+
+    private void ChangeText(Guid key, string entity, string txt)
+    {
+        entity = txt;
+        OnCellChange.Invoke(Key, key, entity);
+    }
+
+    private void Delete(object? source, Guid key)
+    {
+        OnDeleteCell?.Invoke(Key, key);
+    }
+
+    private void OnNotifyMoveToLeft(MouseEventArgs args, Guid entityKey)
+    {
+        if (OnMoveToLeft is not null)
+        {
+            int index = 0;
+
+            foreach (var key in Cells.Keys)
+            {
+                if (key == entityKey)
+                    break;
+                index++;
+            }
+
+            if (index > 0)
+                OnMoveToLeft.Invoke(index);
+        }
+    }
+
+    private void OnNotifyMoveToRight(MouseEventArgs args, Guid entityKey)
+    {
+        if (OnMoveToRight is not null)
+        {
+            int index = 0;
+
+            foreach (var key in Cells.Keys)
+            {
+                if (key == entityKey)
+                    break;
+                index++;
+            }
+
+            if (index < Cells.Keys.Count - 1)
+                OnMoveToRight.Invoke(index);
+        }
+    }
+
+    // public void MoveToLeft(int column)
+    // {
+    //     if (column > 0)
+    //     {
+    //         int index = 0;
+    //         Guid previous = Guid.Empty;
+    //         foreach (var key in Cells.Keys)
+    //         {
+    //             if (index == column)
+    //             {
+    //                 var tmp = Cells[key];
+    //                 Cells[key] = Cells[previous];
+    //                 Cells[previous] = tmp;
+    //                 break;
+    //             }
+    //             previous = key;
+    //         }
+    //     }
+    // }
+    // 
+    // public void MoveToRight(int column)
+    // {
+    //     if (column < Cells.Count - 1)
+    //     { 
+    //         int index = 0;
+    //         Guid previous = Guid.Empty;
+    //         foreach (var key in Cells.Keys)
+    //         {
+    //             if (index == column + 1)
+    //             {
+    //                 var tmp = Cells[key];
+    //                 Cells[key] = Cells[previous];
+    //                 Cells[previous] = tmp;
+    //                 break;
+    //             }
+    //             previous = key;
+    //         }
+    //     }
+    // }
+}

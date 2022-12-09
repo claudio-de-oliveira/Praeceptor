@@ -1,7 +1,6 @@
-﻿namespace Administrative.App.Models
+﻿namespace Administrative.App.Models;
+
+public class AbstractTypeModel : Entity
 {
-    public class AbstractTypeModel : Entity
-    {
-        public string Code { get; set; } = null!;
-    }
+    public string Code { get; set; } = null!;
 }

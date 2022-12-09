@@ -118,8 +118,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<SqlFileStream?> GetFileInfo(Guid guid)
         {
-            Log.Warning($"FileStreamRepository:GetFileInfo('{guid}')");
-
             await Task.CompletedTask;
 
             DataTable dt = ListData(
@@ -164,8 +162,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<SqlFileStream?> StoreFile(SqlFileStream fileStream)
         {
-            Log.Warning($"FileStreamRepository:StoreFile('{fileStream.Name}')");
-
             await Task.CompletedTask;
 
             List<SqlParameter> parameters = new();
@@ -184,9 +180,9 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             parameters.Add(parameter);
             parameter = new SqlParameter("@InstituteId", SqlDbType.UniqueIdentifier) { Value = fileStream.InstituteId };
             parameters.Add(parameter);
-            parameter = new SqlParameter("@ContentType", SqlDbType.NVarChar, 500) { Value = fileStream.ContentType };
-            parameters.Add(parameter);
             parameter = new SqlParameter("@DateCreated", SqlDbType.DateTime) { Value = DateTime.Now };
+            parameters.Add(parameter);
+            parameter = new SqlParameter("@ContentType", SqlDbType.NVarChar, 500) { Value = fileStream.ContentType };
             parameters.Add(parameter);
 
             object transactionContext;
@@ -245,8 +241,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<SqlFileStream?> ReadFile(Guid guid)
         {
-            Log.Warning($"FileStreamRepository:ReadFile('{guid}')");
-
             List<SqlParameter> parameters = new()
             {
                 new SqlParameter("@Id", SqlDbType.UniqueIdentifier) { Value = guid }
@@ -257,25 +251,24 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                 parameters
                 );
 
-            return (values is not null)
-                ? new(guid)
-                {
-                    Name = (string)values[0],
-                    Title = (string)values[1],
-                    Source = (string)values[2],
-                    Description = (string)values[3],
-                    InstituteId = (Guid)values[4],
-                    ContentType = (string)values[5],
-                    DateCreated = (DateTime)values[6],
-                    Data = (byte[])values[7]
-                }
-                : null!;
+            if (values is null)
+                return null;
+
+            return new(guid)
+            {
+                Name = (string)values[0],
+                Title = (string)values[1],
+                Source = (string)values[2],
+                Description = (string)values[3],
+                InstituteId = (Guid)values[4],
+                ContentType = (string)values[5],
+                DateCreated = (DateTime)values[6],
+                Data = (byte[])values[7]
+            };
         }
 
         public bool Exists(Guid instituteId, string name)
         {
-            Log.Warning($"FileStreamRepository:Exists('{instituteId}', '{name}')");
-
             DataTable dt = ListData(
                 $"SELECT COUNT(*) AS RESULT FROM FileStreamTable WHERE [InstituteId] = '{instituteId}' AND [Name] = '{name}';"
                 );
@@ -289,8 +282,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<SqlFileStream?> ReadFile(Guid instituteId, string name)
         {
-            Log.Warning($"FileStreamRepository:ReadFile('{instituteId}', '{name}')");
-
             List<SqlParameter> parameters = new()
             {
                 new SqlParameter("@Name", SqlDbType.NVarChar, 250) { Value = name },
@@ -302,25 +293,24 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                 parameters
                 );
 
-            return (values is not null)
-                ? new((Guid)values[0])
-                {
-                    Name = name,
-                    Title = (string)values[1],
-                    Source = (string)values[2],
-                    Description = (string)values[3],
-                    ContentType = (string)values[4],
-                    InstituteId = instituteId,
-                    DateCreated = (DateTime)values[5],
-                    Data = (byte[])values[6]
-                }
-                : null!;
+            if (values is null)
+                return null;
+
+            return new((Guid)values[0])
+            {
+                Name = name,
+                Title = (string)values[1],
+                Source = (string)values[2],
+                Description = (string)values[3],
+                ContentType = (string)values[4],
+                InstituteId = instituteId,
+                DateCreated = (DateTime)values[5],
+                Data = (byte[])values[6]
+            };
         }
 
         public async Task<int> DeleteFile(Guid guid)
         {
-            Log.Warning($"FileStreamRepository:DeleteFile('{guid}')");
-
             await Task.CompletedTask;
 
             SqlCommand command;
@@ -344,10 +334,8 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             return rowsDeleted;
         }
 
-        public async Task<int> GetClassCountByInstitute(Guid instituteId)
+        public async Task<int> GetFileCountByInstitute(Guid instituteId)
         {
-            Log.Warning($"FileStreamRepository:GetClassCountByInstitute('{instituteId}')");
-
             await Task.CompletedTask;
 
             int count = 0;

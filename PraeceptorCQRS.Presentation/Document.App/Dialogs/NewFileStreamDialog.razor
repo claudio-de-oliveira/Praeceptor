@@ -19,24 +19,31 @@
                         <form>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Nome</label>
-                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="true">
+                                <input type="text" class="form-control" @bind-value="@fileModel.Name" id="recipient-name" contenteditable="true">
                             </div>
                             <div class="mb-3">
                                 <label for="recipient-title" class="col-form-label">Título</label>
-                                <input type="text" class="form-control" @bind-value="@title" id="recipient-title" contenteditable="true">
+                                <input type="text" class="form-control" @bind-value="@fileModel.Title" id="recipient-title" contenteditable="true">
                             </div>
                             <div class="mb-3">
                                 <label for="message-source" class="col-form-label">Fonte</label>
-                                <textarea type="text" class="form-control" @bind="@source" wrap="soft" id="message-source" rows="3" contenteditable="true"></textarea>
+                                <textarea type="text" class="form-control" @bind="@fileModel.Source" wrap="soft" id="message-source" rows="3" contenteditable="true"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="message-description" class="col-form-label">Descrição</label>
-                                <textarea type="text" class="form-control" @bind="@description" wrap="soft" id="message-description" rows="3" contenteditable="true"></textarea>
+                                <textarea type="text" class="form-control" @bind="@fileModel.Description" wrap="soft" id="message-description" rows="3" contenteditable="true"></textarea>
                             </div>
+
+                            <!-- Para selecão de múltiplos arquivos -->
+                            @*
                             @for (int i = 0; i < numberOfInputFiles; i++)
                             {
-                                <InputFile @key="i" OnChange="OnFileChanged" multiple style="@GetInputFileStyle(i)"></InputFile>
+                            <InputFile @key="i" OnChange="OnFileChanged" style="@GetInputFileStyle(i)"></InputFile>
                             }
+                            *@
+                            <!-- Para selecão de arquivo único -->
+                            <InputFile OnChange="OnFileChanged"></InputFile>
+
                             <div style="font-size:small;">
                                 <pre>@status</pre>
                             </div>
@@ -66,22 +73,22 @@
     [Inject]
     protected ToasterService? _toasterService { get; set; }
     [Parameter]
-    public EventCallback<List<FileModel>> OnClose { get; set; }
-
-    private string name = default!;
-    private string? title;
-    private string? source;
-    private string? description;
+    public EventCallback<FileModel?> OnClose { get; set; }
 
     private List<FileModel> fileList = new();
 
-    int numberOfInputFiles = 1;
+    private FileModel fileModel = new();
+
     string? status = "";
 
-    private string GetInputFileStyle(int index)
-    {
-        return index == numberOfInputFiles - 1 ? "" : "display: none";
-    }
+    #region Para selecão de múltiplos arquivos
+    // int numberOfInputFiles = 1;
+
+    // private string GetInputFileStyle(int index)
+    // {
+    //     return index == numberOfInputFiles - 1 ? "" : "display: none";
+    // }
+    #endregion
 
     private static async Task<byte[]> ReadTemplateFile(IBrowserFile file)
     {
@@ -105,51 +112,82 @@
         return data;
     }
 
+    #region Para selecão de múltiplos arquivos
+    // private async Task OnFileChanged(InputFileChangeEventArgs e)
+    // {
+    //     // Create a new InputFile component
+    //     numberOfInputFiles++;
+    // 
+    //     // Handle selected files
+    //     try
+    //     {
+    //         // checar e.File
+    //         foreach (var file in e.GetMultipleFiles(e.FileCount))
+    //         {
+    //             if (file.Size < 2 * 1024 * 1024)
+    //             {
+    //                 var buffer = await ReadTemplateFile(file);
+    // 
+    //                 string contentType;
+    // 
+    //                 contentType = (string.IsNullOrWhiteSpace(file.ContentType))
+    //                     ? $"unknow/{file.Name.Split('.')[^1]}"
+    //                     : contentType = file.ContentType;
+    // 
+    //                 fileModel.ContentType = contentType;
+    //                 fileModel.Data = buffer;
+    // 
+    //                 status += $"\nO arquivo {file.Name} foi selecionado.";
+    //             }
+    //             else
+    //             {
+    //                 status += $"\n*** ERRO: O arquivo {file.Name} é muito grande. Tamanho máximo é de 2MB.";
+    //             }
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         status += "\nERRO: " + ex.Message;
+    //     }
+    // 
+    //     await InvokeAsync(StateHasChanged);
+    // }
+    #endregion
+
+    #region Para selecão de arquivo único
     private async Task OnFileChanged(InputFileChangeEventArgs e)
     {
-        // Create a new InputFile component
-        numberOfInputFiles++;
-
         // Handle selected files
         try
         {
-            foreach (var file in e.GetMultipleFiles(e.FileCount))
+            if (e.File.Size < 2 * 1024 * 1024)
             {
-                if (file.Size < 2 * 1024 * 1024)
-                {
-                    var buffer = await ReadTemplateFile(file);
+                var buffer = await ReadTemplateFile(e.File);
 
-                    string contentType;
+                string contentType;
 
-                    contentType = (string.IsNullOrWhiteSpace(file.ContentType))
-                        ? $"unknow/{file.Name.Split('.')[^1]}"
-                        : contentType = file.ContentType;
+                contentType = (string.IsNullOrWhiteSpace(e.File.ContentType))
+                        ? $"unknow/{e.File.Name.Split('.')[^1]}"
+                        : contentType = e.File.ContentType;
 
-                    fileList.Add(new FileModel
-                        {
-                            Name = file.Name,
-                            Title = title,
-                            Source = source,
-                            Description = description,
-                            DateCreated = DateTime.Now,
-                            ContentType = contentType,
-                            Data = buffer
-                        });
-                    status += $"\nO arquivo {file.Name} foi selecionado.";
-                }
-                else
-                {
-                    status += $"\n*** ERRO: O arquivo {file.Name} é muito grande. Tamanho máximo é de 2MB.";
-                }
+                fileModel.ContentType = contentType;
+                fileModel.Data = buffer;
+
+                status += $"\nO arquivo {e.File.Name} foi selecionado.";
+            }
+            else
+            {
+                status += $"\nO arquivo {e.File.Name} é muito grande. Tamanho máximo é de 2MB.";
             }
         }
         catch (Exception ex)
         {
-            status += "\nERRO: " + ex.Message;
+            status += "\n" + ex.Message;
         }
 
         await InvokeAsync(StateHasChanged);
     }
+    #endregion
 
     private Task Cancel()
     {
@@ -158,6 +196,6 @@
 
     private Task Ok()
     {
-        return OnClose.InvokeAsync(fileList);
+        return OnClose.InvokeAsync(fileModel);
     }
 }

@@ -1,0 +1,333 @@
+﻿@page "/planner/details/2/{PlannerId:guid}"
+
+@using Ardalis.GuardClauses;
+@using Document.App.Components
+@using Microsoft.AspNetCore.Mvc;
+@using Newtonsoft.Json;
+@using PraeceptorCQRS.Contracts.Entities.Pea;
+
+@inherits AuthenticatedPage
+
+<section class="p-1">
+
+    <PageHeaderComponent Institute="@institute" Text=@($"PLANOS DE ENSINO E APRENDIZAGEM DE {className}")></PageHeaderComponent>
+
+    <article class="content px-4">
+
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-tab-ementa" data-bs-toggle="tab" data-bs-target="#nav-panel-ementa" type="button" role="tab" aria-controls="nav-content-ementa" aria-selected="true">
+                    Ementa
+                </button>
+                <button class="nav-link" id="nav-tab-objetivos" data-bs-toggle="tab" data-bs-target="#nav-panel-objetivos" type="button" role="tab" aria-controls="nav-content-objetivos" aria-selected="false">
+                    Objetivos
+                </button>
+                <button class="nav-link" id="nav-tab-unidade1" data-bs-toggle="tab" data-bs-target="#nav-panel-unidade1" type="button" role="tab" aria-controls="nav-content-unidade1" aria-selected="false">
+                    Unidade 1
+                </button>
+                <button class="nav-link" id="nav-tab-unidade2" data-bs-toggle="tab" data-bs-target="#nav-panel-unidade2" type="button" role="tab" aria-controls="nav-content-unidade2" aria-selected="false">
+                    Unidade 2
+                </button>
+                <button class="nav-link" id="nav-tab-procedimentos" data-bs-toggle="tab" data-bs-target="#nav-panel-procedimentos" type="button" role="tab" aria-controls="nav-content-procedimentos" aria-selected="false">
+                    Procedimentos
+                </button>
+                <button class="nav-link" id="nav-tab-avaliacao" data-bs-toggle="tab" data-bs-target="#nav-panel-avaliacao" type="button" role="tab" aria-controls="nav-content-avaliacao" aria-selected="false">
+                    Avaliação
+                </button>
+                <button class="nav-link" id="nav-tab-basica" data-bs-toggle="tab" data-bs-target="#nav-panel-basica" type="button" role="tab" aria-controls="nav-content-basica" aria-selected="false">
+                    Bibliografia Básica
+                </button>
+                <button class="nav-link" id="nav-tab-complementar" data-bs-toggle="tab" data-bs-target="#nav-panel-complementar" type="button" role="tab" aria-controls="nav-content-complementar" aria-selected="false">
+                    Bibliografia Complementar
+                </button>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-panel-ementa" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="my-4">
+                    <textarea type="text"
+                              class="form-control bg-light"
+                              id="ementaFormControlTextarea"
+                              rows="5"
+                              contenteditable="true"
+                              @onchange="@OnChangedEmenta">
+                        @plannerModel?.Ementa
+                    </textarea>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-objetivos" role="tabpanel" aria-labelledby="nav-tab-objetivos">
+                <div class="mt-4">
+                    <StringListComponent StringList="@objetivos" OnUpdateList="@OnUpdateObjectives" />
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-unidade1" role="tabpanel" aria-labelledby="nav-tab-unidade1">
+                <div class="mt-4">
+                    <UnitComponent Unidade="@unidade1" OnConceptKeyChanged="@Unidade1Changed"></UnitComponent>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-unidade2" role="tabpanel" aria-labelledby="nav-tab-unidade2">
+                <div class="mt-4">
+                    <UnitComponent Unidade="@unidade2" OnConceptKeyChanged="@Unidade2Changed"></UnitComponent>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-procedimentos" role="tabpanel" aria-labelledby="nav-tab-procedimentos">
+                <div class="mt-4">
+                    <textarea type="text"
+                              class="form-control bg-light"
+                              id="procedimentosFormControlTextarea"
+                              rows="5"
+                              contenteditable="true"
+                              @onchange="@OnChangedProcedimentos">
+                        @plannerModel?.Procedimentos
+                    </textarea>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-avaliacao" role="tabpanel" aria-labelledby="nav-tab-avaliacao">
+                <div class="mt-4">
+                    <textarea type="text"
+                              class="form-control bg-light"
+                              id="avaliacaoFormControlTextarea"
+                              rows="5"
+                              contenteditable="true"
+                              @onchange="@OnChangedAvaliacao">
+                        @plannerModel?.Avaliacao
+                    </textarea>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-basica" role="tabpanel" aria-labelledby="nav-tab-basica">
+                <div class="mt-4">
+                    <BibliographyComponent Bibliography="@basicBibliography" OnUpdadeBibliography="@OnUpdadeBasicBibliography"></BibliographyComponent>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-panel-complementar" role="tabpanel" aria-labelledby="nav-tab-complementar">
+                <div class="mt-4">
+                    <BibliographyComponent Bibliography="@complementarBibliography" OnUpdadeBibliography="@OnUpdadeComplementarBibliography"></BibliographyComponent>
+                </div>
+
+            </div>
+        </div>
+
+    </article>
+
+</section>
+
+@code {
+    [Inject]
+    protected IPlannerService PlannerService { get; set; } = default!;
+    [Parameter]
+    public Guid PlannerId { get; set; }
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
+
+    private InstituteModel? institute;
+    private PlannerModel? plannerModel;
+
+    private Dictionary<Guid, string> objetivos = new();
+    private Dictionary<Guid, BibItemValueModel> basicBibliography = new();
+    private Dictionary<Guid, BibItemValueModel> complementarBibliography = new();
+    private Dictionary<Guid, ConceptKeyModel> unidade1 = new();
+    private Dictionary<Guid, ConceptKeyModel> unidade2 = new();
+
+    private string className = "TESTE";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
+            Guard.Against.Null(institute);
+            plannerModel = new();
+
+            plannerModel = await PlannerService.GetPlannerFromId(PlannerId);
+            if (plannerModel is not null)
+            {
+                plannerModel.Objetivos.ForEach(o => objetivos.Add(Guid.NewGuid(), o));
+                plannerModel.BibliografiaBasica.ForEach(o => basicBibliography.Add(Guid.NewGuid(), o));
+                plannerModel.BibliografiaComplementar.ForEach(o => complementarBibliography.Add(Guid.NewGuid(), o));
+                plannerModel.Unidade1.ForEach(o => unidade1.Add(Guid.NewGuid(), o));
+                plannerModel.Unidade2.ForEach(o => unidade2.Add(Guid.NewGuid(), o));
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnFilterChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        string filter = (string)args.Value;
+        objetivos.Clear();
+        StateHasChanged();
+    }
+
+    private async Task<bool> UpdatePlanner()
+    {
+        Guard.Against.Null(plannerModel);
+        var response = await PlannerService.UpdatePlanner(
+            new UpdatePeaRequest(
+                plannerModel.Id,
+                PlannerModel.Encode(plannerModel),
+                _userName
+            )
+        );
+        if (response.IsSuccessStatusCode)
+        {
+            _toasterService?.AddToastSuccess("O plano foi atualizado com sucesso");
+            return true;
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+            return false;
+        }
+    }
+
+    private async Task OnUpdateObjectives(List<string> objectives)
+    {
+        Guard.Against.Null(plannerModel);
+
+        var previous = new List<string>();
+        previous.AddRange(plannerModel.Objetivos);
+
+        plannerModel?.Objetivos.RemoveAll(o => true);
+        plannerModel?.Objetivos.AddRange(objectives);
+
+        if (!await UpdatePlanner())
+        {
+            plannerModel?.Objetivos.RemoveAll(o => true);
+            if (previous is not null)
+                plannerModel?.Objetivos.AddRange(previous);
+        }
+    }
+
+    private async void OnChangedEmenta(ChangeEventArgs args)
+    {
+        Guard.Against.Null(plannerModel);
+
+        string? text = (string?)args.Value;
+        Guard.Against.Null(text);
+
+        if (string.Compare(text, plannerModel.Ementa) != 0)
+        {
+            var previous = plannerModel.Ementa;
+            plannerModel.Ementa = text;
+            if (!await UpdatePlanner())
+                plannerModel.Ementa = previous;
+        }
+    }
+
+    private async void OnChangedProcedimentos(ChangeEventArgs args)
+    {
+        Guard.Against.Null(plannerModel);
+
+        string? text = (string?)args.Value;
+        Guard.Against.Null(text);
+
+        if (string.Compare(text, plannerModel.Procedimentos) != 0)
+        {
+            var previous = plannerModel.Procedimentos;
+            plannerModel.Procedimentos = text;
+            if (!await UpdatePlanner())
+                plannerModel.Procedimentos = previous;
+        }
+    }
+
+    private async void OnChangedAvaliacao(ChangeEventArgs args)
+    {
+        Guard.Against.Null(plannerModel);
+
+        string? text = (string?)args.Value;
+        Guard.Against.Null(text);
+
+        if (string.Compare(text, plannerModel.Avaliacao) != 0)
+        {
+            var previous = plannerModel.Avaliacao;
+            plannerModel.Avaliacao = text;
+            if (!await UpdatePlanner())
+                plannerModel.Avaliacao = previous;
+        }
+    }
+
+    private async Task<List<ConceptKeyModel>> UnidadeChanged(Dictionary<Guid, ConceptKeyModel> unidade, Guid id, ConceptKeyModel? concept)
+    {
+        if (unidade.ContainsKey(id))
+        {
+            // ATUALIZAÇÃO OU REMOÇÃO DE CONTEÚDO
+            if (concept is not null)
+                unidade[id] = concept;
+            else
+                unidade.Remove(id);
+
+            return unidade.Values.ToList();
+        }
+        else if (concept is not null)
+        {
+            // CRIAÇÃO DE NOVO CONCEITO CHAVE
+            unidade.Add(id, concept);
+
+            return unidade.Values.ToList();
+        }
+        else
+        {
+            // EXCLUSÃO DE CONCEITO CHAVE
+            if (!await UpdatePlanner())
+                unidade.Remove(id);
+
+            return unidade.Values.ToList();
+        }
+    }
+
+    private async void Unidade1Changed(Guid id, ConceptKeyModel? concept)
+    {
+        Guard.Against.Null(plannerModel);
+
+        plannerModel.Unidade1 = new(await UnidadeChanged(unidade1, id, concept));
+        await UpdatePlanner();
+    }
+
+    private async void Unidade2Changed(Guid id, ConceptKeyModel? concept)
+    {
+        Guard.Against.Null(plannerModel);
+
+        plannerModel.Unidade2 = new(await UnidadeChanged(unidade2, id, concept));
+        await UpdatePlanner();
+    }
+
+    private async void OnUpdadeBasicBibliography(List<BibItemValueModel> bibItems)
+    {
+        Guard.Against.Null(plannerModel);
+
+        List<BibItemValueModel> previous = new();
+        previous.AddRange(plannerModel.BibliografiaBasica);
+
+        plannerModel.BibliografiaBasica.RemoveAll(o => true);
+        plannerModel.BibliografiaBasica.AddRange(bibItems);
+
+        if (!await UpdatePlanner())
+        {
+            plannerModel.BibliografiaBasica.RemoveAll(o => true);
+            plannerModel.BibliografiaBasica.AddRange(previous);
+        }
+    }
+    private async void OnUpdadeComplementarBibliography(List<BibItemValueModel> bibItems)
+    {
+        Guard.Against.Null(plannerModel);
+
+        List<BibItemValueModel> previous = new();
+        previous.AddRange(plannerModel.BibliografiaComplementar);
+
+        plannerModel.BibliografiaComplementar.RemoveAll(o => true);
+        plannerModel.BibliografiaComplementar.AddRange(bibItems);
+
+        if (!await UpdatePlanner())
+        {
+            plannerModel.BibliografiaComplementar.RemoveAll(o => true);
+            plannerModel.BibliografiaComplementar.AddRange(previous);
+        }
+    }
+}

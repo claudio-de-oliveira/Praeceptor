@@ -20,10 +20,10 @@ internal sealed class InstituteHasBeenCreatedDomainEventHandler
 
     public async Task Handle(InstituteHasBeenCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        // var institute = await _instituteRepository.GetInstituteById(notification.Id);
-        // 
-        // Guard.Against.Null(institute);
-        // 
+        var institute = await _instituteRepository.GetInstituteById(notification.Id);
+
+        Guard.Against.Null(institute);
+        //
         // Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
         // Console.WriteLine($"Foi criado o instituto {institute.Name}");
         // Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++");

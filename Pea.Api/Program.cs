@@ -1,5 +1,9 @@
 using Microsoft.IdentityModel.Tokens;
 
+using Pea.Api;
+
+using PraeceptorCQRS.Application;
+using PraeceptorCQRS.Infrastructure;
 using PraeceptorCQRS.Utilities;
 
 using Serilog;
@@ -24,6 +28,12 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
         reloadOnChange: false);
 });
 
+builder.Services
+    .AddPresentation()
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
+// .AddDataBase(builder.Configuration);
+
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
@@ -37,6 +47,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 #region Adds the authentication services to DI and configures Bearer as the default scheme.
+
 var Authority = builder.Configuration.GetSection("IdentityServer").GetSection("Authority").Value;
 var Audience = builder.Configuration.GetSection("Pea.API").GetSection("Audience").Value;
 
@@ -62,7 +73,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("DeletePolice", policy =>
           policy.RequireClaim("scope", "Pea.API.Delete", "Pea.API.FullAccess"));
 });
-#endregion
+
+#endregion Adds the authentication services to DI and configures Bearer as the default scheme.
 
 // Add services to the container.
 

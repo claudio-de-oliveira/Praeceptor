@@ -11,6 +11,7 @@
         /// Lado esquerdo das regras de produção
         /// </summary>
         private AbstractTAG[][] RHS { get; set; }
+
         /// <summary>
         /// Função de parsing LL(1)
         /// </summary>
@@ -23,6 +24,7 @@
         /// Tag concreto marcando o final do texto a ser compilado.
         /// </summary>
         protected abstract AbstractTAG EndMark { get; }
+
         /// <summary>
         /// Indica que o texto todo já foi analizado.
         /// </summary>
@@ -31,10 +33,13 @@
         /// <summary>
         /// Resultado de uma compilação correta ou nulo
         /// </summary>
-        public T? Result { get { return _environment.Result; } }
+        public T? Result
+        { get { return _environment.Result; } }
 
         private readonly AbstractEnvironment<T> _environment;
-        protected AbstractEnvironment<T> Environment { get { return _environment; } }
+
+        protected AbstractEnvironment<T> Environment
+        { get { return _environment; } }
 
         /// <summary>
         /// Construção do parser LL(1). O construtor da classe derivada deve invocar este construtor.
@@ -88,7 +93,7 @@
         }
 
         /// <summary>
-        /// Ajusta os atributos durante a reescrita de um não-terminal por uma de suas definições 
+        /// Ajusta os atributos durante a reescrita de um não-terminal por uma de suas definições
         /// </summary>
         /// <param name="stk">Pilha sintática contendo os tags a serem modificados</param>
         /// <param name="A">O não terminal a ser substituido</param>
@@ -97,7 +102,7 @@
 
         //////////////////////////////////////////////////////////////////////
         // O método de correção de erros apenas desconsidera símbolos e nunca
-        // insere novos símbolos na entrada. O símbolo descartado pode ser da 
+        // insere novos símbolos na entrada. O símbolo descartado pode ser da
         // entrada ou do otopo da pilha de parser.
 
         /// <summary>
@@ -105,7 +110,7 @@
         /// </summary>
         /// <param name="txt">Texto a ser "compilado"</param>
         /// <returns>Resultado de uma compilação correta ou nulo.</returns>
-        public object? Parse(string txt, string filename)
+        public object? Parse(string txt, string? filename)
         {
             //******************************************************
             //******************************************************
@@ -160,7 +165,7 @@
                             /////////////////////////////////////////////////////////
                             // Recuperação de erros:
                             // ---------------------------------------
-                            // * POP também ocorre quando o terminal no topo da pilha 
+                            // * POP também ocorre quando o terminal no topo da pilha
                             // * é diferente do próximo símbolo da entrada
 
                             if (filename is not null)

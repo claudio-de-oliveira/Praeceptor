@@ -1,0 +1,300 @@
+﻿@page "/planner/details/{ClassId:guid}"
+
+@using Ardalis.GuardClauses;
+@using Document.App.Components
+@using Document.App.DownloadFile.Interfaces;
+@using Microsoft.AspNetCore.Mvc;
+@using Newtonsoft.Json;
+@using PraeceptorCQRS.Contracts.Entities.Pea;
+
+@attribute [Authorize]
+
+@inherits AuthenticatedPage
+
+@inject NavigationManager navigationManager
+
+<section class="p-1">
+
+    <PageHeaderComponent Institute="@institute" Text=@($"PLANOS DE ENSINO E APRENDIZAGEM DE {className}")></PageHeaderComponent>
+
+    <article class="content px-4">
+
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+
+            <thead>
+                <tr>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Data de Criação" Filter="@createdFilter" Waiting="@waiting" OnTextChange="@OnCreatedChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Criador" Filter="@createdByFilter" Waiting="@waiting" OnTextChange="@OnCreatedByChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Data de Modificação" Filter="@lastModifiedFilter" Waiting="@waiting" OnTextChange="@OnLastModifiedByChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Modificador" Filter="@lastModifiedByFilter" Waiting="@waiting" OnTextChange="@OnLastModifiedByByChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="Created" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Criador" SortBy="CreatedBy" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Modificador" SortBy="LastModifiedBy" OnClick="@SortBy" />
+                    </td>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <!---->
+            </thead>
+
+            <tbody>
+                @foreach (var entity in plannerList)
+                {
+                    <tr>
+                        <td>@entity.Created</td>
+                        <td>@entity.CreatedBy</td>
+                        <td>@entity.LastModified</td>
+                        <td>@entity.LastModifiedBy</td>
+                        <td align="right" style="width: 80px;">
+                            <button type="button"
+                                    class="btn btn-sm btn-success"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Ver detalhes"
+                                    @onclick="@(() => Details(entity))"
+                                    style="border: none;">
+                                Detalhes
+                            </button>
+                        </td>
+                        <td align="right" style="width: 80px;">
+                            <button type="button"
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editChapterModal"
+                                    title="Editar"
+                                    @onclick="@(() => Print(entity))"
+                                    style="border: none;">
+                                Imprimir
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@waiting"
+                        title="Criar um novo plano de ensino"
+                        @onclick="() => OnCreate()">
+                    <i class="bi bi-plus-lg"></i>
+                    Novo plano de ensino
+                </button>
+            </div>
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+        </div>
+
+    </article>
+
+</section>
+
+@code {
+    [Parameter]
+    public Guid ClassId { get; set; }
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
+    [Inject]
+    protected IPlannerService PlannerService { get; set; } = default!;
+    [Inject]
+    private IClassService classService { get; set; } = default!;
+    [Inject]
+    private IDownloadFileService downloadFileService { get; set; } = default!;
+    [Inject]
+    private IWordService wordService { get; set; } = default!;
+
+    protected bool waiting = true;
+
+    private InstituteModel? institute;
+
+    private List<PlannerModel> plannerList = new();
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? createdFilter = "";
+    protected string? createdByFilter = "";
+    protected string? lastModifiedFilter = "";
+    protected string? lastModifiedByFilter = "";
+
+    private string className = "TESTE";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
+            Guard.Against.Null(institute);
+            await PageRequest(0);
+        }
+    }
+
+    protected async Task OnCreatedChanged(ChangeEventArgs args)
+    {
+        createdFilter = args.Value?.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnCreatedByChanged(ChangeEventArgs args)
+    {
+        createdByFilter = args.Value?.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedByChanged(ChangeEventArgs args)
+    {
+        lastModifiedFilter = args.Value?.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnLastModifiedByByChanged(ChangeEventArgs args)
+    {
+        lastModifiedByFilter = args.Value?.ToString();
+        await PageRequest(0);
+    }
+
+    protected async Task PageRequest(int page)
+    {
+        waiting = true;
+        var message = await PlannerService.GetPlannerPage(
+            new GetPeaPageRequest(
+                ClassId,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                createdFilter,
+                createdByFilter,
+                lastModifiedFilter,
+                lastModifiedByFilter
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfPlannerModel>(content);
+            Guard.Against.Null(tmp);
+            plannerList = new();
+            tmp.Entities.ForEach(o => plannerList.Add(o));
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+
+            plannerList.ForEach(o => Console.WriteLine(o.Id));
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
+    }
+
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+    protected virtual void OnCreate()
+    {
+        StateHasChanged();
+    }
+
+    protected void Details(PlannerModel entity)
+    {
+        Console.WriteLine(entity?.Id);
+        navigationManager.NavigateTo($"/planner/details/2/{entity?.Id}");
+    }
+
+    protected async void Print(PlannerModel entity)
+    {
+        Stream stream = default!;
+        FileStream fs = default!;
+
+        waiting = true;
+
+        StateHasChanged();
+
+        try
+        {
+            stream = await wordService.ConvertPeaToDoc(entity.Id);
+
+            if (stream is not null)
+            {
+                string filename = $"document.docx";
+
+                byte[] bytes = new byte[stream.Length];
+
+                stream.Read(bytes, 0, (int)stream.Length);
+
+                await downloadFileService.DownloadFileAsync(filename, bytes);
+                string message = $"Criado arquivo '{filename}'";
+                _toasterService?.AddToastError(message);
+            }
+            else
+            {
+                string message = "Erro sintático! O arquivo não foi criado.";
+                _toasterService?.AddToastError(message);
+            }
+        }
+        catch (Exception ex)
+        {
+            _toasterService?.AddToastError(ex.Message);
+        }
+        finally
+        {
+            if (fs != default)
+            {
+                fs.Close();
+                fs.Dispose();
+            }
+            if (stream != default)
+                stream.Dispose();
+
+            waiting = false;
+        }
+    }
+}

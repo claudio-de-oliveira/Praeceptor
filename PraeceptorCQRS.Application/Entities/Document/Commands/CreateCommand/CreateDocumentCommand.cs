@@ -1,5 +1,7 @@
 using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.Document.Common;
 using PraeceptorCQRS.Domain.Values;
 
@@ -12,4 +14,3 @@ namespace PraeceptorCQRS.Application.Entities.Document.Commands
         string? CreatedBy
         ) : IRequest<ErrorOr<DocumentResult>>;
 }
-

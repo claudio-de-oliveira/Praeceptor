@@ -11,8 +11,8 @@ namespace Document.App.Interfaces
         Task<FileModel?> GetFileStreamById(Guid id);
         Task<bool> ExistFileStream(Guid instituteId, string code);
         Task<FileModel?> GetFileStreamByCode(Guid instituteId, string code);
-        Task<HttpResponseMessage> GetFileStreamPage(GetFileStreamPageRequest request);
-        Task<HttpResponseMessage> CreateFileStream(CreateSqlFileStreamRequest request);
+        Task<HttpResponseMessage> GetFileStreamPage(GetFilePageRequest request);
+        Task<HttpResponseMessage> CreateFileStream(CreateFileRequest request);
         Task<HttpResponseMessage> DeleteFileStream(Guid id);
     }
 }

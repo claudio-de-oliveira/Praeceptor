@@ -15,10 +15,19 @@ namespace PraeceptorCQRS.Infrastructure.Configurations
 
             modelBuilder
                 .HasKey(x => x.Id);
+
+            modelBuilder
+                .HasOne(d => d.Institute)
+                .WithMany(p => p.Classes);
             modelBuilder
                 .HasMany(d => d.Components)
-                .WithOne(p => p.Class)
-                .OnDelete(DeleteBehavior.NoAction);
+                .WithOne(p => p.Class);
+            modelBuilder
+                .HasOne(d => d.Type)
+                .WithMany(p => p.Classes);
+            modelBuilder
+                .HasMany(d => d.Peas)
+                .WithOne(p => p.Class);
         }
     }
 }

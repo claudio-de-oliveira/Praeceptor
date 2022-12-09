@@ -10,7 +10,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 using PraeceptorCQRS.Application.Entities.FileStream.Commands;
 using PraeceptorCQRS.Application.Entities.FileStream.Common;
@@ -57,10 +56,10 @@ namespace FileStream.Api.Controllers
                 id
                 );
 
-            ErrorOr<SqlFileStreamResult> result = await _mediator.Send(query);
+            ErrorOr<PraeceptorCQRS.Application.Entities.FileStream.Common.FileResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<SqlFileStreamResponse>(result)),
+                result => Ok(_mapper.Map<FileResponse>(result)),
                 errors => Problem(errors)
                 );
         }
@@ -91,10 +90,10 @@ namespace FileStream.Api.Controllers
                 code
                 );
 
-            ErrorOr<SqlFileStreamResult> result = await _mediator.Send(query);
+            ErrorOr<PraeceptorCQRS.Application.Entities.FileStream.Common.FileResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<SqlFileStreamResponse>(result)),
+                result => Ok(_mapper.Map<FileResponse>(result)),
                 errors => Problem(errors)
                 );
         }
@@ -102,14 +101,13 @@ namespace FileStream.Api.Controllers
         [HttpPost("create")]
         [Authorize("CreatePolice")]
         public async Task<IActionResult> CreateFileStream(
-            [FromBody] CreateSqlFileStreamRequest request,
-            [FromServices] IValidator<CreateSqlFileStreamCommand> validator
+            [FromBody] CreateFileRequest request,
+            [FromServices] IValidator<CreateFileCommand> validator
             )
         {
-            var command = _mapper.Map<CreateSqlFileStreamCommand>(request);
+            var command = _mapper.Map<CreateFileCommand>(request);
 
             var validatinResult = await validator.ValidateAsync(command);
-
             if (!validatinResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -125,11 +123,11 @@ namespace FileStream.Api.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
 
-            ErrorOr<SqlFileStreamResult> result = await _mediator.Send(command);
+            ErrorOr<PraeceptorCQRS.Application.Entities.FileStream.Common.FileResult> result = await _mediator.Send(command);
 
             return result.Match(
                 // Use CreatedAtAction to return 201 CreatedAtAction
-                result => CreatedAtAction(nameof(CreateFileStream), _mapper.Map<SqlFileStreamResponse>(result)),
+                result => CreatedAtAction(nameof(CreateFileStream), _mapper.Map<FileResponse>(result)),
                 errors => Problem(errors)
                 );
         }
@@ -140,7 +138,7 @@ namespace FileStream.Api.Controllers
         {
             var command = new DeleteSqlFileStreamCommand(id);
 
-            ErrorOr<SqlFileStreamResult> result = await _mediator.Send(command);
+            ErrorOr<PraeceptorCQRS.Application.Entities.FileStream.Common.FileResult> result = await _mediator.Send(command);
 
             return result.Match(
                 result => NoContent(),
@@ -150,14 +148,14 @@ namespace FileStream.Api.Controllers
 
         [HttpPost("get/page")]
         [Authorize("ReadPolice")]
-        public async Task<IActionResult> GetFileStreamPage([FromBody] GetFileStreamPageRequest request)
+        public async Task<IActionResult> GetFileStreamPage([FromBody] GetFilePageRequest request)
         {
-            var query = _mapper.Map<GetSqlFileStreamPageQuery>(request);
+            var query = _mapper.Map<GetFilePageQuery>(request);
 
-            ErrorOr<SqlFileStreamPageResult> result = await _mediator.Send(query);
+            ErrorOr<FilePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<SqlFileStreamResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<FileResponse>>(result)),
                 errors => Problem(errors)
                 );
         }

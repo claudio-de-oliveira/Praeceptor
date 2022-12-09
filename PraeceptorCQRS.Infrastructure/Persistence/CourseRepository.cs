@@ -14,19 +14,25 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<Course?> CreateCourse(Course entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<Course, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Course?> GetCourseById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<Course?> GetCourseByCode(string code)
             => await ReadDefault(o => string.Compare(o.Code, code, true) == 0);
+
         public async Task<int> GetCoursesCountByInstitute(Guid instituteId)
             => await Count(o => o.InstituteId == instituteId);
+
         public async Task UpdateCourse(Course entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task DeleteCourse(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
@@ -263,11 +269,12 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                 "AC" => Global.SortList(list, x => x.AC, ascending),
                 "Seasons" => Global.SortList(list, x => x.NumberOfSeasons, ascending),
                 "MinimumWorkload" => Global.SortList(list, x => x.MinimumWorkload, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };
         }
     }
 }
-

@@ -8,6 +8,7 @@
 @using Document.App.Components
 @using Document.App.Components.Toaster
 @using Document.App.Dialogs
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 @using PraeceptorCQRS.Contracts.Entities.DocumentTemplate
 @using PraeceptorCQRS.Contracts.Entities.SqlFileStream
@@ -40,7 +41,6 @@
                         <ClearableInputTextComponent Filter="@descriptionFilter" Waiting="@waiting" OnTextChange="@OnDescriptionChanged"></ClearableInputTextComponent>
                     </td>
                     <td align="center"></td>
-                    <td align="center"></td>
                 </tr>
                 <!---->
                 <tr>
@@ -59,7 +59,6 @@
                     <td align="center">
                         <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="DateCreated" OnClick="@SortBy" />
                     </td>
-                    <th></th>
                 </tr>
                 <!---->
             </thead>
@@ -80,19 +79,6 @@
                             <div style="font-size: smaller">@TextToDisplay(entity.Description)</div>
                         </td>
                         <td align="center" style="font-size: smaller">@Global.ConvertDateTimeToString(entity.DateCreated)</td>
-                        <td align="center">
-                            <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editChapterModal"
-                                title="Editar"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none; margin:auto;">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </td>
                     </tr>
                 }
             </tbody>
@@ -214,7 +200,7 @@
     {
         waiting = true;
         var message = await fileStreamService.GetFileStreamPage(
-            new GetFileStreamPageRequest(
+            new GetFilePageRequest(
                 _userInstituteId,
                 page,
                 pageSize,
@@ -240,50 +226,35 @@
             nextPage = tmp.NextPage;
             numberOfPages = tmp.NumberOfPages;
         }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
         waiting = false;
 
         StateHasChanged();
     }
 
-    protected virtual void Edit(FileModel entity)
-    {
-        created = false;
-
-        entitySelected = entity;
-        previousName = entitySelected.Name;
-        previousTitle = entitySelected.Title;
-        previousSource = entitySelected.Source;
-        previousDescription = entitySelected.Description;
-        EditEntityDialogIsOpen = true;
-        StateHasChanged();
-    }
-
     protected virtual void OnCreate()
     {
-        created = true;
-
-        entitySelected = new FileModel();
-        previousName = "";
-        previousTitle = "";
-        previousSource = "";
-        previousDescription = "";
         EditEntityDialogIsOpen = true;
         StateHasChanged();
     }
 
-    protected virtual async Task OnEditFileModelDialogClose(List<FileModel> fileList)
+    protected virtual async Task OnEditFileModelDialogClose(FileModel? model)
     {
-        if (fileList is null)
-            return;
-
-        foreach (var model in fileList)
+        if (model is not null)
         {
             waiting = true;
 
             HttpResponseMessage response;
 
             response = await fileStreamService.CreateFileStream(
-                new CreateSqlFileStreamRequest(
+                new CreateFileRequest(
                     model.Name,
                     model.Title,
                     model.Source,
@@ -306,9 +277,13 @@
             }
             else
             {
-                Guard.Against.Null(entitySelected);
                 var result = await response.Content.ReadAsStringAsync();
-                _toasterService?.AddToastError(result);
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
+                Guard.Against.Null(entitySelected);
                 entitySelected.Name = previousName;
                 entitySelected.Title = previousTitle;
                 entitySelected.Source = previousSource;

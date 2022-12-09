@@ -1,14 +1,11 @@
 using Ardalis.GuardClauses;
 
-using MediatR;
-
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using PraeceptorCQRS.Application.Abstractions;
 using PraeceptorCQRS.Application.Authentication;
 using PraeceptorCQRS.Application.Email;
 using PraeceptorCQRS.Application.Persistence;
@@ -18,7 +15,6 @@ using PraeceptorCQRS.Infrastructure.Authentication;
 using PraeceptorCQRS.Infrastructure.BackgroundJobs;
 using PraeceptorCQRS.Infrastructure.Data;
 using PraeceptorCQRS.Infrastructure.Email;
-using PraeceptorCQRS.Infrastructure.Idempotence;
 using PraeceptorCQRS.Infrastructure.Interceptors;
 using PraeceptorCQRS.Infrastructure.Options;
 using PraeceptorCQRS.Infrastructure.Persistence;
@@ -51,10 +47,12 @@ namespace PraeceptorCQRS.Infrastructure
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IDocumentRepository, DocumentRepository>();
             services.AddScoped<IFileStreamRepository, FileStreamRepository>(o => new FileStreamRepository(configuration.GetConnectionString("FileStreamConnection")));
+            services.AddScoped<IDocxStreamRepository, DocxStreamRepository>(o => new DocxStreamRepository(configuration.GetConnectionString("DocxStreamConnection")));
             services.AddScoped<ISubSubSectionRepository, SubSubSectionRepository>();
             services.AddScoped<ISubSectionRepository, SubSectionRepository>();
             services.AddScoped<ISectionRepository, SectionRepository>();
             services.AddScoped<IChapterRepository, ChapterRepository>();
+            services.AddScoped<IPreceptorRoleTypeRepository, PreceptorRoleTypeRepository>();
             services.AddScoped<IPreceptorDegreeTypeRepository, PreceptorDegreeTypeRepository>();
             services.AddScoped<IPreceptorRegimeTypeRepository, PreceptorRegimeTypeRepository>();
             services.AddScoped<IClassTypeRepository, ClassTypeRepository>();
@@ -65,6 +63,8 @@ namespace PraeceptorCQRS.Infrastructure
             services.AddScoped<IHoldingRepository, HoldingRepository>();
             services.AddScoped<IListRepository, ListRepository>();
             services.AddScoped<IPeaRepository, PeaRepository>();
+            services.AddScoped<ISocialBodyRepository, SocialBodyRepository>();
+            services.AddScoped<ISimpleTableRepository, SimpleTableRepository>();
 
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<IGroupValueRepository, GroupValueRepository>();
@@ -87,7 +87,6 @@ namespace PraeceptorCQRS.Infrastructure
                 o.MultipartBodyLengthLimit = int.MaxValue;
                 o.MemoryBufferThreshold = int.MaxValue;
             });
-
 
             services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
 
@@ -172,7 +171,6 @@ namespace PraeceptorCQRS.Infrastructure
             return services;
         }
 
-
         private static void InstallSerilog(ConfigurationManager _)
         {
             Log.Logger = new LoggerConfiguration()
@@ -189,4 +187,3 @@ namespace PraeceptorCQRS.Infrastructure
         }
     }
 }
-

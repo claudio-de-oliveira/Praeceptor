@@ -1,5 +1,7 @@
 ﻿using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.Variable.Common;
 using PraeceptorCQRS.Application.Persistence;
 
@@ -20,7 +22,7 @@ namespace PraeceptorCQRS.Application.Entities.Variable.Queries
             if (cancellationToken.IsCancellationRequested)
                 return Domain.Errors.Error.Variable.Canceled;
 
-            var exist = await _repository.Exists(o => o.GroupId == request.GroupId && string.Compare(o.Code, request.Code, true) == 0);
+            var exist = await _repository.Exists(o => o.GroupId == request.GroupId && o.Code == request.Code);
 
             return new VariableExistResult(exist);
         }

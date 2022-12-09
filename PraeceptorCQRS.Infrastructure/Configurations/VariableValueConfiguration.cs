@@ -15,6 +15,14 @@ namespace PraeceptorCQRS.Infrastructure.Configurations
 
             modelBuilder
                 .HasKey(x => x.Id);
+
+            modelBuilder
+                .HasOne(d => d.GroupValue)
+                .WithMany(p => p.VariableValues)
+                .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.NoAction);
+            modelBuilder
+                .HasOne(d => d.Variable)
+                .WithMany(p => p.Values);
         }
     }
 }

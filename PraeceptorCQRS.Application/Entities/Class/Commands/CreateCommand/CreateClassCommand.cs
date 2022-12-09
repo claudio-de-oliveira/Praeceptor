@@ -3,7 +3,6 @@ using ErrorOr;
 using MediatR;
 
 using PraeceptorCQRS.Application.Entities.Class.Common;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Application.Entities.Class.Commands
 {
@@ -14,7 +13,7 @@ namespace PraeceptorCQRS.Application.Entities.Class.Commands
         int Theory,
         int PR,
         Guid InstituteId,
-        Guid TypeId
+        Guid TypeId,
+        bool HasPlanner
         ) : IRequest<ErrorOr<ClassResult>>;
 }
-

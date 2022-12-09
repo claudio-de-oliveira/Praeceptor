@@ -1,5 +1,7 @@
 ﻿using ErrorOr;
+
 using FluentValidation;
+
 using MediatR;
 
 namespace PraeceptorCQRS.Application.Behaviors
@@ -18,8 +20,8 @@ namespace PraeceptorCQRS.Application.Behaviors
 
         public async Task<TResponse> Handle(
             TRequest request,
-            CancellationToken cancellationToken,
-            RequestHandlerDelegate<TResponse> next
+            RequestHandlerDelegate<TResponse> next,
+            CancellationToken cancellationToken
             )
         {
             if (_validator is null)

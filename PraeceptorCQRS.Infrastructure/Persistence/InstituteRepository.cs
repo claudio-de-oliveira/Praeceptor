@@ -14,19 +14,25 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<Institute?> CreateInstitute(Institute entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<Institute, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Institute?> GetInstituteById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<Institute?> GetInstituteByCode(string code)
             => await ReadDefault(o => string.Compare(o.Acronym, code, true) == 0);
+
         public async Task<int> GetInstitutesCountByHolding(Guid holdingId)
             => await Count(o => o.HoldingId == holdingId);
+
         public async Task UpdateInstitute(Institute entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task DeleteInstitute(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
@@ -212,11 +218,12 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                 "Acronym" => Global.SortList(list, x => x.Acronym, ascending),
                 "Name" => Global.SortList(list, x => x.Name, ascending),
                 "Address" => Global.SortList(list, x => x.Address, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };
         }
     }
 }
-

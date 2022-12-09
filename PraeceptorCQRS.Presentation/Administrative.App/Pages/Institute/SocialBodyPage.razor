@@ -1,0 +1,550 @@
+﻿@page "/course/preceptors/{InstituteId:guid}/{courseId:guid}"
+
+@inject IJSRuntime JsRuntime
+
+@using Administrative.App.Components
+@using Administrative.App.Dialogs
+@using Administrative.App.Interfaces
+@using Administrative.App.Models
+@using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType
+@using PraeceptorCQRS.Contracts.Entities.PreceptorRegimeType
+@using PraeceptorCQRS.Contracts.Entities.PreceptorRoleType
+@using PraeceptorCQRS.Contracts.Entities.SocialBody
+
+@inherits AuthenticatedPage
+
+<PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando o corpo social do curso {course?.Name}")" />
+
+<!-- Modal: Editar entidade -->
+@if (EditSocialBodyEntryIsOpen)
+{
+    <EditSocialBodyEntryDialog Create="@create" InstituteId="@instituteId" Entry="@selectedEntry" Roles="@optionsRole" OnClose="@OnEditOrCreateEndDialog" />
+}
+
+<ConfirmSocialBodyEntryExclusion @ref="DeleteConfirmation" ConfirmationChanged="OnDeleteRole"
+                                 ConfirmationMessage="Tem certeza que quer excluir o papel do docente" />
+
+<section class="p-1">
+    <article class="content px-4">
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+            <thead>
+                <tr>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Código" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Nome" Filter="@nameFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <SelectTextComponent Waiting="@waiting" Options="@optionsDegree" OnSelectedChange="OnDegreeChanged" OnTextChange="OnDegreeChanged"></SelectTextComponent>
+                    </td>
+                    <td align="center">
+                        <SelectTextComponent Waiting="@waiting" Options="@optionsRegime" OnSelectedChange="OnRegimeChanged" OnTextChange="OnRegimeChanged"></SelectTextComponent>
+                    </td>
+                    <td align="center">
+                        <SelectTextComponent Waiting="@waiting" Options="@optionsRole" OnSelectedChange="OnRoleChanged" OnTextChange="OnRoleChanged"></SelectTextComponent>
+                    </td>
+                    @*
+                    <td>
+                    </td>
+                    *@
+                    <td>
+                    </td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Código" SortBy="Code" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Nome" SortBy="Name" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Titulação" SortBy="Degree" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Regime" SortBy="Regime" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Contribuição" SortBy="Role" OnClick="@SortBy" />
+                    </td>
+                    @*
+                    <td>
+                        Editar
+                    </td>
+                    *@
+                    <td>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entity in socialBodyEntryList)
+                {
+                    <tr>
+                        <td align="center"><div style="font-size: smaller">@entity.Preceptor.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Preceptor.Name</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.Preceptor.DegreeType.Code</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.Preceptor.RegimeType.Code</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.Role.Code</div></td>
+                        @*
+                        <td align="center">
+                            <button type="button"
+                                class="btn btn-sm btn-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Excluir"
+                                disabled="@false"
+                                @onclick="@(() => EditPreceptorRole(entity))"
+                                style="border: none;">
+                                Editar
+                            </button>
+                        </td>
+                                    <button type="button"
+                                        class="btn btn-sm btn-danger"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Excluir valor selecionado"
+                                        style="margin:0;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
+                                        disabled=@(group.GroupValueSelectedId == Guid.Empty)>
+                                        Excluir Valor
+                                    </button>
+                    *@
+
+                        <td align="right" style="width: 80px;">
+                            <button type="button"
+                                    class="btn btn-sm btn-danger"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Excluir docente"
+                                    data-bs-toggle="modal"
+                                    disabled="@(!CanRemove())"
+                                    data-bs-target="#@($"A{entity.Preceptor.Id.ToString("N")}-{entity.Role.Id.ToString("N")}")"
+                                    @onclick="@(() => RemoveRoleFromCourse(entity))"
+                                    style="margin:0; border: none;">
+                                Remover
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@(waiting || !CanCreate())"
+                        title="Incluir docente ao curso"
+                        @onclick="() => OnIncludePreceptorOnCourse()">
+                    <i class="bi bi-plus-slash-minus"></i>
+                    Incluir docente ao curso
+                </button>
+            </div>
+        </div>
+    </article>
+</section>
+
+@code {
+    [Parameter]
+    public Guid InstituteId { get; set; } = default!;
+    [Parameter]
+    public Guid CourseId { get; set; } = default!;
+    [Inject]
+    private ICourseService courseService { get; set; } = default!;
+    [Inject]
+    private IInstituteService instituteBodyService { get; set; } = default!;
+    [Inject]
+    private ISocialBodyService socialBodyService { get; set; } = default!;
+    [Inject]
+    private IPreceptorDegreeService preceptorDegreeService { get; set; } = default!;
+    [Inject]
+    private IPreceptorRegimeService preceptorRegimeService { get; set; } = default!;
+    [Inject]
+    private IPreceptorRoleService preceptorRoleService { get; set; } = default!;
+
+    private Guid instituteId = Guid.Empty;
+    private Guid courseId = Guid.Empty;
+
+    protected bool waiting = true;
+
+    private readonly int pageSize = int.MaxValue;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? codeFilter = "";
+    protected string? nameFilter = "";
+    protected Guid? degreeFilter = default!;
+    protected Guid? regimeFilter = default!;
+    protected Guid? roleFilter = default!;
+
+    private List<SocialBodyEntryModel> socialBodyEntryList = new();
+    private SocialBodyEntryModel? selectedEntry;
+
+    private Dictionary<Guid, string> optionsDegree = new();
+    private Dictionary<Guid, string> optionsRegime = new();
+    private Dictionary<Guid, string> optionsRole = new();
+
+    private InstituteModel? institute;
+    private CourseModel? course;
+
+    private bool EditSocialBodyEntryIsOpen = false;
+    // private bool ConfirmationIsOpen = false;
+    private bool create = true;
+
+    protected ConfirmSocialBodyEntryExclusion DeleteConfirmation { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        instituteId = InstituteId;
+        courseId = CourseId;
+        base.OnInitialized();
+    }
+
+    public void Test(bool test)
+    {
+        Console.WriteLine(test);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            course = await courseService.GetCourseById(courseId);
+            institute = await instituteBodyService.GetInstituteById(instituteId);
+
+            await GetAllPreceptorDegreeType();
+            await GetAllPreceptorRegimeType();
+            await GetAllPreceptorRoleType();
+
+            await PageRequest(currentPage);
+        }
+    }
+
+    private bool CanRemove()
+    {
+        return true;
+    }
+
+    private async Task EditPreceptorRole(SocialBodyEntryModel model)
+    {
+        create = false;
+        selectedEntry = new SocialBodyEntryModel {
+            Course = model.Course,
+            Preceptor = model.Preceptor,
+            Role = model.Role
+        };
+        EditSocialBodyEntryIsOpen = true;
+        await Task.CompletedTask;
+        StateHasChanged();
+    }
+
+    private async Task OnIncludePreceptorOnCourse()
+    {
+        create = true;
+        selectedEntry = new SocialBodyEntryModel {
+            Course = course!,
+            Preceptor = null!,
+            Role = null!
+        };
+        EditSocialBodyEntryIsOpen = true;
+        await Task.CompletedTask;
+        StateHasChanged();
+    }
+
+    private async Task OnEditOrCreateEndDialog(SocialBodyEntryModel? model)
+    {
+        if (model is null)
+            return;
+
+        if (create)
+        {
+            var response = await socialBodyService.CreateSocialBodyEntry(
+                new CreateSocialBodyEntryRequest(
+                    model.Course.Id,
+                    model.Preceptor.Id,
+                    model.Role.Id
+                )
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                _toasterService?.AddToastSuccess("As modificações foram salvas.");
+
+                var entryCreated = await socialBodyService.GetSocialBodyEntry(
+                    model.Course.Id,
+                    model.Preceptor.Id,
+                    model.Role.Id
+                );
+                Guard.Against.Null(entryCreated);
+                socialBodyEntryList.Add(entryCreated);
+            }
+            else
+            { 
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+            }
+        }
+        else
+        { 
+            // NÃO SERÁ IMPLEMENTADO - É NECESSÁRIO EXCLUIR FUNÇÃO ATUAL E INCLUIR FUNÇÃO NOVA
+        }
+
+        EditSocialBodyEntryIsOpen = false;
+    }
+
+    private async Task GetAllPreceptorDegreeType()
+    {
+        waiting = true;
+        var message = await preceptorDegreeService.PostPage(
+            new GetPreceptorDegreeTypePageRequest(
+                instituteId,
+                0,
+                int.MaxValue,
+                sort,
+                ascendingSort,
+                "",
+                "",
+                "",
+                "",
+                ""
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<PageOfPreceptorDegreeTypeModel>(await message.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.Entities.ForEach(o => optionsDegree.Add(o.Id, o.Code));
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+    }
+
+    private async Task GetAllPreceptorRegimeType()
+    {
+        waiting = true;
+        var message = await preceptorRegimeService.PostPage(
+            new GetPreceptorRegimeTypePageRequest(
+                instituteId,
+                0,
+                int.MaxValue,
+                sort,
+                ascendingSort,
+                "",
+                "",
+                "",
+                "",
+                ""
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<PageOfPreceptorRegimeTypeModel>(await message.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            tmp.Entities.ForEach(o => optionsRegime.Add(o.Id, o.Code));
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+    }
+
+    private async Task GetAllPreceptorRoleType()
+    {
+        waiting = true;
+        var message = await preceptorRoleService.PostPage(
+            new GetPreceptorRoleTypePageRequest(
+                instituteId,
+                0,
+                int.MaxValue,
+                sort,
+                ascendingSort,
+                "",
+                "",
+                "",
+                "",
+                ""
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var tmp = JsonConvert.DeserializeObject<PageOfPreceptorRoleTypeModel>(await message.Content.ReadAsStringAsync());
+            Guard.Against.Null(tmp);
+            // roles = tmp.Entities;
+            tmp.Entities.ForEach(o => optionsRole.Add(o.Id, o.Code));
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+    }
+
+    protected async Task PageRequest(int page)
+    {
+        waiting = true;
+        var message = await socialBodyService.GetSocialBodyEntriesPage(
+            new GetSocialBodyPageRequest(
+                courseId,
+                0,
+                pageSize,
+                sort,
+                ascendingSort,
+                codeFilter,
+                nameFilter,
+                degreeFilter,
+                regimeFilter,
+                roleFilter
+            )
+        );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfSocialBodyEntryModel>(content);
+            Guard.Against.Null(tmp);
+            socialBodyEntryList = tmp.Entities.Select(o => (SocialBodyEntryModel)o).ToList();
+
+            foreach (var entry in socialBodyEntryList)
+                entry.Course = course!;
+
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+#pragma warning disable CS8602
+    protected async Task OnCodeChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        codeFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnNameChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        nameFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnDegreeChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        degreeFilter = ConvertStringToGuid(args.Value.ToString());
+        await PageRequest(0);
+    }
+    protected async Task OnRegimeChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        regimeFilter = ConvertStringToGuid(args.Value.ToString());
+        await PageRequest(0);
+    }
+    protected async Task OnRoleChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        roleFilter = ConvertStringToGuid(args.Value.ToString());
+        await PageRequest(0);
+    }
+#pragma warning restore CS8602
+
+    private Guid ConvertStringToGuid(string? str)
+    {
+        Guid guid;
+
+        if (string.IsNullOrWhiteSpace(str))
+            return Guid.Empty;
+        if (Guid.TryParse(str, out guid))
+            return guid;
+        else
+            return Guid.Empty;
+    }
+
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+    private void RemoveRoleFromCourse(SocialBodyEntryModel model)
+    {
+        DeleteConfirmation.Show(model);
+        StateHasChanged();
+    }
+
+    protected async Task OnDeleteRole(SocialBodyEntryModel? entry)
+    {
+        if(entry is not null)
+        {
+            var response = await socialBodyService.DeleteSocialBodyEntry(entry.Course.Id, entry.Preceptor.Id, entry.Role.Id);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var index = socialBodyEntryList.FindIndex(o =>
+                    o.Course.Id == entry.Course.Id &&
+                    o.Preceptor.Id == entry.Preceptor.Id &&
+                    o.Role.Id == entry.Role.Id
+                );
+                socialBodyEntryList.RemoveAt(index);
+                _toasterService?.AddToastSuccess("A função foi excluída com sucesso.");
+                StateHasChanged();
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+            }
+        }
+    }
+}

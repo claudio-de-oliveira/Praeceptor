@@ -4,6 +4,7 @@
 @using Administrative.App.Interfaces
 @using Administrative.App.Models
 @using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 @using PraeceptorCQRS.Contracts.Entities.Course
 @using PraeceptorCQRS.Contracts.Entities.Preceptor
@@ -24,7 +25,7 @@
 
 <section class="p-1">
     <article class="content px-4">
-        <table class='table'>
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
             <thead>
                 <tr>
                     <td align="center">
@@ -37,10 +38,10 @@
                         <ClearableInputTextComponent Placeholder="Filtrar por Email" Filter="@emailFilter" Waiting="@waiting" OnTextChange="@OnEmailChanged"></ClearableInputTextComponent>
                     </td>
                     <td align="center">
-                        <SelectTextComponent Waiting="@waiting" Options="@degreeList" OnTextChange="OnDegreeChanged"></SelectTextComponent>
+                        <SelectTextComponent Waiting="@waiting" Options="@degreeList" OnSelectedChange="OnDegreeChanged" OnTextChange="OnDegreeChanged"></SelectTextComponent>
                     </td>
                     <td align="center">
-                        <SelectTextComponent Waiting="@waiting" Options="@regimeList" OnTextChange="OnRegimeChanged"></SelectTextComponent>
+                        <SelectTextComponent Waiting="@waiting" Options="@regimeList" OnSelectedChange="OnRegimeChanged" OnTextChange="OnRegimeChanged"></SelectTextComponent>
                     </td>
                     <td align="center"></td>
                     <td align="center"></td>
@@ -71,35 +72,35 @@
                 @foreach (var entity in preceptorList)
                 {
                     <tr>
-                        <td>@entity.Code</td>
-                        <td>@entity.Name</td>
-                        <td>@entity.Email</td>
-                        <td>@degreeList[entity.DegreeTypeId]</td>
-                        <td>@regimeList[entity.RegimeTypeId]</td>
-                        <td align="center">
+                        <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Name</div></td>
+                        <td><div style="font-size: smaller">@entity.Email</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.DegreeType.Code</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.RegimeType.Code</div></td>
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-outline-info"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Ver detalhes"
-                                disabled="@(!CanViewDetails(entity))"
-                                @onclick="@(() => Details(entity))"
-                                style="border: none;">
-                                <i class="bi bi-diagram-3"></i>
+                                    class="btn btn-sm btn-success"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Ver detalhes"
+                                    disabled="@(!CanViewDetails(entity))"
+                                    @onclick="@(() => Details(entity))"
+                                    style="border: none;">
+                                Detalhes
                             </button>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editChapterModal"
-                                title="Editar"
-                                disabled="@(!CanEdit(entity))"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editChapterModal"
+                                    title="Editar"
+                                    disabled="@(!CanEdit(entity))"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                     </tr>
@@ -250,6 +251,14 @@
             Guard.Against.Null(tmp);
             tmp.Entities.ForEach(o => degreeList.Add(o.Id, o.Code));
         }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
         waiting = false;
     }
 
@@ -276,6 +285,14 @@
             var tmp = JsonConvert.DeserializeObject<PageOfPreceptorRegimeTypeModel>(await message.Content.ReadAsStringAsync());
             Guard.Against.Null(tmp);
             tmp.Entities.ForEach(o => regimeList.Add(o.Id, o.Code));
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
         }
         waiting = false;
     }
@@ -312,7 +329,14 @@
             previousPage = tmp.PreviousPage;
             nextPage = tmp.NextPage;
             numberOfPages = tmp.NumberOfPages;
-
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
         }
         waiting = false;
 
@@ -407,7 +431,11 @@
             else
             {
                 var result = await response.Content.ReadAsStringAsync();
-                _toasterService?.AddToastError(result);
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
                 entitySelected.Code = previousCode;
                 entitySelected.Name = previousName;
                 entitySelected.Email = previousEmail;

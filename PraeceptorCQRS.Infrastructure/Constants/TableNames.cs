@@ -4,6 +4,7 @@
     {
         public const string Documents = "DocumentTable";
         public const string SqlFileStreams = "FileStreamTable";
+        public const string SqlDocxStreams = "DocxStreamTable";
         public const string SubSubSections = "SubSubSectionTable";
         public const string SubSections = "SubSectionTable";
         public const string Sections = "SectionTable";
@@ -23,7 +24,10 @@
         public const string GroupValues = "GroupValueTable";
         public const string Variables = "VariableTable";
         public const string VariableValues = "VariableValueTable";
+        public const string PreceptorRoleTypes = "PreceptorRoleTypeTable";
+        public const string CourseSocialBodyEntries = "CourseSocialBodyTable";
         public const string Peas = "PeaTable";
+        public const string SimpleTablesTable = "SimpleTablesTable";
 
         public const string OutboxMessages = "OutboxMessageTable";
         public const string OutboxMessageConsumers = "OutboxMessageConsumerTable";

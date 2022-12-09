@@ -12,8 +12,6 @@ using PraeceptorCQRS.Application.Entities.PreceptorRegimeType.Common;
 using PraeceptorCQRS.Application.Entities.PreceptorRegimeType.Queries;
 using PraeceptorCQRS.Contracts.Entities.Page;
 using PraeceptorCQRS.Contracts.Entities.PreceptorRegimeType;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
 {
@@ -66,13 +64,14 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<PreceptorRegimeTypePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<PreceptorRegimeTypeResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<PreceptorRegimeTypeResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
 
         [HttpGet("get/id/{id}")]
-        [Authorize("ReadPolice")]
+        // [Authorize("ReadPolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPreceptorRegimeTypeById(Guid id)
         {
             var query = new GetPreceptorRegimeTypeByIdQuery(
@@ -119,7 +118,8 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreatePreceptorRegimeType([FromBody] CreatePreceptorRegimeTypeRequest request)
         {
             // var command = _mapper.Map<CreatePreceptorRegimeTypeCommand>(request);
@@ -152,4 +152,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-

@@ -1,5 +1,5 @@
-﻿@page "/course/details/{InstituteId:guid}/{courseId:guid}"
-@page "/course/details/{InstituteId:guid}/{courseId:guid}/{curriculum:int}"
+﻿@page "/course/matrix/{InstituteId:guid}/{courseId:guid}"
+@page "/course/matrix/{InstituteId:guid}/{courseId:guid}/{curriculum:int}"
 
 @inherits AuthenticatedPage
 
@@ -43,7 +43,6 @@ else
         <PageHeaderComponent Title="@courseModel?.Name" Text="@($"Você está visualizando a estrutura curricular do currículo {curriculum}")" />
         -->
         <article class="content px-4">
-
             <table class="table table-sm" cellpadding="1" cellspacing="1">
                 <thead>
                     <tr>
@@ -55,11 +54,11 @@ else
                         <th colspan="4">
                             <div class="my-md-3">
                                 <label for="recipient-curriculum" class="col-form-label">Currículo: </label>
-                                <select id="recipient-curriculum" 
-                                        class="form-select" 
-                                        aria-label="Default select example" 
-                                        style="background-color:aliceblue;"
-                                        @onchange="OnCurriculumChanged">
+                                <select id="recipient-curriculum"
+                                    class="form-select"
+                                    aria-label="Default select example"
+                                    style="background-color:aliceblue;"
+                                    @onchange="OnCurriculumChanged">
                                     @foreach (var item in curriculumList)
                                     {
                                         @if (curriculum == item.Curriculum)
@@ -132,30 +131,30 @@ else
                                 <td style="text-align:center; vertical-align:central; font-size:smaller;">@component.Class.Theory</td>
                                 <td style="text-align:center; vertical-align:central; font-size:smaller;">@component.Class.Practice</td>
 
-                                <td align="center">
+                                <td align="right" style="width: 80px;">
                                     <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Editar"
-                                disabled="@(!CanEdit(courseModel))"
-                                @onclick="@(() => Edit(component))"
-                                style="border: none;">
-                                        <i class="bi bi-pencil"></i>
+                                            class="btn btn-sm btn-warning"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Editar"
+                                            disabled="@(!CanEdit(courseModel))"
+                                            @onclick="@(() => Edit(component))"
+                                            style="border: none;">
+                                        Editar
                                     </button>
                                 </td>
 
-                                <td align="center">
+                                <td align="right" style="width: 80px;">
                                     <button type="button"
-                                class="btn btn-sm btn-outline-danger"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                title="Editar"
-                                disabled="@(!CanEdit(courseModel))"
-                                @onclick="@(() => Delete(component))"
-                                style="border: none;">
-                                        <i class="bi bi-x"></i>
+                                            class="btn btn-sm btn-danger"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            data-bs-toggle="modal"
+                                            title="Editar"
+                                            disabled="@(!CanEdit(courseModel))"
+                                            @onclick="@(() => Delete(component))"
+                                            style="border: none;">
+                                        Excluir
                                     </button>
                                 </td>
                             </tr>
@@ -289,9 +288,13 @@ else
 
             curriculumList = curList;
 
-            curriculum = Curriculum ?? curriculumList.Max(o => o.Curriculum);
+            seasons = new();
 
-            await InitializeSeasons();
+            if (Curriculum is not null || curriculumList.Any())
+            {
+                curriculum = Curriculum ?? curriculumList.Max(o => o.Curriculum);
+                await InitializeSeasons();
+            }
 
             waiting = false;
 
@@ -314,8 +317,6 @@ else
 
     private async Task InitializeSeasons()
     {
-        seasons = new();
-
         for (int season = 0; season < courseModel.NumberOfSeasons; season++)
             seasons.Add(await InitializeSeason(courseId, curriculum, season));
     }
@@ -326,15 +327,6 @@ else
         Guard.Against.Null(components);
 
         var seasonModel = new SeasonModel { Order = season, Components = components.ToList() };
-        foreach (var component in seasonModel.Components)
-        {
-            var cls = await classService.GetClassById(component.ClassId);
-            Guard.Against.Null(cls);
-            component.Class = cls;
-            var axis = await axisTypeService.GetAxisTypeById(component.AxisTypeId);
-            Guard.Against.Null(axis);
-            component.Axis = axis;
-        }
 
         return seasonModel;
     }
@@ -464,7 +456,6 @@ else
                 Guard.Against.Null(error.Title);
                 _toasterService?.AddToastError(error.Title);
             }
-
 
             waiting = false;
         }

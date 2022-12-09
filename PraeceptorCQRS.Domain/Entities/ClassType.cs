@@ -1,5 +1,4 @@
 using PraeceptorCQRS.Domain.Base;
-using PraeceptorCQRS.Domain.Values;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,6 +16,8 @@ namespace PraeceptorCQRS.Domain.Entities
         public static ClassType Create(
             string code,
             Guid instituteId,
+            bool isRemote,
+            int durationInMinutes,
             DateTime created,
             string? createdBy
             )
@@ -24,6 +25,8 @@ namespace PraeceptorCQRS.Domain.Entities
             {
                 Code = code,
                 InstituteId = instituteId,
+                IsRemote = isRemote,
+                DurationInMinutes = durationInMinutes,
                 Created = created,
                 CreatedBy = createdBy,
                 LastModified = created,
@@ -40,11 +43,16 @@ namespace PraeceptorCQRS.Domain.Entities
         [Required, MaxLength(20)]
         public string Code { get; set; } = null!;
 
+        public bool IsRemote { get; set; }
+        public bool IsTCC { get; set; }
+        public bool IsEstagio { get; set; }
+        public int DurationInMinutes { get; set; }
+
         public Guid InstituteId { get; set; }
+
         [Required, ForeignKey("InstituteId")]
         public virtual Institute Institute { get; set; } = null!;
 
         public virtual ICollection<Class> Classes { get; set; }
     }
 }
-

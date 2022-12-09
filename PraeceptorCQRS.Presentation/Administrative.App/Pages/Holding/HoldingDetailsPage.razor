@@ -8,6 +8,7 @@
 @using Administrative.App.Interfaces
 @using Administrative.App.Models
 @using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 @using PraeceptorCQRS.Contracts.Entities.Holding
 @using PraeceptorCQRS.Contracts.Entities.Institute
@@ -81,33 +82,33 @@ else
                     @foreach (var entity in instituteList)
                     {
                         <tr>
-                            <td>@entity.Acronym</td>
-                            <td>@entity.Name</td>
-                            <td>@entity.Address</td>
-                            <td align="center">
+                            <td><div style="font-size: smaller">@entity.Acronym</div></td>
+                            <td><div style="font-size: smaller">@entity.Name</div></td>
+                            <td><div style="font-size: smaller">@entity.Address</div></td>
+                            <td align="right" style="width: 80px;">
                                 <button type="button"
-                                class="btn btn-outline-info"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Ver detalhes"
-                                disabled="@(!CanViewDetails(entity))"
-                                @onclick="@(() => Details(entity))"
-                                style="border: none;">
-                                    <i class="bi bi-diagram-3"></i>
+                                        class="btn btn-sm btn-success"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Ver detalhes"
+                                        disabled="@(!CanViewDetails(entity))"
+                                        @onclick="@(() => Details(entity))"
+                                        style="border: none;">
+                                    Detalhes
                                 </button>
                             </td>
-                            <td align="center">
+                            <td align="right" style="width: 80px;">
                                 <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editChapterModal"
-                                title="Editar"
-                                disabled="@(!CanEdit(entity))"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                    <i class="bi bi-pencil"></i>
+                                        class="btn btn-sm btn-warning"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editChapterModal"
+                                        title="Editar"
+                                        disabled="@(!CanEdit(entity))"
+                                        @onclick="@(() => Edit(entity))"
+                                        style="border: none;">
+                                    Editar
                                 </button>
                             </td>
                         </tr>
@@ -118,13 +119,13 @@ else
             <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
                 <div class="btn-group" role="group" aria-label="First group">
                     <button type="button"
-                        class="btn btn-outline-primary"
-                        data-toggle="tooltip"
-                        data-placement="top"
-                        data-bs-toggle="modal"
-                        disabled="@(waiting || !CanCreate())"
-                        title="Criar uma nova instituição"
-                        @onclick="() => OnCreate()">
+                            class="btn btn-outline-primary"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            data-bs-toggle="modal"
+                            disabled="@(waiting || !CanCreate())"
+                            title="Criar uma nova instituição"
+                            @onclick="() => OnCreate()">
                         <i class="bi bi-plus-slash-minus"></i>
                         Criar uma nova instituição
                     </button>
@@ -270,6 +271,14 @@ else
             nextPage = tmp.NextPage;
             numberOfPages = tmp.NumberOfPages;
         }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
         waiting = false;
 
         StateHasChanged();
@@ -327,7 +336,7 @@ else
             HttpResponseMessage response;
             string? result = default!;
 
-            if (created)
+            if (created && CanCreate())
             {
                 response = await instituteService.CreateInstitute(
                     new CreateInstituteRequest(
@@ -336,10 +345,10 @@ else
                         entitySelected.Address,
                         holdingId)
                     );
-                if (response.IsSuccessStatusCode)
-                    result = await response.Content.ReadAsStringAsync();
+                // if (response.IsSuccessStatusCode)
+                result = await response.Content.ReadAsStringAsync();
             }
-            else if (_isInstituteAdmin || _isVisitor)
+            else if (CanEdit(entitySelected))
             {
                 response = await instituteService.UpdateInstitute(
                     new UpdateInstituteRequest(
@@ -348,8 +357,8 @@ else
                         entitySelected.Address
                         )
                     );
-                if (response.IsSuccessStatusCode)
-                    result = await response.Content.ReadAsStringAsync();
+                // if (response.IsSuccessStatusCode)
+                result = await response.Content.ReadAsStringAsync();
             }
             else
             {
@@ -387,8 +396,11 @@ else
             }
             else
             {
-                // var result = await response.Content.ReadAsStringAsync();
-                _toasterService?.AddToastError(result);
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
                 entitySelected.Acronym = previousAcronym;
                 entitySelected.Name = previousName;
                 entitySelected.Address = previousAddress;
@@ -428,7 +440,10 @@ else
             else
             {
                 var result = await response.Content.ReadAsStringAsync();
-                _toasterService?.AddToastError(result);
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
             }
 
             waiting = false;

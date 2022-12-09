@@ -3,7 +3,6 @@ using Document.App.Models;
 
 using IdentityModel.Client;
 
-using Microsoft.AspNetCore.Mvc;
 using PraeceptorCQRS.Contracts.Entities.Group;
 using PraeceptorCQRS.Utilities;
 
@@ -45,16 +44,22 @@ namespace Document.App.Services
 
         public async Task<bool> Exists(Guid instituteId, string code)
             => await base.Exist("exists", instituteId, code);
+
         public async Task<HttpResponseMessage> CreateGroup(CreateGroupRequest request)
             => await base.Create(request, "create");
+
         public async Task<GroupModel?> GetGroupById(Guid id)
             => await base.GetOne<GroupModel>("get", "id", id);
+
         public async Task<GroupModel?> GetGroupByCode(Guid instituteId, string code)
             => await base.GetOne<GroupModel>("get", "code", instituteId, code);
+
         public async Task<int> GetGroupsCountByInstitute(Guid instituteId)
             => await base.Count("get", "count", instituteId);
+
         public async Task<HttpResponseMessage> GetGroupPage(GetGroupPageRequest request)
             => await base.Create<GetGroupPageRequest>(request, "get", "page");
+
         public async Task<HttpResponseMessage> DeleteGroup(Guid id)
             => await base.Delete("delete", id);
     }

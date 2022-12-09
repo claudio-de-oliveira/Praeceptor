@@ -16,12 +16,16 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<bool> Exists(Func<Group, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Group?> CreateGroup(Group entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<Group?> GetGroupById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<Group?> GetGroupByCode(Guid instituteId, string code)
-            => await ReadDefault(o => o.InstituteId == instituteId && string.Compare(o.Code, code, true) == 0);
+            => await ReadDefault(o => o.InstituteId == instituteId && o.Code == code);
+
         public async Task<Group?> DeleteGroup(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);

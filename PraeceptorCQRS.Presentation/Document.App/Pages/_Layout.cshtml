@@ -18,8 +18,6 @@
     <link href="Document.App.styles.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
 
-    <script src="_content/BlazorAnimate/blazorAnimateInterop.js"></script>
-
     <title>Document App</title>
 
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
@@ -38,10 +36,12 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <script src="_content/BlazorAnimate/blazorAnimateInterop.js"></script>
+
     <script src="_framework/blazor.server.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" 
-            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" 
-        crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            crossorigin="anonymous">
     </script>
 
     <script>
@@ -55,6 +55,29 @@
                 'bootstrap-table.min.js',
                 'extensions/filter-control/bootstrap-table-filter-control.min.js'
             ]
+        })
+    </script>
+
+    <script>
+        document.getElementById("ConceptForm").onkeypress = function (e) {
+            var key = e.charCode || e.keyCode || 0;
+            if (key == 13) {
+                e.preventDefault();
+            }
+        }
+    </script>
+
+    <script src="scripts/blazorDownloadFile.js"></script>
+
+    <script>
+        $(function () {
+            $('#table').bootstrapTable()
+
+            $('#button').click(function () {
+                alert(JSON.stringify($('#table').bootstrapTable('getData').map(function (row) {
+                    return row.id
+                })))
+            })
         })
     </script>
 

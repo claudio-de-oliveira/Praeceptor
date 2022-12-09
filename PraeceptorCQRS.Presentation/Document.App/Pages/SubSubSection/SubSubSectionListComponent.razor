@@ -26,18 +26,20 @@
                     <td align="center">
                         <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
                     </td>
-                    <td align="center" colspan="3">
+                    <td align="center" colspan="2">
                         <ClearableInputTextComponent Placeholder="Filtrar por Texto" Filter="@textFilter" Waiting="@waiting" OnTextChange="@OnTextChanged"></ClearableInputTextComponent>
                     </td>
+                    <td></td>
                 </tr>
                 <!---->
                 <tr>
                     <td align="center">
                         <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
                     </td>
-                    <td align="center" colspan="2">
+                    <td align="center">
                         <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
                     </td>
+                    <td></td>
                     <td align="center">
                         <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
                     </td>
@@ -56,17 +58,17 @@
                         <td>
                             <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
                         </td>
-                        <td align="right">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editSubSubSectionModal"
-                                title="Editar"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editSubSubSectionModal"
+                                    title="Editar"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                         <td align="center" style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</td>

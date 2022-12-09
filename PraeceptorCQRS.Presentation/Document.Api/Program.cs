@@ -31,7 +31,7 @@ builder.Services
     .AddPresentation()
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
-    // .AddDataBase(builder.Configuration);
+// .AddDataBase(builder.Configuration);
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -46,6 +46,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 #region Adds the authentication services to DI and configures Bearer as the default scheme.
+
 var Authority = builder.Configuration.GetSection("IdentityServer").GetSection("Authority").Value;
 var Audience = builder.Configuration.GetSection("Document.API").GetSection("Audience").Value;
 
@@ -71,7 +72,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("DeletePolice", policy =>
           policy.RequireClaim("scope", "Document.API.Delete", "Document.API.FullAccess"));
 });
-#endregion
+
+#endregion Adds the authentication services to DI and configures Bearer as the default scheme.
 
 var app = builder.Build();
 

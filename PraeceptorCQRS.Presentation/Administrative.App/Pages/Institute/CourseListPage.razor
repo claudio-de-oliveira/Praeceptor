@@ -4,6 +4,7 @@
 @using Administrative.App.Models
 @using Administrative.App.Dialogs
 @using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 @using PraeceptorCQRS.Contracts.Entities.Course
 
@@ -26,7 +27,9 @@
 <section class="p-1">
 
     <article class="content px-4">
-        <table class='table'>
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+
+
             <thead>
                 <tr>
                     <td align="center">
@@ -47,6 +50,7 @@
                     <td align="center">
                         <ClearableInputTextComponent Placeholder="Filtrar por Carga Horária Mínima" Filter="@minimumWorkloadFilter" Waiting="@waiting" OnTextChange="@OnMinimumWorkloadChanged"></ClearableInputTextComponent>
                     </td>
+                    <td align="center"></td>
                     <td align="center"></td>
                     <td align="center"></td>
                 </tr>
@@ -72,6 +76,7 @@
                     </td>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 <!---->
             </thead>
@@ -79,27 +84,38 @@
                 @foreach (var entity in courseList)
                 {
                     <tr>
-                        <td>@entity.Code</td>
-                        <td>@entity.Name</td>
-                        <td>@entity.CEO</td>
-                        <td>@entity.AC</td>
-                        <td>@entity.NumberOfSeasons</td>
-                        <td>@entity.MinimumWorkload</td>
-                        <td align="center">
+                        <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Name</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.CEO</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.AC</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.NumberOfSeasons</div></td>
+                        <td align="center"><div style="font-size: smaller">@entity.MinimumWorkload</div></td>
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-outline-info"
+                                class="btn btn-sm btn-primary"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="Ver detalhes"
+                                title="Corpo social"
+                                @onclick="@(() => Administration(entity))"
+                                style="border: none;">
+                                Administração
+                            </button>
+                        </td>
+                        <td align="right" style="width: 80px;">
+                            <button type="button"
+                                class="btn btn-sm btn-success"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Estrutura curricular"
                                 disabled="@(!CanViewDetails(entity))"
                                 @onclick="@(() => Details(entity))"
                                 style="border: none;">
-                                <i class="bi bi-diagram-3"></i>
+                                Matriz
                             </button>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
+                                class="btn btn-sm btn-warning"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
@@ -108,7 +124,7 @@
                                 disabled="@(!CanEdit(entity))"
                                 @onclick="@(() => Edit(entity))"
                                 style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                Editar
                             </button>
                         </td>
                     </tr>
@@ -277,6 +293,14 @@
             nextPage = tmp.NextPage;
             numberOfPages = tmp.NumberOfPages;
         }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
         waiting = false;
 
         StateHasChanged();
@@ -289,7 +313,6 @@
         entitySelected = entity;
         previousCode = entitySelected.Code;
         previousName = entitySelected.Name;
-        // previousCEO = entitySelected.CEO;
         previousCEOId = entitySelected.CEO;
         previousAC = entitySelected.AC;
         previousSeasons = entitySelected.NumberOfSeasons;
@@ -322,105 +345,143 @@
         StateHasChanged();
     }
 
+    protected async Task Create(CourseModel course)
+    {
+        var response = await courseService.CreateCourse(
+            new CreateCourseRequest(
+                course.Code,
+                course.Name,
+                course.CEO,
+                course.AC,
+                course.NumberOfSeasons,
+                course.MinimumWorkload,
+                course.Telephone,
+                course.Email,
+                course.Image,
+                instituteId
+                )
+            );
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var courseCreated = JsonConvert.DeserializeObject<CourseModel>(result);
+            Guard.Against.Null(courseCreated);
+
+            await PageRequest(currentPage);
+
+            if (course.CEO is not null && course.CEO != Guid.Empty)
+            {
+                Guard.Against.Null(course.CEO);
+                var preceptor = await preceptorService.GetPreceptorById((Guid)course.CEO);
+                Guard.Against.Null(preceptor);
+                var r = await CreateAdmin(courseCreated.Id.ToString(), preceptor.Code, preceptor.Email, "CourseAdmin");
+                if (r && string.IsNullOrWhiteSpace(course.CEO_Email))
+                    _toasterService?.AddToastSuccess($"Um email para confirmação de senha foi enviado para {course.CEO_Email}");
+            }
+
+            _toasterService?.AddToastSuccess("As modificações foram salvas.");
+
+            Guard.Against.Null(entitySelected);
+            entitySelected.Code = course.Code;
+            entitySelected.Name = course.Name;
+            entitySelected.CEO = course.CEO;
+            entitySelected.CEO_Email = course.CEO_Email;
+            entitySelected.AC = course.AC;
+            entitySelected.NumberOfSeasons = course.NumberOfSeasons;
+            entitySelected.MinimumWorkload = course.MinimumWorkload;
+            entitySelected.Telephone = course.Telephone;
+            entitySelected.Email = course.Email;
+            entitySelected.Image = course.Image;
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+    }
+
+    protected async Task Update(CourseModel course)
+    {
+        var response = await courseService.UpdateCourse(
+                    new UpdateCourseRequest(
+                        course.Id,
+                        course.Name,
+                        course.CEO,
+                        course.AC,
+                        course.NumberOfSeasons,
+                        course.MinimumWorkload,
+                        course.Telephone,
+                        course.Email,
+                        course.Image
+                        )
+                    );
+
+        if (response.IsSuccessStatusCode)
+        {
+            await PageRequest(currentPage);
+
+            if (course.CEO != previousCEOId && course.CEO != Guid.Empty)
+            {
+                Guard.Against.Null(course.CEO);
+                var preceptor = await preceptorService.GetPreceptorById((Guid)course.CEO);
+                Guard.Against.Null(preceptor);
+                var r = await CreateAdmin(course.Id.ToString(), preceptor.Code, preceptor.Email, "CourseAdmin");
+                if (r && string.IsNullOrWhiteSpace(course.CEO_Email))
+                    _toasterService?.AddToastSuccess($"Um email para confirmação de senha foi enviado para {course.CEO_Email}");
+            }
+
+            Guard.Against.Null(entitySelected);
+            entitySelected.Code = course.Code;
+            entitySelected.Name = course.Name;
+            entitySelected.CEO = course.CEO;
+            entitySelected.CEO_Email = course.CEO_Email;
+            entitySelected.AC = course.AC;
+            entitySelected.NumberOfSeasons = course.NumberOfSeasons;
+            entitySelected.MinimumWorkload = course.MinimumWorkload;
+            entitySelected.Telephone = course.Telephone;
+            entitySelected.Email = course.Email;
+            entitySelected.Image = course.Image;
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+
+            entitySelected.Code = previousCode;
+            entitySelected.Name = previousName;
+            entitySelected.CEO = previousCEO is not null ? previousCEO.Id : Guid.Empty;
+            entitySelected.AC = previousAC;
+            entitySelected.NumberOfSeasons = previousSeasons;
+            entitySelected.MinimumWorkload = previousMinimumWorkload;
+            entitySelected.Telephone = previousTelephone;
+            entitySelected.Email = previousEmail;
+            entitySelected.Image = previousImage;
+        }
+    }
+
     protected async Task OnEditDialogClose(CourseModel? modifiednewEntity)
     {
         if (modifiednewEntity is not null)
         {
             waiting = true;
 
-            Guard.Against.Null(entitySelected);
-            entitySelected.Code = modifiednewEntity.Code;
-            entitySelected.Name = modifiednewEntity.Name;
-            entitySelected.CEO = modifiednewEntity.CEO;
-            entitySelected.AC = modifiednewEntity.AC;
-            entitySelected.NumberOfSeasons = modifiednewEntity.NumberOfSeasons;
-            entitySelected.MinimumWorkload = modifiednewEntity.MinimumWorkload;
-            entitySelected.Telephone = modifiednewEntity.Telephone;
-            entitySelected.Email = modifiednewEntity.Email;
-            entitySelected.Image = modifiednewEntity.Image;
-            HttpResponseMessage response;
+            modifiednewEntity.Id = entitySelected.Id;
+            modifiednewEntity.InstituteId = entitySelected.InstituteId;
 
             if (created)
-            {
-                response = await courseService.CreateCourse(
-                    new CreateCourseRequest(
-                        entitySelected.Code,
-                        entitySelected.Name,
-                        entitySelected.CEO,
-                        entitySelected.AC,
-                        entitySelected.NumberOfSeasons,
-                        entitySelected.MinimumWorkload,
-                        entitySelected.Telephone,
-                        entitySelected.Email,
-                        entitySelected.Image,
-                        instituteId
-                        )
-                    );
-            }
+                await Create(modifiednewEntity);
             else
-            {
-                response = await courseService.UpdateCourse(
-                    new UpdateCourseRequest(
-                        entitySelected.Id,
-                        // entitySelected.Code,
-                        entitySelected.Name,
-                        entitySelected.CEO,
-                        entitySelected.AC,
-                        entitySelected.NumberOfSeasons,
-                        entitySelected.MinimumWorkload,
-                        entitySelected.Telephone,
-                        entitySelected.Email,
-                        entitySelected.Image
-                        )
-                    );
-            }
+                await Update(modifiednewEntity);
 
             waiting = false;
 
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadAsStringAsync();
-                var courseCreated = JsonConvert.DeserializeObject<CourseModel>(result);
-                Guard.Against.Null(courseCreated);
-                _toasterService?.AddToastSuccess("As modificações foram salvas.");
-                previousCode = entitySelected.Code;
-                previousName = entitySelected.Name;
-                // previousCEO = entitySelected.CEO;
-                previousCEOId = entitySelected.CEO;
-                previousAC = entitySelected.AC;
-                previousSeasons = entitySelected.NumberOfSeasons;
-                previousMinimumWorkload = entitySelected.MinimumWorkload;
-                previousTelephone = entitySelected.Telephone;
-                previousEmail = entitySelected.Email;
-                previousImage = entitySelected.Image;
-                await PageRequest(currentPage);
-
-                if (modifiednewEntity.CEO is not null && modifiednewEntity.CEO != Guid.Empty)
-                {
-                    Guard.Against.Null(modifiednewEntity.CEO);
-                    var preceptor = await preceptorService.GetPreceptorById((Guid)modifiednewEntity.CEO);
-                    Guard.Against.Null(preceptor);
-                    var r = await CreateAdmin(courseCreated.Id.ToString(), preceptor.Code, preceptor.Email, "CourseAdmin");
-                    if (r)
-                        _toasterService?.AddToastSuccess($"Um email para confirmação de senha foi enviado para {modifiednewEntity.Email}");
-                    else
-                        _toasterService?.AddToastError($"Não foi possível enviar email para {modifiednewEntity.Email}");
-                }
-            }
-            else
-            {
-                var result = await response.Content.ReadAsStringAsync();
-                _toasterService?.AddToastError(result);
-                entitySelected.Code = previousCode;
-                entitySelected.Name = previousName;
-                entitySelected.CEO = previousCEO is not null ? previousCEO.Id : Guid.Empty;
-                entitySelected.AC = previousAC;
-                entitySelected.NumberOfSeasons = previousSeasons;
-                entitySelected.MinimumWorkload = previousMinimumWorkload;
-                entitySelected.Telephone = previousTelephone;
-                entitySelected.Email = previousEmail;
-                entitySelected.Image = previousImage;
-            }
         }
 
         EditDialogIsOpen = false;
@@ -494,9 +555,14 @@
 
     protected void Details(CourseModel? entity)
     {
-        int Curriculum = 2022;
         Guard.Against.Null(entity);
-        navigationManager.NavigateTo($"/course/details/{instituteId}/{entity.Id}/{Curriculum}");
+        navigationManager.NavigateTo($"/course/matrix/{instituteId}/{entity.Id}");
+    }
+
+    protected void Administration(CourseModel? entity)
+    {
+        Guard.Against.Null(entity);
+        navigationManager.NavigateTo($"/course/preceptors/{instituteId}/{entity.Id}");
     }
 
     public void Dispose()

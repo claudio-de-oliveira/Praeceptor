@@ -1,5 +1,7 @@
 using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Common;
 using PraeceptorCQRS.Application.Persistence;
 using PraeceptorCQRS.Application.Services;
@@ -22,6 +24,8 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Commands
         {
             var entity = Domain.Entities.PreceptorDegreeType.Create(
                 request.Code,
+                request.LatoSensu,
+                request.StrictoSensu,
                 request.InstituteId,
                 _dateTimeProvider.UtcNow,
                 string.Empty
@@ -50,4 +54,3 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Commands
         }
     }
 }
-

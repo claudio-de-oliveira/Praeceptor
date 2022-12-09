@@ -9,5 +9,5 @@ namespace PraeceptorCQRS.Application.Entities.FileStream.Queries
     public record GetSqlFileStreamByCodeQuery(
         Guid InstituteId,
         string Code
-        ) : IRequest<ErrorOr<SqlFileStreamResult>>;
+        ) : IRequest<ErrorOr<FileResult>>;
 }

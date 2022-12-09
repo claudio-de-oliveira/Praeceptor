@@ -1,5 +1,4 @@
 using PraeceptorCQRS.Domain.Base;
-using PraeceptorCQRS.Domain.Values;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +11,7 @@ namespace PraeceptorCQRS.Domain.Entities
             : base(id)
         {
             Components = new HashSet<Component>();
+            CourseSocialBodyEntries = new HashSet<SocialBodyEntry>();
         }
 
         public static Course Create(
@@ -68,6 +68,7 @@ namespace PraeceptorCQRS.Domain.Entities
         public virtual Institute Institute { get; set; } = default!;
 
         public virtual ICollection<Component> Components { get; set; } = default!;
+        public virtual ICollection<SocialBodyEntry> CourseSocialBodyEntries { get; set; } = null!;
     }
 }
 

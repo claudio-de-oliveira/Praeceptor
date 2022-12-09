@@ -3,6 +3,7 @@
 @using Administrative.App.Interfaces
 @using Administrative.App.Models
 @using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 @using PraeceptorCQRS.Contracts.Entities.ClassType
 @using PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType
@@ -13,29 +14,29 @@
 <!-- Modal: Editar entidade -->
 @if (EditDialogIsOpen)
 {
-    <EditDegreeTypeDialog Code="@previousCode" OnClose="@OnEditDialogClose" />
+    <EditDegreeTypeDialog Code="@previousCode" LatoSensu=@previousLatoSensu StrictoSensu=@previousStrictoSensu OnClose="@OnEditDialogClose" />
 }
 
 <section class="p-1">
     <article class="content px-4">
-        <table class='table'>
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
             <tbody>
                 @foreach (var entity in typeList)
                 {
                     <tr>
-                        <td>@entity.Code</td>
-                        <td align="center">
+                        <td><div style="font-size: smaller">@entity.Code</div></td>
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editDegreeTypeModal"
-                                title="Editar"
-                                disabled="@(!CanEdit(entity))"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editDegreeTypeModal"
+                                    title="Editar"
+                                    disabled="@(!CanEdit(entity))"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                     </tr>
@@ -71,7 +72,10 @@
 
     protected List<PreceptorDegreeTypeModel> typeList = new();
     protected PreceptorDegreeTypeModel entitySelected = new();
+
     protected string previousCode = string.Empty;
+    protected bool previousLatoSensu = false;
+    protected bool previousStrictoSensu = false;
 
     private Guid instituteId;
     private InstituteModel? institute;
@@ -143,6 +147,14 @@
             Guard.Against.Null(tmp);
             typeList = tmp.Entities;
         }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
         waiting = false;
 
         StateHasChanged();
@@ -152,6 +164,8 @@
     {
         entitySelected = entity;
         previousCode = entitySelected.Code;
+        previousLatoSensu = entitySelected.LatoSensu;
+        previousStrictoSensu = entitySelected.StrictoSensu;
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -162,6 +176,8 @@
 
         entitySelected = new PreceptorDegreeTypeModel() { InstituteId = instituteId };
         previousCode = "";
+        previousLatoSensu = false;
+        previousStrictoSensu = false;
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -174,6 +190,8 @@
 
             Guard.Against.Null(entitySelected);
             entitySelected.Code = modifiednewEntity.Code;
+            previousLatoSensu = modifiednewEntity.LatoSensu;
+            previousStrictoSensu = modifiednewEntity.StrictoSensu;
             HttpResponseMessage response;
 
             if (created)
@@ -181,6 +199,8 @@
                 response = await typeService.CreatePreceptorDegreeType(
                     new CreatePreceptorDegreeTypeRequest(
                         entitySelected.Code,
+                        entitySelected.LatoSensu,
+                        entitySelected.StrictoSensu,
                         instituteId
                         )
                     );
@@ -199,14 +219,22 @@
                 var result = await response.Content.ReadAsStringAsync();
                 _toasterService?.AddToastSuccess("As modificações foram salvas.");
                 previousCode = entitySelected.Code;
+                previousLatoSensu = entitySelected.LatoSensu;
+                previousStrictoSensu = entitySelected.StrictoSensu;
 
                 await PageRequest();
             }
             else
             {
                 var result = await response.Content.ReadAsStringAsync();
-                _toasterService?.AddToastError(result);
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+
                 entitySelected.Code = previousCode;
+                entitySelected.LatoSensu = previousLatoSensu;
+                entitySelected.StrictoSensu = previousStrictoSensu;
             }
 
             waiting = false;

@@ -1,5 +1,4 @@
 using PraeceptorCQRS.Domain.Base;
-using PraeceptorCQRS.Domain.Values;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +9,9 @@ namespace PraeceptorCQRS.Domain.Entities
     {
         public Preceptor(Guid id)
             : base(id)
-        { /* Nothing more todo */}
+        {
+            CourseSocialBodyEntries = new HashSet<SocialBodyEntry>();
+        }
 
         public static Preceptor Create(
             string code,
@@ -49,13 +50,17 @@ namespace PraeceptorCQRS.Domain.Entities
 
         public Guid DegreeTypeId { get; set; }
         [Required, ForeignKey("DegreeTypeId")]
-        public virtual PreceptorDegreeType DegreeType { get; set; } = null!;
+        public virtual PreceptorDegreeType DegreeType { get; set; } = default!;
+
         public Guid RegimeTypeId { get; set; }
         [Required, ForeignKey("RegimeTypeId")]
-        public virtual PreceptorRegimeType RegimeType { get; set; } = null!;
+        public virtual PreceptorRegimeType RegimeType { get; set; } = default!;
+
         public Guid InstituteId { get; set; }
         [Required, ForeignKey("InstituteId")]
         public virtual Institute Institute { get; set; } = null!;
+
+        public virtual ICollection<SocialBodyEntry> CourseSocialBodyEntries { get; set; } = null!;
     }
 }
 

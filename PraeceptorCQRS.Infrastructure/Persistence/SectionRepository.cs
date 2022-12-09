@@ -20,16 +20,22 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<int> GetSectionsCountByInstitute(Guid instituteId)
             => await Count(o => o.InstituteId == instituteId);
+
         public async Task<List<Section>> GetSectionByInstitute(Guid instituteId)
             => await ListDefault(o => o.InstituteId == instituteId);
+
         public async Task<List<Section>> GetSectionPageByInstitute(Guid instituteId, int start, int count)
             => await PageDefault(o => o.InstituteId == instituteId, start, count);
+
         public async Task<Section?> CreateSection(Section entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<Section, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Section?> GetSectionById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task UpdateSection(Section entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
@@ -222,11 +228,12 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             {
                 "Title" => Global.SortList(list, x => x.Title, ascending),
                 "Text" => Global.SortList(list, x => x.Text, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };
         }
     }
 }
-

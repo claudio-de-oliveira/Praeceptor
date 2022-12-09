@@ -27,6 +27,31 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             _mapper = mapper;
         }
 
+        [HttpPost("create")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreatePreceptor([FromBody] CreatePreceptorRequest request)
+        {
+            // var command = _mapper.Map<CreatePreceptorCommand>(request);
+            var command = new CreatePreceptorCommand(
+                request.Code,
+                request.Name,
+                request.Email,
+                request.Image,
+                request.DegreeTypeId,
+                request.RegimeTypeId,
+                request.InstituteId
+                );
+
+            ErrorOr<PreceptorResult> result = await _mediator.Send(command);
+
+            return result.Match(
+                // Use CreatedAtAction to return 201 CreatedAtAction
+                result => CreatedAtAction(nameof(CreatePreceptor), _mapper.Map<PreceptorResponse>(result)),
+                errors => Problem(errors)
+                );
+        }
+
         [HttpGet("get/count/{instituteId}")]
         [Authorize("ReadPolice")]
         public async Task<IActionResult> GetPreceptorCountByInstitute(Guid instituteId)
@@ -68,13 +93,14 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<PreceptorPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<PreceptorResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<PreceptorResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
 
         [HttpGet("get/id/{id}")]
-        [Authorize("ReadPolice")]
+        // [Authorize("ReadPolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPreceptorById(Guid id)
         {
             var query = new GetPreceptorByIdQuery(
@@ -90,7 +116,8 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpGet("get/code/{code}")]
-        [Authorize("ReadPolice")]
+        //[Authorize("ReadPolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPreceptorByCode(string code)
         {
             var query = new GetPreceptorByCodeQuery(
@@ -119,21 +146,6 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
                 );
         }
 
-        [HttpPost("create")]
-        [Authorize("CreatePolice")]
-        public async Task<IActionResult> CreatePreceptor([FromBody] CreatePreceptorRequest request)
-        {
-            var command = _mapper.Map<CreatePreceptorCommand>(request);
-
-            ErrorOr<PreceptorResult> result = await _mediator.Send(command);
-
-            return result.Match(
-                // Use CreatedAtAction to return 201 CreatedAtAction
-                result => CreatedAtAction(nameof(CreatePreceptor), _mapper.Map<PreceptorResponse>(result)),
-                errors => Problem(errors)
-                );
-        }
-
         [HttpDelete("delete/{id}")]
         [Authorize("DeletePolice")]
         public async Task<IActionResult> DeletePreceptor(Guid id)
@@ -149,4 +161,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-

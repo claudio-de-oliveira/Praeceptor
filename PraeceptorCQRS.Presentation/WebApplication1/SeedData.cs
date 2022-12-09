@@ -3,6 +3,8 @@
 
 using Ardalis.GuardClauses;
 
+using IdentityModel;
+
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 
@@ -11,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 
 using PraeceptorCQRS.Domain.Entities;
 using PraeceptorCQRS.Infrastructure.Data;
+
+using System.Security.Claims;
 
 namespace IdentityServer.Api
 {
@@ -64,7 +68,12 @@ namespace IdentityServer.Api
             }
         }
 
-        public static void EnsureSeedData(IServiceCollection services)
+        public static void EnsureSeedData(
+            IServiceCollection services,
+            string holdingId,
+            string instituteId,
+            string courseId
+            )
         {
             services.AddLogging();
 
@@ -76,176 +85,155 @@ namespace IdentityServer.Api
             Guard.Against.Null(context);
             context.Database.Migrate();
 
-            // var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            // var systemAdmin = userMgr.FindByNameAsync("SystemManager").Result;
-            // if (systemAdmin == null)
-            // {
-            //     systemAdmin = new ApplicationUser
-            //     {
-            //         UserName = "SystemManager",
-            //         Email = "systemmanager@gmail.com",
-            //         NormalizedEmail = "SYSTEMMANAGER@GMAIL.COM",
-            //         NormalizedUserName = "SYSTEMMANAGER",
-            //         Gender = 'M',
-            //         HoldingId = Guid.Empty.ToString(), // "holdingId"
-            //         InstituteId = Guid.Empty.ToString(), // "instituteId"
-            //         CourseId = Guid.Empty.ToString(), // "courseId"
-            //         IsEnabled = true
-            //     };
-            //     var result = userMgr.CreateAsync(systemAdmin, "@Eaafe_301").Result;
-            //     if (!result.Succeeded)
-            //     {
-            //         throw new Exception(result.Errors.First().Description);
-            //     }
-            // 
-            //     result = userMgr.AddClaimsAsync(systemAdmin, new Claim[]{
-            //                 new Claim(JwtClaimTypes.Name, "Gerenciador do Sistema"),
-            //                 new Claim(JwtClaimTypes.GivenName, "Gerenciador do"),
-            //                 new Claim(JwtClaimTypes.FamilyName, "Sistema"),
-            //                 new Claim(JwtClaimTypes.WebSite, "http://claudio.com"),
-            //                 new Claim("gender", systemAdmin.Gender.ToString()),
-            //                 new Claim("holdingid", systemAdmin.HoldingId),
-            //                 new Claim("instituteid", systemAdmin.InstituteId),
-            //                 new Claim("courseid", systemAdmin.CourseId)
-            //             }).Result;
-            //     if (!result.Succeeded)
-            //     {
-            //         throw new Exception(result.Errors.First().Description);
-            //     }
-            //     Log.Debug("SystemAdmin created");
-            // }
-            // else
-            // {
-            //     Log.Debug("SystemAdmin already exists");
-            // }
-            // 
-            // var holdingAdmin = userMgr.FindByNameAsync("HoldingManager").Result;
-            // if (holdingAdmin == null)
-            // {
-            //     holdingAdmin = new ApplicationUser
-            //     {
-            //         UserName = "HoldingManager",
-            //         Email = "holdingmanager@gmail.com",
-            //         NormalizedEmail = "HOLDINGMANAGER@GMAIL.COM",
-            //         NormalizedUserName = "HOLDINGMANAGER",
-            //         Gender = 'M',
-            //         HoldingId = Guid.Empty.ToString(), // "holdingId"
-            //         InstituteId = Guid.Empty.ToString(), // "instituteId"
-            //         CourseId = Guid.Empty.ToString(), // "courseId"
-            //         IsEnabled = true
-            //     };
-            //     var result = userMgr.CreateAsync(holdingAdmin, "@Eaafe_301").Result;
-            //     if (!result.Succeeded)
-            //     {
-            //         throw new Exception(result.Errors.First().Description);
-            //     }
-            // 
-            //     result = userMgr.AddClaimsAsync(holdingAdmin, new Claim[]{
-            //                 new Claim(JwtClaimTypes.Name, "Gerenciador da Holding"),
-            //                 new Claim(JwtClaimTypes.GivenName, "Gerenciador da"),
-            //                 new Claim(JwtClaimTypes.FamilyName, "Holding"),
-            //                 new Claim(JwtClaimTypes.WebSite, "http://claudio.com"),
-            //                 new Claim("gender", holdingAdmin.Gender.ToString()),
-            //                 new Claim("holdingid", holdingAdmin.HoldingId),
-            //                 new Claim("instituteid", holdingAdmin.InstituteId),
-            //                 new Claim("courseid", holdingAdmin.CourseId)
-            //             }).Result;
-            //     if (!result.Succeeded)
-            //     {
-            //         throw new Exception(result.Errors.First().Description);
-            //     }
-            //     Log.Debug("HoldingAdmin created");
-            // }
-            // else
-            // {
-            //     Log.Debug("HoldingAdmin already exists");
-            // }
-            // 
-            // var instituteAdmin = userMgr.FindByNameAsync("InstituteManager").Result;
-            // if (instituteAdmin == null)
-            // {
-            //     instituteAdmin = new ApplicationUser
-            //     {
-            //         UserName = "InstituteManager",
-            //         Email = "institutemanager@gmail.com",
-            //         NormalizedEmail = "INSTITUTEMANAGER@GMAIL.COM",
-            //         NormalizedUserName = "INSTITUTEMANAGER",
-            //         Gender = 'M',
-            //         HoldingId = Guid.Empty.ToString(), // "holdingId"
-            //         InstituteId = Guid.Empty.ToString(), // "instituteId"
-            //         CourseId = Guid.Empty.ToString(), // "courseId"
-            //         IsEnabled = true
-            //     };
-            //     var result = userMgr.CreateAsync(instituteAdmin, "@Eaafe_301").Result;
-            //     if (!result.Succeeded)
-            //     {
-            //         throw new Exception(result.Errors.First().Description);
-            //     }
-            // 
-            //     result = userMgr.AddClaimsAsync(instituteAdmin, new Claim[]{
-            //                 new Claim(JwtClaimTypes.Name, "Gerenciador do Instituto"),
-            //                 new Claim(JwtClaimTypes.GivenName, "Gerenciador do"),
-            //                 new Claim(JwtClaimTypes.FamilyName, "Instituto"),
-            //                 new Claim(JwtClaimTypes.WebSite, "http://claudio.com"),
-            //                 new Claim("gender", instituteAdmin.Gender.ToString()),
-            //                 new Claim("holdingid", instituteAdmin.HoldingId),
-            //                 new Claim("instituteid", instituteAdmin.InstituteId),
-            //                 new Claim("courseid", instituteAdmin.CourseId)
-            //             }).Result;
-            //     if (!result.Succeeded)
-            //     {
-            //         throw new Exception(result.Errors.First().Description);
-            //     }
-            //     Log.Debug("InstituteAdmin created");
-            // }
-            // else
-            // {
-            //     Log.Debug("InstituteAdmin already exists");
-            // }
+            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            /*
-            var luisa = userMgr.FindByNameAsync("Luisa").Result;
-            if (luisa == null)
+            var systemAdmin = userMgr.FindByNameAsync("SystemAdmin").Result;
+            if (systemAdmin == null)
             {
-                luisa = new ApplicationUser
+                systemAdmin = new ApplicationUser
                 {
-                    UserName = "Luisa",
-                    Email = "luisa.bonin@gmail.com",
-                    NormalizedEmail = "luisa.bonin@gmail.com",
-                    NormalizedUserName = "Luisa Bonin de Oliveira",
-                    Gender = 'F',
-                    HoldingId = Guid.Empty.ToString(), // "holdingId"
-                    InstituteId = Guid.Empty.ToString(), // "instituteId"
-                    CourseId = Guid.Empty.ToString(), // "courseId"
+                    UserName = "SystemAdmin",
+                    Email = "clalulana@gmail.com",
+                    NormalizedEmail = "CLALULANA@GMAIL.COM",
+                    NormalizedUserName = "SYSTEMADMIN",
+                    Gender = 'M',
+                    HoldingId = holdingId,
+                    InstituteId = instituteId,
+                    CourseId = courseId,
                     IsEnabled = true
                 };
-                var result = userMgr.CreateAsync(luisa, "Pass123$").Result;
+                var result = userMgr.CreateAsync(systemAdmin, "Eaafe_301").Result;
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
-        
-                result = userMgr.AddClaimsAsync(luisa, new Claim[]{
-                            new Claim(JwtClaimTypes.Name, "Luisa Bonin de Oliveira"),
-                            new Claim(JwtClaimTypes.GivenName, "Luisa Bonin de"),
-                            new Claim(JwtClaimTypes.FamilyName, "Oliveira"),
-                            new Claim(JwtClaimTypes.WebSite, "http://luisa.com"),
-                            new Claim("gender", luisa.Gender.ToString()),
-                            new Claim("holdingid", luisa.HoldingId),
-                            new Claim("courseid", luisa.InstituteId),
-                            new Claim("instituteid", luisa.CourseId)
+
+                result = userMgr.AddClaimsAsync(systemAdmin, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Gerenciador do Sistema"),
+                            new Claim(JwtClaimTypes.GivenName, "Gerenciador do"),
+                            new Claim(JwtClaimTypes.FamilyName, "Sistema"),
+                            new Claim(JwtClaimTypes.WebSite, "http://system_admin.com"),
+                            new Claim("gender", systemAdmin.Gender.ToString()),
+                            new Claim("holdingid", systemAdmin.HoldingId),
+                            new Claim("instituteid", systemAdmin.InstituteId),
+                            new Claim("courseid", systemAdmin.CourseId)
                         }).Result;
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
-                Log.Debug("luisa created");
             }
-            else
+
+            var holdingAdmin = userMgr.FindByNameAsync("HoldingAdmin").Result;
+            if (holdingAdmin == null)
             {
-                Log.Debug("luisa already exists");
+                holdingAdmin = new ApplicationUser
+                {
+                    UserName = "HoldingAdmin",
+                    Email = "clalulana1@gmail.com",
+                    NormalizedEmail = "CLALULANA1@GMAIL.COM",
+                    NormalizedUserName = "HOLDINGADMIN",
+                    Gender = 'M',
+                    HoldingId = holdingId,
+                    InstituteId = instituteId,
+                    CourseId = courseId,
+                    IsEnabled = true
+                };
+                var result = userMgr.CreateAsync(holdingAdmin, "Eaafe_301").Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+
+                result = userMgr.AddClaimsAsync(holdingAdmin, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Gerenciador da Holding"),
+                            new Claim(JwtClaimTypes.GivenName, "Gerenciador da"),
+                            new Claim(JwtClaimTypes.FamilyName, "Holding"),
+                            new Claim(JwtClaimTypes.WebSite, "http://holding_admin.com"),
+                            new Claim("gender", holdingAdmin.Gender.ToString()),
+                            new Claim("holdingid", holdingAdmin.HoldingId),
+                            new Claim("instituteid", holdingAdmin.InstituteId),
+                            new Claim("courseid", holdingAdmin.CourseId)
+                        }).Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
             }
-            */
+
+            var instituteAdmin = userMgr.FindByNameAsync("InstituteAdmin").Result;
+            if (instituteAdmin == null)
+            {
+                instituteAdmin = new ApplicationUser
+                {
+                    UserName = "InstituteAdmin",
+                    Email = "clalulana2@gmail.com",
+                    NormalizedEmail = "CLALULANA2@GMAIL.COM",
+                    NormalizedUserName = "INSTITUTEADMIN",
+                    Gender = 'M',
+                    HoldingId = holdingId,
+                    InstituteId = instituteId,
+                    CourseId = courseId,
+                    IsEnabled = true
+                };
+                var result = userMgr.CreateAsync(instituteAdmin, "Eaafe_301").Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+
+                result = userMgr.AddClaimsAsync(instituteAdmin, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Gerenciador do Instituto"),
+                            new Claim(JwtClaimTypes.GivenName, "Gerenciador do"),
+                            new Claim(JwtClaimTypes.FamilyName, "Instituto"),
+                            new Claim(JwtClaimTypes.WebSite, "http://institute_admin.com"),
+                            new Claim("gender", instituteAdmin.Gender.ToString()),
+                            new Claim("holdingid", instituteAdmin.HoldingId),
+                            new Claim("instituteid", instituteAdmin.InstituteId),
+                            new Claim("courseid", instituteAdmin.CourseId)
+                        }).Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+            }
+
+            var courseAdmin = userMgr.FindByNameAsync("CourseAdmin").Result;
+            if (courseAdmin == null)
+            {
+                courseAdmin = new ApplicationUser
+                {
+                    UserName = "CourseAdmin",
+                    Email = "clalulana3@gmail.com",
+                    NormalizedEmail = "CLALULANA3@GMAIL.COM",
+                    NormalizedUserName = "COURSEADMIN",
+                    Gender = 'F',
+                    HoldingId = holdingId,
+                    InstituteId = instituteId,
+                    CourseId = courseId,
+                    IsEnabled = true
+                };
+                var result = userMgr.CreateAsync(courseAdmin, "Eaafe_301").Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+
+                result = userMgr.AddClaimsAsync(courseAdmin, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Gerenciador do Curso"),
+                            new Claim(JwtClaimTypes.GivenName, "Gerenciador do"),
+                            new Claim(JwtClaimTypes.FamilyName, "Curso"),
+                            new Claim(JwtClaimTypes.WebSite, "http://course_admin.com"),
+                            new Claim("gender", courseAdmin.Gender.ToString()),
+                            new Claim("holdingid", courseAdmin.HoldingId),
+                            new Claim("instituteid", courseAdmin.CourseId),
+                            new Claim("courseid", courseAdmin.InstituteId)
+                        }).Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+            }
         }
 
         public static async Task CreateUserRoles(IServiceCollection services)
@@ -264,19 +252,23 @@ namespace IdentityServer.Api
                     _ = await RoleManager.CreateAsync(new IdentityRole(role));
             }
 
-            // ApplicationUser user;
-            // 
-            // user = await UserManager.FindByNameAsync("SystemManager");
-            // await UserManager.AddToRoleAsync(user, "SystemAdmin");
-            // 
-            // user = await UserManager.FindByNameAsync("HoldingManager");
-            // await UserManager.AddToRoleAsync(user, "HoldingAdmin");
-            // 
-            // user = await UserManager.FindByNameAsync("InstituteManager");
-            // await UserManager.AddToRoleAsync(user, "InstituteAdmin");
+            ApplicationUser userToMakeAdmin;
 
-            // user = await UserManager.FindByNameAsync("Luisa");
-            // await UserManager.AddToRoleAsync(user, "Pedagogo");
+            userToMakeAdmin = await UserManager.FindByNameAsync("SystemAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "SystemAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "Visitor");
+
+            userToMakeAdmin = await UserManager.FindByNameAsync("HoldingAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "HoldingAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "Visitor");
+
+            userToMakeAdmin = await UserManager.FindByNameAsync("InstituteAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "InstituteAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "Visitor");
+
+            userToMakeAdmin = await UserManager.FindByNameAsync("CourseAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "CourseAdmin");
+            await UserManager.AddToRoleAsync(userToMakeAdmin, "Visitor");
         }
     }
 }

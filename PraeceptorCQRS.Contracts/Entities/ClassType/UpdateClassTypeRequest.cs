@@ -1,7 +1,8 @@
 namespace PraeceptorCQRS.Contracts.Entities.ClassType
 {
     public record UpdateClassTypeRequest(
-        Guid Id
+        Guid Id,
+        bool IsRemote,
+        int DurationInMinutes
     );
 }
-

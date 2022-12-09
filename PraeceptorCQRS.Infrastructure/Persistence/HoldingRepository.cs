@@ -14,19 +14,25 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<Holding?> CreateHolding(Holding entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<Holding, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Holding?> GetHoldingById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<Holding?> GetHoldingByCode(string code)
-            => await ReadDefault(o => string.Compare(o.Acronym, code, true) == 0);
+            => await ReadDefault(o => o.Acronym == code);
+
         public async Task<int> GetHoldingsCount()
             => await Count(o => true);
+
         public async Task UpdateHolding(Holding entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task DeleteHolding(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
@@ -207,11 +213,13 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             {
                 "Acronym" => Global.SortList(list, x => x.Acronym, ascending),
                 "Name" => Global.SortList(list, x => x.Name, ascending),
+                "Address" => Global.SortList(list, x => x.Address, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };
         }
     }
 }
-

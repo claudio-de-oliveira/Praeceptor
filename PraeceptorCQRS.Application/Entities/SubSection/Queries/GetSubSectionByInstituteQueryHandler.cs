@@ -19,6 +19,9 @@ namespace PraeceptorCQRS.Application.Entities.SubSection.Queries
 
         public async Task<ErrorOr<SubSectionListResult>> Handle(GetSubSectionByInstituteQuery request, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+                return Domain.Errors.Error.SubSection.Canceled;
+
             var list = await _repository.GetSubSectionByInstitute(request.InstituteId);
 
             if (list is null)

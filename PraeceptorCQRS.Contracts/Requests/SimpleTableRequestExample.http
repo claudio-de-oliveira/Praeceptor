@@ -1,0 +1,77 @@
+﻿# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7001
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@instituteId=58BC2E71-58AA-4439-5519-08DACCDBFBDC
+
+## C R E A T E ###########################################
+POST {{host}}/table/create
+Content-Type: {{contentType}}
+
+{
+    "Code": "TABELA4",
+    "Title": "Primeira Tabela",
+    "Header": "Coluna 1 & Coluna 2 & Coluna 3",
+    "Rows": "Linha 1, Coluna 1 & Linha 1, Coluna 2 & Linha 1, Coluna 3 && Linha 2, Coluna 1 & Linha 2, Coluna 2 & Linha 2, Coluna 3 && Linha 3, Coluna 1 & Linha 3, Coluna 2 & Linha 3, Coluna 3",
+    "Footer": "Roda-pé 1 & Roda-pé 2 & Roda-pé 3",
+    "InstituteId": "{{instituteId}}"
+}
+
+##########################################################
+# TODO: provide the Holding ID to GET, UPDATE and DELETE
+@idToGet=EAAEB130-31B6-4966-8DD4-9BAF040B96F5
+@idToUpd=bca8346e-6d3c-4905-86ec-a2163712bf06
+@idToDel=2a729787-0e8b-43aa-8b43-d1117155e7aa
+
+## G E T #################################################
+GET {{host}}/table/get/id/{{idToGet}}
+Content-Type: {{contentType}}
+
+## G E T #################################################
+GET {{host}}/table/get/code/TABELA3/{{instituteId}}
+Content-Type: {{contentType}}
+
+## U P D A T E ###########################################
+PUT {{host}}/table/update
+Content-Type: {{contentType}}
+
+{
+	"id": "{{idToUpd}}",
+    "Title": "Terceira Tabela",
+    "Header": "Coluna 1 & Coluna 2 & Coluna 3",
+    "Rows": "Linha 1, Coluna 1 & Linha 1, Coluna 2 & Linha 1, Coluna 3 && Linha 2, Coluna 1 & Linha 2, Coluna 2 & Linha 2, Coluna 3 && Linha 3, Coluna 1 & Linha 3, Coluna 2 & Linha 3, Coluna 3 && Linha 4, Coluna 1 & Linha 4, Coluna 2 & Linha 4, Coluna 3",
+    "Footer": "Roda-pé 1 & Roda-pé 2 & Roda-pé 3"
+}
+# TODO: add above the UpdateClassRequest values
+
+## D E L E T E ###########################################
+DELETE {{host}}/table/delete/{{idToDel}}
+Content-Type: {{contentType}}
+
+
+## G E T #################################################
+GET {{host}}/table/get/count/{{instituteId}}
+Content-Type: {{contentType}}
+
+## P A G E ###############################################
+POST {{host}}/table/get/page
+Content-Type: {{contentType}}
+
+{
+    "instituteid": "{{instituteId}}",
+    "start": 0,
+    "count": 200,
+    "sort": "Title",
+    "ascending": false,
+    "codefilter": "3",
+    "titlefilter": "",
+    "headerfilter": "",
+    "createdbyfilter": "",
+    "createdfilter": "",
+    "lastmodifiedfilter": "",
+    "lastmodifiedbyfilter": ""
+}
+

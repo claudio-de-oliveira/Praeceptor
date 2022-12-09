@@ -9,8 +9,18 @@
                 @Message
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cancelar</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="@(() => Confirmation())">Confirmar</button>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" 
+                        class="btn btn-danger" 
+                        data-bs-dismiss="modal" 
+                        onclick="@(() => Confirmation())">
+                        @*
+                        @onclick="((args) => OnConfirmEvent(args, ParameterId))">
+                        *@
+                    Confirmar
+                </button>
             </div>
         </div>
     </div>

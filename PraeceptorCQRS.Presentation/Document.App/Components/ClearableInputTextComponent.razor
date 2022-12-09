@@ -1,5 +1,7 @@
 <div class="input-group mb-3">
+
     <input class="form-control form-control-sm" type="text" value=@Filter @onchange=@OnTextChange disabled="@Waiting" placeholder="@Placeholder" style="font-size:small; background-color:aliceblue;">
+
     @if (Waiting)
     {
         <button type="button" class="btn btn-sm btn-outline-primary" disabled>
@@ -8,10 +10,10 @@
     }
     else
     {
-        <button class="btn btn-sm btn-outline-primary btn-clear" type="button" data-toggle="tooltip" title="Limpar"
-            disabled="@(string.IsNullOrWhiteSpace(Filter))"
-            @onclick="@OnClear">
-            <i class="bi small bi-x-lg"></i>
+        <button type="button" class="btn btn-sm btn-outline-primary btn-clear" data-toggle="tooltip" title="Limpar"
+                disabled="@(string.IsNullOrWhiteSpace(Filter))"
+                @onclick="@OnClear">
+            <i class="bi bi-x-lg"></i>
         </button>
     }
 </div>

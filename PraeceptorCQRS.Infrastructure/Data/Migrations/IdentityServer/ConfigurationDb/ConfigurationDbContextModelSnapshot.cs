@@ -774,7 +774,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("UserClaims")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApiResource");
@@ -785,7 +785,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("Properties")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApiResource");
@@ -796,7 +796,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("Scopes")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApiResource");
@@ -807,7 +807,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiResource", "ApiResource")
                         .WithMany("Secrets")
                         .HasForeignKey("ApiResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApiResource");
@@ -818,7 +818,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiScope", "Scope")
                         .WithMany("UserClaims")
                         .HasForeignKey("ScopeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Scope");
@@ -829,7 +829,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.ApiScope", "Scope")
                         .WithMany("Properties")
                         .HasForeignKey("ScopeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Scope");
@@ -840,7 +840,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("Claims")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -851,7 +851,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("AllowedCorsOrigins")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -862,7 +862,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("AllowedGrantTypes")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -873,7 +873,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("IdentityProviderRestrictions")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -884,7 +884,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("PostLogoutRedirectUris")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -895,7 +895,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("Properties")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -906,7 +906,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("RedirectUris")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -917,7 +917,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("AllowedScopes")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -928,7 +928,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.Client", "Client")
                         .WithMany("ClientSecrets")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -939,7 +939,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.IdentityResource", "IdentityResource")
                         .WithMany("UserClaims")
                         .HasForeignKey("IdentityResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("IdentityResource");
@@ -950,7 +950,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Configura
                     b.HasOne("IdentityServer4.EntityFramework.Entities.IdentityResource", "IdentityResource")
                         .WithMany("Properties")
                         .HasForeignKey("IdentityResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("IdentityResource");

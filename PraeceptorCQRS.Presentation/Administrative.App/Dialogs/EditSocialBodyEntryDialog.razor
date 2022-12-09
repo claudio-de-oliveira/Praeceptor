@@ -1,0 +1,202 @@
+﻿@using Administrative.App.Components
+@using Administrative.App.Components.Toaster;
+@using Administrative.App.Interfaces
+@using Administrative.App.Models
+@using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc;
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.Preceptor
+
+<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <form>
+                            <div class="mb-3">
+                                <label for="recipient-preceptor" class="col-form-label">Docente</label>
+                                @if (Create)
+                                {
+                                    <SelectTextComponent Waiting="@false" Options="@options" OnSelectedChange="@OnPreceptorSelected" OnTextChange="@OnPreceptorChanged"></SelectTextComponent>
+                                }
+                                else
+                                {
+                                    <input type="text" disabled="@true" value="@Entry?.Preceptor.Name" />
+                                }
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-role" class="col-form-label">Participação</label>
+                                <select class="form-select" id="recipient-role" @bind="@roleSelectedId" style="background-color:aliceblue;">
+                                    <option value=@Guid.Empty>Selecione uma função para o docente</option>
+                                    @foreach (var role in Roles)
+                                    {
+                                        <option value=@role.Key>@role.Value</option>
+                                    }
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editChapterModal"
+                        title="Cuidado: As modificações serão perdidas"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" 
+                        class="btn btn-outline-primary" 
+                        disabled = "@(roleSelectedId == Guid.Empty)"
+                        @onclick="@(async () => await Ok())">
+                        Salvar alterações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid InstituteId { get; set; }
+    [Parameter]
+    public bool Create { get; set; }
+    [Parameter]
+    public SocialBodyEntryModel Entry { get; set; } = default!;
+    [Parameter]
+    public Dictionary<Guid, string> Roles { get; set; } = new();
+    [Parameter]
+    public EventCallback<SocialBodyEntryModel?> OnClose { get; set; }
+    [Inject]
+    private IPreceptorService preceptorService { get; set; } = default!;
+    [Inject]
+    private IPreceptorRoleService roleService { get; set; } = default!;
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
+
+    private List<PreceptorModel> preceptors = new();
+    // private Guid roleCode;
+
+    private Dictionary<Guid, string> options = new();
+
+    private string? preceptorFilter = default!;
+    private Guid roleSelectedId = default!;
+    private PreceptorModel? preceptor;
+    // private PreceptorRoleTypeModel? role;
+
+    protected bool waiting = true;
+
+    protected override void OnInitialized()
+    {
+        Guard.Against.Null(Entry);
+        Guard.Against.Null(Entry.Course);
+
+        if (!Create)
+        {
+            Guard.Against.Null(Entry);
+            preceptor = Entry.Preceptor;
+            roleSelectedId = Entry.Role.Id;
+        }
+        else
+        {
+            preceptor = null;
+            // role = null;
+        }
+
+        base.OnInitialized();
+    }
+
+    private async void OnPreceptorChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        preceptorFilter = (string)args.Value;
+        await PageRequest();
+    }
+
+    private async void OnPreceptorSelected(ChangeEventArgs args)
+    {
+        await Task.CompletedTask;
+        Guard.Against.Null(args.Value);
+        var tmp = await preceptorService.GetPreceptorById(Guid.Parse((string)args.Value));
+        Guard.Against.Null(tmp);
+        preceptor = tmp;
+    }
+
+    protected async Task PageRequest()
+    {
+        waiting = true;
+        var message = await preceptorService.PostPage(
+            new GetPreceptorPageRequest(
+                InstituteId,
+                0,
+                int.MaxValue,
+                "",
+                true,
+                preceptorFilter,
+                preceptorFilter,
+                "",
+                null,
+                null,
+                "",
+                "",
+                "",
+                ""
+                )
+            );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfPreceptorModel>(content);
+            Guard.Against.Null(tmp);
+            options.Clear();
+            tmp.Entities.ForEach(o => options.Add(o.Id, $"{o.Name} ({o.Code})"));
+        }
+        else
+        { 
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+
+    private async Task Ok()
+    {
+        var role = await roleService.GetPreceptorRoleTypeById(roleSelectedId);
+        Guard.Against.Null(role);
+        Guard.Against.Null(preceptor);
+
+        await OnClose.InvokeAsync(new SocialBodyEntryModel
+            {
+                Course = Entry.Course,
+                Preceptor = preceptor,
+                Role = role
+            });
+
+        await OnClose.InvokeAsync(null);
+    }
+}

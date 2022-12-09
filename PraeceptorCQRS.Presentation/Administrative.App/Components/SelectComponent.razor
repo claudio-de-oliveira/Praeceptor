@@ -1,5 +1,5 @@
 ﻿<div class="input-group mb-3">
-    <input type="text" class="form-control"
+    <input type="text" class="form-control form-control-sm"
            aria-label="Text input with dropdown button"
            value=@Filter
            @onchange=@OnTextChange
@@ -7,24 +7,24 @@
            style="background-color:aliceblue;">
     @if (Waiting)
     {
-        <button type="button" class="btn btn-outline-primary" disabled>
+        <button type="button" class="btn btn-sm btn-outline-primary" disabled>
             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
         </button>
     }
     else
     {
-        <button class="btn btn-outline-primary" type="button" data-toggle="tooltip" title="Limpar"
+        <button class="btn btn-sm btn-outline-primary" type="button" data-toggle="tooltip" title="Limpar"
             disabled="@(string.IsNullOrWhiteSpace(Filter))"
             @onclick="@OnClear">
-            <i class="bi bi-x-lg"></i>
+            <i class="bi small bi-x-lg"></i>
         </button>
     }
-    <button class="btn btn-outline-primary dropdown-toggle"
+    <button class="btn btn-sm btn-outline-primary dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false">
     </button>
-    <ul class="dropdown-menu dropdown-menu-end">
+    <ul class="dropdown-menu bg-secondary dropdown-menu-end form-control-sm">
         @foreach (var key in Options)
         {
             <li>

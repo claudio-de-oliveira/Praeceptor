@@ -1,5 +1,6 @@
 ﻿@using Administrative.App.Components.Toaster
 @using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 
 @using Administrative.App.Components
@@ -112,7 +113,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await axisService.GetAxisTypePage(
+        var message = await axisService.GetAxisTypePage(
             new GetAxisTypePageRequest(
                 InstituteId,
                 0,
@@ -126,11 +127,19 @@
                 null
             )
         );
-        if (result.IsSuccessStatusCode)
+        if (message.IsSuccessStatusCode)
         {
-            var list = JsonConvert.DeserializeObject<List<AxisTypeModel>>(await result.Content.ReadAsStringAsync());
+            var list = JsonConvert.DeserializeObject<List<AxisTypeModel>>(await message.Content.ReadAsStringAsync());
             Guard.Against.Null(list);
             axisTypeList = list.ToList();
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
         }
     }
 

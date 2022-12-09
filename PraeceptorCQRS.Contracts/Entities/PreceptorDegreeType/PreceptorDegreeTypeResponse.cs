@@ -4,6 +4,9 @@ namespace PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType
         Guid Id,
 
         string Code,
+        bool LatoSensu,
+        bool StrictoSensu,
+
         Guid InstituteId,
 
         DateTime Created,
@@ -12,4 +15,3 @@ namespace PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType
         string? LastModifiedBy
    );
 }
-

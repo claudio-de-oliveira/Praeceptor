@@ -37,6 +37,7 @@ namespace PraeceptorCQRS.Application.Entities.Class.Commands
                 TypeId = request.TypeId,
                 // don't change institute!
                 InstituteId = entity.InstituteId,
+                HasPlanner = request.HasPlanner,
                 // ...
                 Created = entity.Created,
                 CreatedBy = entity.CreatedBy,
@@ -53,4 +54,3 @@ namespace PraeceptorCQRS.Application.Entities.Class.Commands
         }
     }
 }
-

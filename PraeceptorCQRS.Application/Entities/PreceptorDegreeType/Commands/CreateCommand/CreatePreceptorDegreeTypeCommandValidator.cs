@@ -6,7 +6,7 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Commands
 {
     public class CreatePreceptorDegreeTypeCommandValidator : AbstractValidator<CreatePreceptorDegreeTypeCommand>
     {
-        public CreatePreceptorDegreeTypeCommandValidator(IPreceptorDegreeTypeRepository preceptorDegreeTypeRepository, IInstituteRepository instituteRepository)
+        public CreatePreceptorDegreeTypeCommandValidator(IPreceptorRoleTypeRepository preceptorDegreeTypeRepository, IInstituteRepository instituteRepository)
         {
             RuleFor(x => x.Code)
                 .NotEmpty()

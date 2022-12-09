@@ -8,6 +8,7 @@ using Hanssens.Net;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.DependencyInjection;
 
 using PraeceptorCQRS.Utilities;
 
@@ -67,14 +68,20 @@ var holdingService = new HoldingService(builder.Configuration);
 builder.Services.AddSingleton<IHoldingService>(holdingService);
 var instituteService = new InstituteService(builder.Configuration);
 builder.Services.AddSingleton<IInstituteService>(instituteService);
-var preceptorService = new PreceptorService(builder.Configuration);
-builder.Services.AddSingleton<IPreceptorService>(preceptorService);
+
 var preceptorDegreeService = new PreceptorDegreeService(builder.Configuration);
 builder.Services.AddSingleton<IPreceptorDegreeService>(preceptorDegreeService);
 var preceptorRegimeService = new PreceptorRegimeService(builder.Configuration);
 builder.Services.AddSingleton<IPreceptorRegimeService>(preceptorRegimeService);
+var preceptorRoleService = new PreceptorRoleService(builder.Configuration);
+builder.Services.AddSingleton<IPreceptorRoleService>(preceptorRoleService);
+var preceptorService = new PreceptorService(builder.Configuration);
+builder.Services.AddSingleton<IPreceptorService>(preceptorService);
+var socialBodyService = new SocialBodyService(builder.Configuration);
+builder.Services.AddSingleton<ISocialBodyService>(socialBodyService);
 
 #region IdentityServer4
+
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 builder.Services.AddAuthentication(options =>
@@ -122,7 +129,7 @@ builder.Services.AddAuthentication(options =>
         options.ClaimActions.MapJsonKey("holdingid", "holdingid", "holdingid");
         options.ClaimActions.MapJsonKey("courseid", "courseid", "courseid");
 
-        // It's recommended to always get claims from the UserInfoEndpoint during the flow. 
+        // It's recommended to always get claims from the UserInfoEndpoint during the flow.
         options.GetClaimsFromUserInfoEndpoint = true;
 
         options.Events = new OpenIdConnectEvents
@@ -136,30 +143,36 @@ builder.Services.AddAuthentication(options =>
             }
         };
     });
-#endregion
+
+#endregion IdentityServer4
 
 var app = builder.Build();
 
-await SeedData.InitializeHoldingTable(holdingService);
-Console.WriteLine("Passou pelas Holdings");
-await SeedData.InitializeInstituteTable(instituteService);
-Console.WriteLine("Passou pelos Institutos");
-await SeedData.InitializeCourseTable(courseService);
-Console.WriteLine("Passou pelos Cursos");
-await SeedData.InitializeClassTypeTable(classTypeService);
-Console.WriteLine("Passou pelos Tipos de Disciplinas");
-await SeedData.InitializeClassTable(classService);
-Console.WriteLine("Passou pelas Disciplinas");
-await SeedData.InitializePreceptorDegreeTable(preceptorDegreeService);
-Console.WriteLine("Passou pelas Titulações");
-await SeedData.InitializePreceptorRegimeTable(preceptorRegimeService);
-Console.WriteLine("Passou pelos Regimes");
-await SeedData.InitializePreceptorTable(preceptorService);
-Console.WriteLine("Passou pelos Professores");
-await SeedData.InitializeAxisTypeTable(axisTypeService);
-Console.WriteLine("Passou pelos Eixos");
-await SeedData.InitializeSyllabusTable(componentService);
-Console.WriteLine("Passou pelos Componentes");
+// await SeedData.InitializeHoldingTable(holdingService);
+// Console.WriteLine("Passou pelas Holdings");
+// await SeedData.InitializeInstituteTable(instituteService);
+// Console.WriteLine("Passou pelos Institutos");
+// await SeedData.InitializeCourseTable(courseService);
+// Console.WriteLine("Passou pelos Cursos");
+// await SeedData.InitializeClassTypeTable(classTypeService);
+// Console.WriteLine("Passou pelos Tipos de Disciplinas");
+// await SeedData.InitializeClassTable(classService);
+// Console.WriteLine("Passou pelas Disciplinas");
+// await SeedData.InitializeAxisTypeTable(axisTypeService);
+// Console.WriteLine("Passou pelos Eixos");
+// await SeedData.InitializeSyllabusTable(componentService);
+// Console.WriteLine("Passou pelos Componentes");
+//
+// await SeedData.InitializePreceptorDegreeTable(preceptorDegreeService);
+// Console.WriteLine("Passou pelas Titulações");
+// await SeedData.InitializePreceptorRegimeTable(preceptorRegimeService);
+// Console.WriteLine("Passou pelos Regimes");
+// await SeedData.InitializePreceptorRoleTable(preceptorRoleService);
+// Console.WriteLine("Passou pelos Papéis dos Docentes");
+// await SeedData.InitializePreceptorTable(preceptorService);
+// Console.WriteLine("Passou pelos Professores");
+// await SeedData.InitializeSocialBodyTable(socialBodyService);
+// Console.WriteLine("Passou pelo Corpo Social");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -208,4 +221,3 @@ static string? FindFirstFilePath(string filename)
 
     return null;
 }
-

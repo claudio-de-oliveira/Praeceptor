@@ -1,0 +1,38 @@
+﻿<div class="input-group input-group-sm mb-3">
+
+    <input class="form-control form-control-sm" type="text" value=@Filter @onchange=@OnTextChange disabled="@Waiting" placeholder="@Placeholder" style="font-size:small; background-color:aliceblue;">
+
+    @if (Waiting)
+    {
+            <button type="button" class="btn btn-sm btn-outline-primary" disabled>
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+            </button>
+    }
+    else
+    {
+            <button class="btn btn-sm btn-outline-primary btn-clear" type="button" data-toggle="tooltip" title="Limpar"
+                disabled="@(string.IsNullOrWhiteSpace(Filter))"
+                @onclick="@OnClear">
+                <i class="bi small bi-x-lg"></i>
+            </button>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public bool Waiting { get; set; } = false;
+    [Parameter]
+    public string? Filter { get; set; }
+    [Parameter]
+    public string Placeholder { get; set; } = default!;
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnTextChange { get; set; }
+
+    private async Task OnClear()
+    {
+        Filter = "";
+        await OnTextChange.InvokeAsync(new ChangeEventArgs { Value = Filter });
+        StateHasChanged();
+    }
+}

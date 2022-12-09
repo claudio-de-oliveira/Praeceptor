@@ -13,29 +13,30 @@
 <!-- Modal: Editar entidade -->
 @if (EditDialogIsOpen)
 {
-    <EditAxisTypeDialog Code="@previousCode" OnClose="@OnEditDialogClose" />
+    <EditAxisTypeDialog Code="@previousCode" Code3="@previousCode3" OnClose="@OnEditDialogClose" />
 }
 
 <section class="p-1">
     <article class="content px-4">
-        <table class='table'>
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
             <tbody>
                 @foreach (var entity in typeList)
                 {
                     <tr>
-                        <td>@entity.Code</td>
-                        <td align="center">
+                        <td><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Code3</div></td>
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editClassTypeModal"
-                                title="Editar"
-                                disabled="@(!CanEdit(entity))"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editClassTypeModal"
+                                    title="Editar"
+                                    disabled="@(!CanEdit(entity))"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                     </tr>
@@ -72,6 +73,7 @@
     protected List<AxisTypeModel> typeList = new();
     protected AxisTypeModel entitySelected = new();
     protected string previousCode = string.Empty;
+    protected string previousCode3 = string.Empty;
 
     private Guid instituteId;
     private InstituteModel? institute;
@@ -142,6 +144,16 @@
             Guard.Against.Null(tmp);
             typeList = tmp.Entities;
         }
+        else 
+        { 
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+
+            typeList = new();
+        }
         waiting = false;
 
         StateHasChanged();
@@ -151,6 +163,7 @@
     {
         entitySelected = entity;
         previousCode = entitySelected.Code;
+        previousCode3 = entitySelected.Code3;
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -161,6 +174,7 @@
 
         entitySelected = new AxisTypeModel() { InstituteId = instituteId };
         previousCode = "";
+        previousCode3 = "";
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -180,6 +194,7 @@
                 response = await axisService.CreateAxisType(
                     new CreateAxisTypeRequest(
                         entitySelected.Code,
+                        entitySelected.Code3,
                         instituteId
                         )
                     );
@@ -198,6 +213,7 @@
                 var result = await response.Content.ReadAsStringAsync();
                 _toasterService?.AddToastSuccess("As modificações foram salvas.");
                 previousCode = entitySelected.Code;
+                previousCode3 = entitySelected.Code3;
 
                 await PageRequest();
             }
@@ -210,6 +226,7 @@
                 _toasterService?.AddToastError(error.Title);
 
                 entitySelected.Code = previousCode;
+                entitySelected.Code3 = previousCode3;
             }
 
             waiting = false;

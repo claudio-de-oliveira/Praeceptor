@@ -1,0 +1,332 @@
+﻿@page "/table/list"
+
+@using Ardalis.GuardClauses
+@using Document.App.Components
+@using Document.App.Components.Toaster
+@using Microsoft.AspNetCore.Mvc;
+@using Newtonsoft.Json
+@using PraeceptorCQRS.Contracts.Entities.DocumentTemplate
+@using PraeceptorCQRS.Contracts.Entities.SimpleTable;
+@using PraeceptorCQRS.Contracts.Entities.SqlFileStream
+@using PraeceptorCQRS.Utilities
+@using Document.App.Dialogs
+
+@attribute [Authorize]
+
+@inject NavigationManager navigationManager
+
+@inherits AuthenticatedPage
+
+<!-- Modal: Editar entidade -->
+@if (editEntityDialogIsOpen)
+{
+    <CreateSimpleTableDialog OnClose="@OnEditSimpleTableModelDialogClose"
+                         Table="@currentEntity"
+                         Create="@create">
+    </CreateSimpleTableDialog>
+}
+
+<section class="p-1">
+    <article class="content px-4">
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+            <thead>
+                <tr>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Código" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Placeholder="Filtrar por Colunas" Filter="@headerFilter" Waiting="@waiting" OnTextChange="@OnHeaderChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Código" SortBy="Code" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Colunas" SortBy="Columns" OnClick="@SortBy" />
+                    </td>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <!---->
+            </thead>
+            <tbody>
+                @foreach (var entity in tables)
+                {
+                    <ConfirmDialog Title="Atenção"
+                               Message=@($"Tem certeza que deseja excluir a tabela \"{entity.Code}\" ?")
+                               OnConfirmEvent="@Delete"
+                               ParameterId="@entity.Id" />
+
+                    <tr>
+                        <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Title</div></td>
+                        <td><div style="font-size: smaller">@entity.Header</div></td>
+                        <td align="right" style="width: 80px;">
+                            <button type="button"
+                                class="btn btn-sm btn-success"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Ver detalhes"
+                                @onclick="@(() => Details(entity))"
+                                style="border: none;">
+                                Detalhes
+                            </button>
+                        </td>
+                        <td align="right" style="width: 80px;">
+                            <button type="button"
+                                class="btn btn-sm btn-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                disabled="@(waiting || !CanDelete(entity))"
+                                data-bs-target="#@($"A{entity.Id.ToString("N")}")"
+                                title="Excluir"
+                                style="border: none;">
+                                Excluir
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@(waiting || !CanCreate())"
+                        title="Criar um novo componente curricular"
+                        @onclick="() => OnCreate()">
+                    <i class="bi bi-plus-slash-minus"></i>
+                    Criar um novo componente curricular
+                </button>
+            </div>
+            <!--
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+            -->
+        </div>
+    </article>
+</section>
+
+@code {
+    [Inject]
+    private ISimpleTableService simpleTableService { get; set; } = default!;
+
+    private List<SimpleTableModel> tables = new();
+
+    private SimpleTableModel currentEntity = default!;
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    protected bool waiting = true;
+
+    protected bool ascendingSort = false;
+    protected string? sort = "LastModified";
+    protected string? codeFilter = "";
+    protected string? titleFilter = "";
+    protected string? headerFilter = "";
+    protected string? createdFilter = "";
+    protected string? createdByFilter = "";
+    protected string? lastModifiedFilter = "";
+    protected string? lastModifiedByFilter = "";
+
+    // private InstituteModel? institute;
+
+    private bool editEntityDialogIsOpen = false;
+    protected bool create = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // institute = await InstituteService.GetInstituteById(_userInstituteId);
+            // Guard.Against.Null(institute);
+
+            // EditEntityDialogIsOpen = false;
+            await PageRequest(currentPage);
+        }
+    }
+
+    protected bool CanCreate()
+    {
+        return true;
+        // return (_isInstituteAdmin || _isHoldingAdmin);
+    }
+
+    protected bool CanDelete(SimpleTableModel entity)
+    {
+        return true;
+        // return (_isInstituteAdmin || _isHoldingAdmin);
+    }
+
+    // protected void Edit(SimpleTableModel entity)
+    // {
+    //     currentEntity = entity;
+    //     create = false;
+    //     editEntityDialogIsOpen = true;
+    //     StateHasChanged();
+    // }
+
+    protected virtual void OnCreate()
+    {
+        currentEntity = new SimpleTableModel()
+            {
+                Id = Guid.NewGuid(),
+                Code = "",
+                Title = "",
+                Header = "",
+                Rows = "",
+                Footer = "",
+                InstituteId = _userInstituteId
+            };
+        create = true;
+        editEntityDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
+    }
+
+    protected async Task PageRequest(int page)
+    {
+        waiting = true;
+        var message = await simpleTableService.GetTablePage(
+            new GetSimpleTablePageRequest(
+                _userInstituteId,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                codeFilter,
+                titleFilter,
+                headerFilter,
+                createdFilter,
+                createdByFilter,
+                lastModifiedFilter,
+                lastModifiedByFilter
+            )
+        );
+
+        if (message.IsSuccessStatusCode)
+        {
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfSimpleTable>(content);
+            Guard.Against.Null(tmp);
+            tables = tmp.Entities.Select(o => (SimpleTableModel)o).ToList();
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+        waiting = false;
+
+        StateHasChanged();
+    }
+
+    protected async Task OnCodeChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        codeFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+
+    protected async Task OnTitleChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        titleFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+
+    protected async Task OnHeaderChanged(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        headerFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+    private async Task OnEditSimpleTableModelDialogClose(SimpleTableModel model)
+    {
+        if (model is not null)
+        {
+            if (create)
+            {
+                var response = await simpleTableService.CreateTable(new CreateSimpleTableRequest(
+                    model.Code,
+                    model.Title,
+                    model.Header,
+                    model.Rows,
+                    model.Footer,
+                    model.InstituteId
+                ));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    Guard.Against.Null(content);
+                    currentEntity = JsonConvert.DeserializeObject<SimpleTableModel>(content)!;
+                    Guard.Against.Null(currentEntity);
+                }
+            }
+        }
+        editEntityDialogIsOpen = false;
+    }
+
+    private async void Delete(object? source, Guid id)
+    {
+        var response = await simpleTableService.DeleteTable(id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            tables.Remove(tables.Find(o => o.Id == id)!);
+            StateHasChanged();
+            _toasterService?.AddToastSuccess("A tabela foi excluída com sucesso.");
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+    }
+
+    private void Details(SimpleTableModel entity)
+    {
+        navigationManager.NavigateTo($"table/details/{entity.Id}");
+    }
+}

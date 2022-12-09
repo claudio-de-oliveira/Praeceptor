@@ -14,15 +14,22 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<Pea?> CreatePea(Pea entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<Pea, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Pea?> GetPeaById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
+        public async Task<Pea?> GetPeaByClassId(Guid classId)
+            => await ReadDefault(o => o.ClassId == classId);
+
         public async Task UpdatePea(Pea entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task DeletePea(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);

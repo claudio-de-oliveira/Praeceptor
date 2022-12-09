@@ -47,7 +47,6 @@ namespace PraeceptorCQRS.Application.Entities.Preceptor.Commands
                     bool exists = await preceptorDegreeTypeRepository.Exists(o => o.Id == degreeId);
                     return exists;
                 });
-
             // institute must exist
             RuleFor(x => x.InstituteId)
                 .MustAsync(async (instituteId, cancellation) =>

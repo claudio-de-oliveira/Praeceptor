@@ -5,7 +5,12 @@
 @using Ardalis.GuardClauses
 @using Document.App.Components
 @using Document.App.Dialogs
+@using Microsoft.AspNetCore.Mvc;
+@using Newtonsoft.Json;
+@using PraeceptorCQRS.Contracts.Entities.Course;
 @using PraeceptorCQRS.Utilities
+@using PraeceptorCQRS.Contracts.Entities.ToWord
+@using PraeceptorCQRS.Contracts.Entities.SqlFileStream;
 
 @inject NavigationManager navigationManager
 
@@ -15,6 +20,10 @@
 @if (EditEntityDialogIsOpen)
 {
     <EditEntityDialog Title="@previousTitle" Text="@previousText" OnClose="@OnEditEntityDialogClose" />
+}
+@if (ToDocxDialogIsOpen)
+{
+    <ToDocxDialog Courses="@courseList" Templates="@templates" OnClose="@OnToDocxDialogClose" />
 }
 
 <section class="p-1">
@@ -67,39 +76,39 @@
                                 @TextToDisplay(entity.Title, 50)
                             </div>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-outline-info"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Ver detalhes"
-                                @onclick="@(() => Details(entity))"
-                                style="border: none;">
-                                <i class="bi bi-diagram-3"></i>
+                                    class="btn btn-sm btn-success"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Ver detalhes"
+                                    @onclick="@(() => Details(entity))"
+                                    style="border: none;">
+                                Detalhes
                             </button>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editDocumentModal"
-                                title="Editar"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editDocumentModal"
+                                    title="Editar"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-outline-success"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Imprimir"
-                                @onclick="@(() => Print(entity))"
-                                style="border: none;">
-                                <i class="bi bi-printer"></i>
+                                    class="btn btn-sm btn-primary"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Gerar documento Word"
+                                    @onclick="@(() => Print(entity))"
+                                    style="border: none;">
+                                Word
                             </button>
                         </td>
                         <td align="center">
@@ -140,8 +149,20 @@
 @code {
     [Inject]
     protected IInstituteService InstituteService { get; set; } = default!;
+    [Inject]
+    protected IDocxStreamService DocxStreamService { get; set; } = default!;
+    [Inject]
+    private ICourseService courseService { get; set; } = default!;
+    [Inject]
+    private IFileStreamService fileService { get; set; } = default!;
 
     private InstituteModel? institute;
+
+    private bool ToDocxDialogIsOpen = false;
+    private List<CourseModel>? courseList = default!;
+    private List<FileModel>? templates = default;
+
+    private BookEntity? entityToPrint;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -154,8 +175,146 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void Print(BookEntity doc)
+    private async Task OnToDocxDialogClose(ConvertPpcToDocxRequest? request)
     {
+        if (request is not null) 
+        {
+            var response = await DocxStreamService.CreateDocxStream(
+                new ConvertPpcToDocxRequest(
+                    request.CourseId,
+                    request.Curriculum,
+                    request.Description,
+                    entityToPrint!.Id,
+                    request.TemplateId,
+                    Guid.Empty,
+                    request.GroupValues,
+                    _userName
+                )
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Guard.Against.Null(content);
+                Console.WriteLine(content);
+                var fileId = JsonConvert.DeserializeObject<Guid>(content);
+                _toasterService?.AddToastSuccess($"Gerando documento {fileId}");
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+                Guard.Against.Null(error);
+                Guard.Against.Null(error.Title);
+                _toasterService?.AddToastError(error.Title);
+            }
+        }
+
+        entityToPrint = null;
+
+        ToDocxDialogIsOpen = false;
+
+        StateHasChanged();
+    }
+
+    private async Task<List<FileModel>?> ReadTemplates(Guid instituteId)
+    {
+        var response = await fileService.GetFileStreamPage(
+            new GetFilePageRequest(
+                instituteId,
+                0,
+                int.MaxValue,
+                "Name",
+                true,
+                null,
+                null,
+                null,
+                null,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+                null
+            )
+        );
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Guard.Against.Null(content);
+            Console.WriteLine(content);
+            var page = JsonConvert.DeserializeObject<PageOfFile>(content);
+            Guard.Against.Null(page);
+
+            return page.Entities;
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+
+            return null;
+        }
+    }
+
+    private async Task<List<CourseModel>?> ReadCourses(Guid instituteId)
+    {
+        var response = await courseService.PostPage(
+            new GetCoursePageRequest(
+                instituteId,
+                0,
+                int.MaxValue,
+                "Name",
+                true,
+                null,
+                null,
+                null,
+                -1,
+                -1,
+                -1,
+                null,
+                null,
+                null,
+                null
+            )
+        );
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Guard.Against.Null(content);
+            Console.WriteLine(content);
+            var page = JsonConvert.DeserializeObject<PageOfCourse>(content);
+            Guard.Against.Null(page);
+
+            return page.Entities;
+        }
+        else
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+
+            return null;
+        }
+    }
+
+    private async Task Print(BookEntity doc)
+    {
+        templates = await ReadTemplates(_userInstituteId);
+        if (templates is null)
+            return;
+        courseList = await ReadCourses(_userInstituteId);
+        if (courseList is null)
+            return;
+
+        entityToPrint = doc;
+
+        ToDocxDialogIsOpen = true;
+
+        StateHasChanged();
     }
 
     private void Details(BookEntity doc)

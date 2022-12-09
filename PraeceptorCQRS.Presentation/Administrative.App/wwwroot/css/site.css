@@ -128,7 +128,6 @@ a, .btn-link {
         opacity: 1;
     }
 
-
 .container {
     width: 1024px;
     padding: 2em;
@@ -160,6 +159,7 @@ a, .btn-link {
         text-transform: uppercase;
         font-size: 20px;
     }
+
     .t-modal .modal.title {
         color: #1A237E;
     }
@@ -175,7 +175,6 @@ a, .btn-link {
 .fade {
     animation-duration: 1s;
 }
-
 
 label {
     display: block;
@@ -199,3 +198,21 @@ input, label {
 input.form-control {
     margin: 0 0;
 }
+
+/* POPUP de confirmação */
+.pop-container {
+    position: relative;
+}
+
+.popconfirm {
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightblue;
+    width: 250px;
+    position: absolute;
+    top: -50px;
+    padding: 10px;
+    border-radius: 8px;
+}
+/**/

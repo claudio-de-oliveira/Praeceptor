@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ErrorOr;
+
+using MediatR;
+
+using PraeceptorCQRS.Application.Entities.Pea.Common;
 
 namespace PraeceptorCQRS.Application.Entities.Pea.Command.DeleteCommand
 {
-    public record DeletePeaCommand
-    {
-    }
+    public record DeletePeaCommand(
+        Guid ClassId
+        ) : IRequest<ErrorOr<PeaResult>>;
 }

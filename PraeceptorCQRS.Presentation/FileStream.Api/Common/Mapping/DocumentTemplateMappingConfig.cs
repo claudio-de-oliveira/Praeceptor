@@ -13,9 +13,9 @@ namespace FileStream.Api.Common.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<GetFileStreamPageRequest, GetSqlFileStreamPageQuery>();
+            config.NewConfig<GetFilePageRequest, GetFilePageQuery>();
 
-            config.NewConfig<CreateSqlFileStreamRequest, CreateSqlFileStreamCommand>()
+            config.NewConfig<CreateFileRequest, CreateFileCommand>()
                 .Map(target => target.Name, source => source.Name)
                 .Map(target => target.Title, source => source.Title)
                 .Map(target => target.Source, source => source.Source)
@@ -23,9 +23,9 @@ namespace FileStream.Api.Common.Mapping
                 .Map(target => target.ContentType, source => source.ContentType)
                 .Map(target => target.InstituteId, source => source.InstituteId)
                 .Map(target => target.Data, source => source.Data);
-            config.NewConfig<SqlFileStreamResult, SqlFileStreamResponse>()
+            config.NewConfig<FileResult, FileResponse>()
                 .Map(dest => dest, src => src.FileStream);
-            config.NewConfig<SqlFileStreamPageResult, PageResponse<SqlFileStreamResponse>>()
+            config.NewConfig<FilePageResult, PageResponse<FileResponse>>()
                 .Map(dest => dest, src => src.Page);
         }
     }

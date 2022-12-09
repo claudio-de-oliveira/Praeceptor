@@ -15,5 +15,12 @@ internal sealed class AxisTypeConfiguration
 
         modelBuilder
             .HasKey(x => x.Id);
+
+        modelBuilder
+            .HasOne(d => d.Institute)
+            .WithMany(p => p.AxisTypes);
+        modelBuilder
+            .HasMany(d => d.Components)
+            .WithOne(p => p.Axis);
     }
 }

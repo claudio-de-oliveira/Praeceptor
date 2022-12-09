@@ -1,6 +1,9 @@
 ﻿using Ardalis.GuardClauses;
+
 using Document.App.Interfaces;
+
 using PraeceptorCQRS.Contracts.Entities.DocumentTemplate;
+
 using Serilog;
 
 namespace Document.App.SeedData.Images
@@ -54,12 +57,12 @@ namespace Document.App.SeedData.Images
                 if (data is null || data.Length == 0)
                     continue;
 
-                bool exist = await service.ExistFileStream(instituteId, vs[0]);
+                bool exist = await service.ExistFileStream(instituteId, fname);
 
                 if (!exist)
                 {
-                    CreateSqlFileStreamRequest request = new(
-                        vs[0],
+                    CreateFileRequest request = new(
+                        $"{vs[0]}.{vs[1]}",
                         fname,
                         fullpath,
                         null,

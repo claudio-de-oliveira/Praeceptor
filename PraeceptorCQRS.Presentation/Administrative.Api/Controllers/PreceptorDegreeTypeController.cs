@@ -12,8 +12,6 @@ using PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Common;
 using PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Queries;
 using PraeceptorCQRS.Contracts.Entities.Page;
 using PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
 {
@@ -66,13 +64,14 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<PreceptorDegreeTypePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<PreceptorDegreeTypeResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<PreceptorDegreeTypeResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
 
         [HttpGet("get/id/{id}")]
-        [Authorize("ReadPolice")]
+        // [Authorize("ReadPolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPreceptorDegreeTypeById(Guid id)
         {
             var query = new GetPreceptorDegreeTypeByIdQuery(
@@ -119,16 +118,19 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreatePreceptorDegreeType([FromBody] CreatePreceptorDegreeTypeRequest request)
         {
             // var command = _mapper.Map<CreatePreceptorDegreeTypeCommand>(request);
             var command = new CreatePreceptorDegreeTypeCommand(
                 request.Code,
+                request.LatoSensu,
+                request.StrictoSensu,
                 request.InstituteId
                 );
 
-            ErrorOr <PreceptorDegreeTypeResult> result = await _mediator.Send(command);
+            ErrorOr<PreceptorDegreeTypeResult> result = await _mediator.Send(command);
 
             return result.Match(
                 // Use CreatedAtAction to return 201 CreatedAtAction
@@ -152,4 +154,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-

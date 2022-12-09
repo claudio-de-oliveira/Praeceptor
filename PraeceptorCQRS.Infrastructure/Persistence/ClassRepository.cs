@@ -1,5 +1,7 @@
 using Ardalis.GuardClauses;
 
+using Microsoft.EntityFrameworkCore;
+
 using PraeceptorCQRS.Application.Persistence;
 using PraeceptorCQRS.Domain.Entities;
 using PraeceptorCQRS.Infrastructure.Common;
@@ -10,33 +12,46 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 {
     public class ClassRepository : AbstractRepository<Class>, IClassRepository
     {
-        private readonly IClassTypeRepository _classTypeRepository;
-
         public ClassRepository(PraeceptorCQRSDbContext dbContext)
             : base(dbContext)
-        {
-            _classTypeRepository = new ClassTypeRepository(dbContext);
-        }
+        { /* Nothing more todo */ }
 
         public async Task<Class?> CreateClass(Class entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<Class, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Class?> GetClassById(Guid id)
-            => await ReadDefault(o => o.Id == id);
+        {
+            var table = _context.Set<Class>();
+            var result = await Task.Run(
+                () => table.Include(p => p.Type).FirstOrDefault(o => o.Id == id));
+            return result;
+        }
+
+        // => await ReadDefault(o => o.Id == id);
         public async Task<Class?> GetClassByCode(string code)
-            => await ReadDefault(o => string.Compare(o.Code, code, true) == 0);
+        {
+            var table = _context.Set<Class>();
+            var result = await Task.Run(
+                () => table.Include(p => p.Type).FirstOrDefault(o => o.Code == code));
+            return result;
+        }
+
+        // => await ReadDefault(o => string.Compare(o.Code, code, true) == 0);
         public async Task UpdateClass(Class entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task<int> GetClassCountByInstitute(Guid instituteId)
             => await Count(o => o.InstituteId == instituteId);
+
         public async Task DeleteClass(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
-
             if (entityToDelete is not null)
                 await DeleteDefault(entityToDelete);
         }
@@ -115,15 +130,20 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             string? lastModifiedByFilter
             )
         {
-            var list = await ListDefault(o => o.InstituteId == instituteId);
+            var table = _context.Set<Class>();
+            // ToList() is needed here
+            var list = await Task.Run(
+                () => table.Include(p => p.Type).Where(o => o.InstituteId == instituteId).ToList());
+            Guard.Against.Null(list);
+            // var list = await ListDefault(o => o.InstituteId == instituteId);
             var filteredList = new List<Class>();
             bool isFiltered = false;
 
             foreach (var entity in list)
             {
-                var t1 = await _classTypeRepository.GetClassTypeById(entity.TypeId);
-                Guard.Against.Null(t1);
-                entity.Type = t1;
+                // var t1 = await _classTypeRepository.GetClassTypeById(entity.TypeId);
+                // Guard.Against.Null(t1);
+                // entity.Type = t1;
 
                 if (!string.IsNullOrWhiteSpace(codeFilter))
                 {
@@ -273,11 +293,12 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                 "Theory" => Global.SortList(list, x => x.Theory, ascending),
                 "PR" => Global.SortList(list, x => x.PR, ascending),
                 "Type" => Global.SortList(list, x => x.Type, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };
         }
     }
 }
-

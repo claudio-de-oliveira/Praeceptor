@@ -1,0 +1,33 @@
+﻿@typeparam TEntity
+
+@code {
+    [Parameter]
+    public string ConfirmationTitle { get; set; } = "Confirm Delete";
+
+    [Parameter]
+    public string ConfirmationMessage { get; set; } = "Are you sure you want to delete";
+
+    [Parameter]
+    public EventCallback<TEntity?> ConfirmationChanged { get; set; }
+
+    protected TEntity? entity = default!;
+
+    protected bool ShowConfirmation { get; set; }
+
+    public void Show(TEntity entity)
+    {
+        this.entity = entity;
+        ShowConfirmation = true;
+        StateHasChanged();
+    }
+
+    protected async Task OnConfirmationChange(bool value)
+    {
+        ShowConfirmation = false;
+
+        if (value)
+            await ConfirmationChanged.InvokeAsync(entity);
+        else
+            await ConfirmationChanged.InvokeAsync(default);
+    }
+}

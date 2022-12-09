@@ -1,17 +1,9 @@
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 
 using PraeceptorCQRS.Application;
-using PraeceptorCQRS.Application.Email;
-using PraeceptorCQRS.Domain.Email;
 using PraeceptorCQRS.Infrastructure;
-using PraeceptorCQRS.Infrastructure.Data;
-using PraeceptorCQRS.Infrastructure.Email;
-using PraeceptorCQRS.Infrastructure.Interceptors;
 using PraeceptorCQRS.Presentation.Administrative.Api;
 using PraeceptorCQRS.Utilities;
-
-using Quartz;
 
 using Serilog;
 using Serilog.Events;
@@ -39,7 +31,7 @@ builder.Services
     .AddPresentation()
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
-    // .AddDataBase(builder.Configuration);
+// .AddDataBase(builder.Configuration);
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -54,6 +46,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 #region Adds the authentication services to DI and configures Bearer as the default scheme.
+
 var Authority = builder.Configuration.GetSection("IdentityServer").GetSection("Authority").Value;
 var Audience = builder.Configuration.GetSection("Administrative.API").GetSection("Audience").Value;
 
@@ -79,7 +72,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("DeletePolice", policy =>
           policy.RequireClaim("scope", "Administrative.API.Delete", "Administrative.API.FullAccess"));
 });
-#endregion
+
+#endregion Adds the authentication services to DI and configures Bearer as the default scheme.
 
 var app = builder.Build();
 

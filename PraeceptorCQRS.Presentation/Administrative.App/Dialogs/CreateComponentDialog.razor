@@ -1,5 +1,6 @@
 ﻿@using Administrative.App.Components.Toaster
 @using Ardalis.GuardClauses
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 
 @using Administrative.App.Components
@@ -153,7 +154,7 @@
     protected override async Task OnInitializedAsync()
     {
         waiting = true;
-        var result = await axisService.GetAxisTypePage(
+        var message = await axisService.GetAxisTypePage(
             new GetAxisTypePageRequest(
                 InstituteId,
                 0,
@@ -167,11 +168,19 @@
                 null
             )
         );
-        if (result.IsSuccessStatusCode)
+        if (message.IsSuccessStatusCode)
         {
-            var response = JsonConvert.DeserializeObject<PageOfAxisTypeModel>(await result.Content.ReadAsStringAsync());
+            var response = JsonConvert.DeserializeObject<PageOfAxisTypeModel>(await message.Content.ReadAsStringAsync());
             Guard.Against.Null(response);
             axisTypeList = response.Entities.Select(o => (AxisTypeModel)o).ToList();
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
         }
 
         waiting = false;
@@ -212,6 +221,14 @@
             var response = JsonConvert.DeserializeObject<PageOfClassModel>(await message.Content.ReadAsStringAsync());
             Guard.Against.Null(response);
             classList = response.Entities.Select(o => (ClassModel)o).ToList();
+        }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
         }
 
         waiting = false;

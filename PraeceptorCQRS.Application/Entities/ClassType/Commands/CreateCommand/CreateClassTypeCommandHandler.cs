@@ -1,5 +1,7 @@
 using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.ClassType.Common;
 using PraeceptorCQRS.Application.Persistence;
 using PraeceptorCQRS.Application.Services;
@@ -26,6 +28,8 @@ namespace PraeceptorCQRS.Application.Entities.ClassType.Commands
             var entity = Domain.Entities.ClassType.Create(
                 request.Code,
                 request.InstituteId,
+                request.IsRemote,
+                request.DurationInMinutes,
                 _dateTimeProvider.UtcNow,
                 string.Empty);
 
@@ -37,4 +41,3 @@ namespace PraeceptorCQRS.Application.Entities.ClassType.Commands
         }
     }
 }
-

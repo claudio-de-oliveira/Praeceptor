@@ -114,7 +114,7 @@ namespace PraeceptorCQRS.Infrastructure.Common
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, $"{nameof(CreateDefault)}({nameof(TEntity)})");
+                Log.Error(ex, $"{nameof(CreateDefault)}({nameof(TEntity)})");
             }
 
             return null;
@@ -136,7 +136,6 @@ namespace PraeceptorCQRS.Infrastructure.Common
                     EntityEntry<TEntity> result = _context.Set<TEntity>().Update(entity);
                     if (result is null)
                         return null;
-
 
                     await SaveChangesAsync();
 
@@ -268,4 +267,3 @@ namespace PraeceptorCQRS.Infrastructure.Common
         }
     }
 }
-

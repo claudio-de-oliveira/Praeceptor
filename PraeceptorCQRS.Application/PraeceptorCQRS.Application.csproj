@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -7,25 +7,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Parsers\AbstractLL\AbstractLL.csproj" />
 		<ProjectReference Include="..\PraeceptorCQRS.Domain\PraeceptorCQRS.Domain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="DocumentFormat.OpenXml" Version="2.18.0" />
 		<PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
-		<PackageReference Include="ErrorOr" Version="1.0.0" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.1.0" />
-		<PackageReference Include="MediatR" Version="10.0.1" />
-		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="Serilog" Version="2.11.0" />
+		<PackageReference Include="ErrorOr" Version="1.2.1" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
+		<PackageReference Include="MediatR" Version="11.1.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="Serilog" Version="2.12.0" />
 		<PackageReference Include="Scrutor" Version="4.2.0" />
-		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.4.0" />
+		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.5.0" />
+		<PackageReference Include="SixLabors.ImageSharp.Web" Version="2.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Entities\AxisType\Events\" />
 	  <Folder Include="Entities\Holding\Events\" />
+	  <Folder Include="Entities\ToWord\Commands\ConvertPeaToWordCommand\" />
 	</ItemGroup>
 
 </Project>

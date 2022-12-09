@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -7,11 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ErrorOr" Version="0.1.0" />
-		<PackageReference Include="MediatR" Version="10.0.1" />
+		<PackageReference Include="ErrorOr" Version="1.2.0" />
+		<PackageReference Include="MediatR" Version="11.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
 		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
-		<PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>

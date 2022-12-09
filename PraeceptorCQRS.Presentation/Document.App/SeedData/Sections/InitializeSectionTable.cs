@@ -290,48 +290,48 @@ namespace Document.App.SeedData.Sections
                 Text =
 @"
 \Paragraph{
-	O egresso do curso deverá ser capaz de atuar em setores industriais, comerciais e 
-	residenciais, por meio de prestação de serviços em empresas de consultoria e/ou de forma 
-	autônoma, planejando soluções de longo prazo, participando de pesquisa e desenvolvimento 
+	O egresso do curso deverá ser capaz de atuar em setores industriais, comerciais e
+	residenciais, por meio de prestação de serviços em empresas de consultoria e/ou de forma
+	autônoma, planejando soluções de longo prazo, participando de pesquisa e desenvolvimento
 	de instrumentos, modelos e sistemas, visando a otimização e a modernização de \variable{@PROFISSAO.@SISTEMA}.
 	}
 \Paragraph{
-	O perfil profissiográfico do egresso do curso de \variable{@CURSO.@NOME} da 
-	\variable{@IES.@ACRONIMO} foi elaborado a partir da concepção e objetivos do curso, em 
-	consonância com as Diretrizes Curriculares Nacionais (DCN), tendo em vista as peculiaridades 
-	regionais e a necessidade do profissional em adaptar-se às constantes mudanças na sua área de 
+	O perfil profissiográfico do egresso do curso de \variable{@CURSO.@NOME} da
+	\variable{@IES.@ACRONIMO} foi elaborado a partir da concepção e objetivos do curso, em
+	consonância com as Diretrizes Curriculares Nacionais (DCN), tendo em vista as peculiaridades
+	regionais e a necessidade do profissional em adaptar-se às constantes mudanças na sua área de
 	formação.
 	}
 \Paragraph{
-	Essa formação profissional é possibilitada pela aquisição de conhecimentos que envolvem 
-	dimensões distintas, \comment{Conferir se se trata das DCNs novas!}{destacando os perfis 
+	Essa formação profissional é possibilitada pela aquisição de conhecimentos que envolvem
+	dimensões distintas, \comment{Conferir se se trata das DCNs novas!}{destacando os perfis
 	constantes nas DCN do curso de Engenharia em seu artigo 3º:}
 	}
 
 \begin{itemize}
-	\Paragraph{ter visão holística e humanista, ser crítico, reflexivo, criativo, cooperativo 
+	\Paragraph{ter visão holística e humanista, ser crítico, reflexivo, criativo, cooperativo
 		e ético e com forte formação técnica;}
-	\Paragraph{estar apto a pesquisar, desenvolver, adaptar e utilizar novas tecnologias, 
+	\Paragraph{estar apto a pesquisar, desenvolver, adaptar e utilizar novas tecnologias,
 		com atuação inovadora e empreendedora;}
-	\Paragraph{ser capaz de reconhecer as necessidades dos usuários, formular, analisar e 
+	\Paragraph{ser capaz de reconhecer as necessidades dos usuários, formular, analisar e
 		resolver, de forma criativa, os problemas de Engenharia;}
 	\Paragraph{adotar perspectivas multidisciplinares e transdisciplinares em sua prática;}
-	\Paragraph{considerar os aspectos globais, políticos, econômicos, sociais, ambientais, 
+	\Paragraph{considerar os aspectos globais, políticos, econômicos, sociais, ambientais,
 		culturais e de segurança e saúde no trabalho;}
-	\Paragraph{atuar com isenção e comprometimento com a responsabilidade social e com o 
+	\Paragraph{atuar com isenção e comprometimento com a responsabilidade social e com o
 		desenvolvimento sustentável.}
 \end{itemize}
 
 \Paragraph{
-	Desta forma, o curso de \variable{@CURSO.@NOME} deverá formar cidadãos profissionais 
-	com um perfil generalista, humanista, científico e empreendedor, para atuarem com 
-	criatividade e criticidade na identificação e resolução de problemas tecnológicos, 
-	considerando aspectos éticos, humanísticos, científicos, econômicos, sociais, 
-	ambientais, culturais e políticos, em atendimento às demandas da sociedade. Para 
-	tanto, o egresso do aluno de \variable{@CURSO.@NOME} será capacitado a exercer ações 
-	profissionais com resiliência, propositividade e proatividade, de forma individual ou 
-	em equipe, sempre atento às boas práticas na concepção, modelagem, implementação e no 
-	gerenciamento de projetos de produtos, processos e serviços, com visão multidisciplinar, 
+	Desta forma, o curso de \variable{@CURSO.@NOME} deverá formar cidadãos profissionais
+	com um perfil generalista, humanista, científico e empreendedor, para atuarem com
+	criatividade e criticidade na identificação e resolução de problemas tecnológicos,
+	considerando aspectos éticos, humanísticos, científicos, econômicos, sociais,
+	ambientais, culturais e políticos, em atendimento às demandas da sociedade. Para
+	tanto, o egresso do aluno de \variable{@CURSO.@NOME} será capacitado a exercer ações
+	profissionais com resiliência, propositividade e proatividade, de forma individual ou
+	em equipe, sempre atento às boas práticas na concepção, modelagem, implementação e no
+	gerenciamento de projetos de produtos, processos e serviços, com visão multidisciplinar,
 	inovadora e empreendedora.
 }
 "
@@ -342,23 +342,23 @@ namespace Document.App.SeedData.Sections
                 Text =
 @"
 \Paragraph{
-	As áreas e espaços que os \variable{@PROFISSAO.@PLURAL} podem atuar estão relacionadas com o 
-	projeto, pesquisa e desenvolvimento de máquinas, equipamentos e instalações para o controle 
-	da energia térmica e/ou o controle do fluxo de gases e líquidos, tais como o bombeamento, 
-	refino, processamento e distribuição de produtos na petroquímica. Ainda no contexto das 
-	indústrias petroquímicas, o Engenheiro Mecânico pode atuar como gestor tanto da planta como 
+	As áreas e espaços que os \variable{@PROFISSAO.@PLURAL} podem atuar estão relacionadas com o
+	projeto, pesquisa e desenvolvimento de máquinas, equipamentos e instalações para o controle
+	da energia térmica e/ou o controle do fluxo de gases e líquidos, tais como o bombeamento,
+	refino, processamento e distribuição de produtos na petroquímica. Ainda no contexto das
+	indústrias petroquímicas, o Engenheiro Mecânico pode atuar como gestor tanto da planta como
 	de equipes de trabalho.}
 \Paragraph{
-	Outra grande área de atuação do \variable{@PROFISSAO.@SINGULAR} é a metalurgia, na qual 
-	o \variable{@PROFISSAO.@SINGULAR} realiza projetos, seleciona materiais, fabrica peças, 
+	Outra grande área de atuação do \variable{@PROFISSAO.@SINGULAR} é a metalurgia, na qual
+	o \variable{@PROFISSAO.@SINGULAR} realiza projetos, seleciona materiais, fabrica peças,
 	organiza a produção, gerencia suprimentos, recursos e equipes.}
 \Paragraph{
-	Na indústria, particularmente na automobilística, o \variable{@PROFISSAO.@SINGULAR} é 
-	responsável por elementos da cadeia de produção, indo desde o projeto de componentes, 
-	gestão e manutenção da linha de produção. Em muitas indústrias, além das atuações típicas 
-	da gestão, os \variable{@PROFISSAO.@PLURAL} também podem ter a oportunidade de conceber, 
+	Na indústria, particularmente na automobilística, o \variable{@PROFISSAO.@SINGULAR} é
+	responsável por elementos da cadeia de produção, indo desde o projeto de componentes,
+	gestão e manutenção da linha de produção. Em muitas indústrias, além das atuações típicas
+	da gestão, os \variable{@PROFISSAO.@PLURAL} também podem ter a oportunidade de conceber,
 	projetar, construir e testar protótipos, tais como na indústria de eletrodomésticos.}
-\Paragraph{\comment{Precisa melhorar isso aqui!}{Na construção civil de grandes espaços, o 
+\Paragraph{\comment{Precisa melhorar isso aqui!}{Na construção civil de grandes espaços, o
 	\variable{@PROFISSAO.@SINGULAR} projeta sistemas de refrigeração e acondicionamento.}}
 "
             },
@@ -514,7 +514,7 @@ namespace Document.App.SeedData.Sections
 @"\paragraph{
     O Plano Nacional de Educação – PNE propõe como meta universalizar até 2016, o atendimento
     escolar da população de 4 e 5 anos, e ampliar a oferta de educação infantil de forma a
-    atender a 50% da população de até 3 anos. Trata-se de objetivo imprescindível para assegurar 
+    atender a 50% da população de até 3 anos. Trata-se de objetivo imprescindível para assegurar
     aprendizado efetivo no ensino fundamental e médio, reduzindo a repetência e aumentando a
     taxa de sucesso na educação básica.  Ainda na educação básica, prevê-se, como meta 2,
     universalizar o ensino fundamental de nove anos para toda população de 6 a 14 anos; e,
@@ -567,7 +567,7 @@ namespace Document.App.SeedData.Sections
     pelo menos, 40% das novas matrículas, no segmento. A proposta é de universalizar o atendimento
     escolar da população ampliando a oferta da Educação Básica e Superior. Trata-se de
     objetivo imprescindível para assegurar aprendizado efetivo, reduzindo a repetência e
-    aumentando a taxa de sucesso na educação básica e progressivamente na educação superior. 
+    aumentando a taxa de sucesso na educação básica e progressivamente na educação superior.
 }
 
 \paragraph{
@@ -744,10 +744,10 @@ namespace Document.App.SeedData.Sections
 }
 
 \begin{itemize}
-    \paragraph{“\run[BOLD]{Aprender a conhecer}” significa, antes de tudo, o aprendizado dos 
-        métodos que nos ajudam a distinguir o que é real do que é ilusório e ter, assim, acesso 
-        aos saberes de nossa época. A iniciação precoce na ciência é salutar, pois ela dá 
-        acesso, desde o início da vida humana à não-aceitação de qualquer resposta sem 
+    \paragraph{“\run[BOLD]{Aprender a conhecer}” significa, antes de tudo, o aprendizado dos
+        métodos que nos ajudam a distinguir o que é real do que é ilusório e ter, assim, acesso
+        aos saberes de nossa época. A iniciação precoce na ciência é salutar, pois ela dá
+        acesso, desde o início da vida humana à não-aceitação de qualquer resposta sem
         fundamentação racional e/ou de qualquer certeza que esteja em contradição com os fatos;}
     \paragraph{“\run[BOLD]{Aprender a fazer}” é um aprendizado da criatividade. “\run[ITALIC]{Fazer}”
         também significa “criar algo novo”, trazer à luz as próprias potencialidades criativas,
@@ -755,7 +755,7 @@ namespace Document.App.SeedData.Sections
     \paragraph{“\run[BOLD]{Aprender a viver juntos}” significa, em primeiro lugar, respeitar as
         normas que regulamentam as relações entre os seres que compõem uma coletividade.
         Porém, essas normas devem ser verdadeiramente compreendidas, admitidas interiormente
-        por cada ser, e não sofridas como imposições exteriores. “\run[ITALIC]{Viver junto}” não quer 
+        por cada ser, e não sofridas como imposições exteriores. “\run[ITALIC]{Viver junto}” não quer
         dizer simplesmente tolerar o outro com suas diferenças embora permanecendo convencido da
         justeza absoluta das próprias posições;}
     \paragraph{“\run[BOLD]{Aprender a ser}” implica aprender que a palavra “\run[ITALIC]{existir}”
@@ -921,12 +921,13 @@ namespace Document.App.SeedData.Sections
                 Title = "Estrutura curricular",
                 Text =
 @"
+
 \paragraph{
-	A estrutura curricular organiza-se de forma a comtemplar o eixo de formação previstos no Catalogo de Curso e 
-	devidamente alinhados ao PPI. Para tal, o seu PPC enfatiza as diferentes áreas do conhecimento permitindo o 
-	desenvolvimento do espírito científico e o aprimoramento das relações homem/natureza. Inspira-se nos pilares 
-	da educação contemporânea, formando profissionais capazes de: \run[BOLD;ITALIC]{aprender a conhecer}, 
-	\run[ITALIC]{aprender a fazer}, \run[ITALIC]{aprender a ser} e \run[ITALIC]{aprender a viver juntos}, apostando 
+	A estrutura curricular organiza-se de forma a comtemplar o eixo de formação previstos no Catalogo de Curso e
+	devidamente alinhados ao PPI. Para tal, o seu PPC enfatiza as diferentes áreas do conhecimento permitindo o
+	desenvolvimento do espírito científico e o aprimoramento das relações homem/natureza. Inspira-se nos pilares
+	da educação contemporânea, formando profissionais capazes de: \run[BOLD;ITALIC]{aprender a conhecer},
+	\run[ITALIC]{aprender a fazer}, \run[ITALIC]{aprender a ser} e \run[ITALIC]{aprender a viver juntos}, apostando
 	no efeito multiplicador e transformador de suas práxis.
 	}
 
@@ -938,25 +939,25 @@ namespace Document.App.SeedData.Sections
 ;;            P E R Í O D O S
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 \code{@TABELA.@PERIODO1}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO2}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO3}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO4}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO5}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO6}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO7}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO8}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO9}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 \code{@TABELA.@PERIODO10}
-\paragraph[BEFORE=100]{\run{ }} 
+\paragraph[BEFORE=100]{\run{ }}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;           O P T A T I V A S
@@ -983,12 +984,11 @@ namespace Document.App.SeedData.Sections
 \code{@TABELA.@RESUMO}
 
 \paragraph[BEFORE=200]{
-	O curso foi formatado com \variable{@CURSO.@CREDITOS} créditos distribuídos em \variable{@CURSO.@PERIODOS} semestres conforme 
-	demonstrado na estrutura curricular anterior, incluindo \variable{@CURSO.@AC} créditos de atividades complementares, ou seja,
-	\variable{@CURSO.@CHAC} horas. Considerando as atividades complementares integrantes do eixo profissionalizante,
-	dos \variable{@CURSO.@CREDITOS} créditos, \variable{@CURSO.@BASICAS} pertencem ao eixo básico (\variable{@CURSO.@PERCBASICAS}%),
-	\variable{@CURSO.@PROFISSIONALIZANTES} pertencem ao eixo profissionalizante (\variable{@CURSO.@PERCPROFISSIONALIZANTES}%)
-	e \variable{@CURSO.@ESPECIFICAS} pertencem ao eixo específico (\variable{@CURSO.@PERCESPECIFICAS}%).
+	O curso foi formatado com \variable{@CURSO.@CHT60} horas distribuídas em \variable{@CURSO.@PERIODOS} semestres conforme
+	demonstrado na estrutura curricular anterior, incluindo \variable{@CURSO.@CHAC} horas de atividades complementares. Considerando as atividades complementares integrantes do eixo profissionalizante,
+	das \variable{@CURSO.@CHT60} horas, \variable{@CURSO.@BASICO} pertencem ao eixo básico (\variable{@CURSO.@BASICO_PERCENTUAL}%),
+	\variable{@CURSO.@PROFISSIONALIZANTE} pertencem ao eixo profissionalizante (\variable{@CURSO.@PROFISSIONALIZANTE_PERCENTUAL}%)
+	e \variable{@CURSO.@ESPECIFICO} pertencem ao eixo específico (\variable{@CURSO.@ESPECIFICO_PERCENTUAL}%).
 }
 "
             },
@@ -1019,34 +1019,34 @@ namespace Document.App.SeedData.Sections
                 Text =
 @"
 \paragraph{
-	As Atividades Complementares \footnote{Anexo, o Regulamento das Atividades Complementares.} são componentes curriculares 
-	enriquecedores e implementadores do perfil do formando, possibilitam interação entre a teoria, a prática e a pesquisa, 
+	As Atividades Complementares \footnote{Anexo, o Regulamento das Atividades Complementares.} são componentes curriculares
+	enriquecedores e implementadores do perfil do formando, possibilitam interação entre a teoria, a prática e a pesquisa,
 	favorecendo ainda a flexibilização e formação complementar do aluno.
 	}
 \paragraph{
-	Tais características propiciam a atualização constante do aluno, a criação do espírito crítico e que conduz a uma maior 
-	busca pelo saber na graduação, ampliando suas práticas profissionais possibilitando a articulando ensino/pesquisa/extensão. 
-	Deste modo a \variable{@IES.@ACRONIMO} entende que as atividades complementares fortalecem a formação do profissional em 
+	Tais características propiciam a atualização constante do aluno, a criação do espírito crítico e que conduz a uma maior
+	busca pelo saber na graduação, ampliando suas práticas profissionais possibilitando a articulando ensino/pesquisa/extensão.
+	Deste modo a \variable{@IES.@ACRONIMO} entende que as atividades complementares fortalecem a formação do profissional em
 	\variable{@CURSO.@NOME}, permitindo aos alunos trocas importantes, tanto no âmbito acadêmico quanto no aspecto profissional.
 	}
 \paragraph{
-	Os discentes do curso de \variable{@CURSO.@NOME} da \variable{@IES.@ACRONIMO} são constantemente estimulados a participar 
-	das atividades e sua efetivação ocorrerá através de seminários, participação em eventos, monitoria, atividades acadêmicas 
-	a distância, iniciação a pesquisa, vivência profissional complementar, workshops, congressos, trabalhos orientados de 
-	campo, artigos científicos, dentre outras. Além das atividades propiciadas pela coordenação do curso e pela instituição, 
-	os alunos são também incentivados a participar fora do ambiente acadêmico, incluindo a prática de estudos, atividades 
-	independentes e transversais de interesse da formação do profissional em total consonância com a Resolução CNE/CES nº 5, 
+	Os discentes do curso de \variable{@CURSO.@NOME} da \variable{@IES.@ACRONIMO} são constantemente estimulados a participar
+	das atividades e sua efetivação ocorrerá através de seminários, participação em eventos, monitoria, atividades acadêmicas
+	a distância, iniciação a pesquisa, vivência profissional complementar, workshops, congressos, trabalhos orientados de
+	campo, artigos científicos, dentre outras. Além das atividades propiciadas pela coordenação do curso e pela instituição,
+	os alunos são também incentivados a participar fora do ambiente acadêmico, incluindo a prática de estudos, atividades
+	independentes e transversais de interesse da formação do profissional em total consonância com a Resolução CNE/CES nº 5,
 	de 07 de novembro de 2001.
 	}
 \paragraph{
-	As Atividades Complementares possuem a característica de serem atemporais, respeitando o tempo de cada aluno, mantendo 
-	coerência com a proposta curricular institucional. Então, podem ser desenvolvidas durante todos os semestres, devendo 
-	estar contemplada até o final do curso de graduação, cujas normas foram apreciadas pela Coordenação e aprovadas pelo 
+	As Atividades Complementares possuem a característica de serem atemporais, respeitando o tempo de cada aluno, mantendo
+	coerência com a proposta curricular institucional. Então, podem ser desenvolvidas durante todos os semestres, devendo
+	estar contemplada até o final do curso de graduação, cujas normas foram apreciadas pela Coordenação e aprovadas pelo
 	Colegiado do Curso.
 	}
 \paragraph{
-	Ciente de que o conhecimento é construído em diferentes e variados cenários, e conforme Art. 4º do Regulamento das 
-	Atividades Complementares dos Cursos de Graduação da \variable{@IES.@NOME} serão consideradas Atividades Complementares 
+	Ciente de que o conhecimento é construído em diferentes e variados cenários, e conforme Art. 4º do Regulamento das
+	Atividades Complementares dos Cursos de Graduação da \variable{@IES.@NOME} serão consideradas Atividades Complementares
 	as atividades, descritas abaixo:
 	}
 
@@ -1081,51 +1081,51 @@ namespace Document.App.SeedData.Sections
                 Text =
 @"
 \paragraph{
-	As Atividades Práticas Supervisionadas 
+	As Atividades Práticas Supervisionadas
 	desenvolvidas no curso de \variable{@CURSO.@NOME} da \variable{@IES.@ACRONIMO}
-	tem como fundamento a Resolução CES/CNE nº 3/2007, que  dispõe sobre procedimentos a serem adotados 
-	quanto ao conceito de hora-aula, e dá outras providências. Explicitado no seu Art. 2º em que 
-	\run[ITALIC]{“cabe às Instituições de Educação Superiores respeitadas o mínimo dos duzentos dias 
-	letivos de trabalho acadêmico efetivo, a definição da duração da atividade acadêmica ou do trabalho 
-	discente efetivo que compreenderá: I – preleções e aulas expositivas; II – atividades práticas 
-	supervisionadas, tais como laboratórios, atividades em biblioteca, iniciação científica, trabalhos 
+	tem como fundamento a Resolução CES/CNE nº 3/2007, que  dispõe sobre procedimentos a serem adotados
+	quanto ao conceito de hora-aula, e dá outras providências. Explicitado no seu Art. 2º em que
+	\run[ITALIC]{“cabe às Instituições de Educação Superiores respeitadas o mínimo dos duzentos dias
+	letivos de trabalho acadêmico efetivo, a definição da duração da atividade acadêmica ou do trabalho
+	discente efetivo que compreenderá: I – preleções e aulas expositivas; II – atividades práticas
+	supervisionadas, tais como laboratórios, atividades em biblioteca, iniciação científica, trabalhos
 	individuais e em grupo, práticas de ensino e outras atividades no caso das licenciaturas”.}
 	}
 \paragraph{
-	Em consonância com a legislação vigente a \variable{@IES.@ACRONIMO}, contemplou no PPC de 
-	\variable{@CURSO.@NOME} a complementaridade das horas de integralização do curso por meio 
-	da institucionalização e normatização das Atividades Práticas Supervisionadas Extraclasse – APSEC, 
-	através da Portaria Interna nº 013 de 11 de fevereiro de 2009 \footnote{Anexo, Portaria Interna nº 13 de 11 de fevereiro de 2009.}, emitida pela Reitoria, 
-	considerando as atividades práticas supervisionadas como trabalho acadêmico ou discente efetivo, 
-	que pode e deve ser contabilizado na carga horária total do curso, aliás, o que a própria resolução 
+	Em consonância com a legislação vigente a \variable{@IES.@ACRONIMO}, contemplou no PPC de
+	\variable{@CURSO.@NOME} a complementaridade das horas de integralização do curso por meio
+	da institucionalização e normatização das Atividades Práticas Supervisionadas Extraclasse – APSEC,
+	através da Portaria Interna nº 013 de 11 de fevereiro de 2009 \footnote{Anexo, Portaria Interna nº 13 de 11 de fevereiro de 2009.}, emitida pela Reitoria,
+	considerando as atividades práticas supervisionadas como trabalho acadêmico ou discente efetivo,
+	que pode e deve ser contabilizado na carga horária total do curso, aliás, o que a própria resolução
 	CES/CNE nº 3/2007, deixa claro.
 	}
 \paragraph{
-	Nesse contexto, o conceito de aula, extrapola o espaço físico da sala de aula e consubstancia-se 
-	no conceito de atividades acadêmicas efetivas, para além da sala de aula, sendo promovidas e 
-	desenvolvidas atividades acadêmicas sob a orientação e supervisão docente, em horários e espaços 
-	diferentes dos encontros presenciais, bem como discriminadas nos planos de ensino e planos 
-	integrados de trabalho de todas as disciplinas do curso. Dentre as atividades inseridas em 
-	todos os componentes curriculares, encontram-se: visitas técnicas orientadas, atividades na 
-	biblioteca, estudos de caso, seminários, oficinas, aulas práticas de campo ou laboratório, 
+	Nesse contexto, o conceito de aula, extrapola o espaço físico da sala de aula e consubstancia-se
+	no conceito de atividades acadêmicas efetivas, para além da sala de aula, sendo promovidas e
+	desenvolvidas atividades acadêmicas sob a orientação e supervisão docente, em horários e espaços
+	diferentes dos encontros presenciais, bem como discriminadas nos planos de ensino e planos
+	integrados de trabalho de todas as disciplinas do curso. Dentre as atividades inseridas em
+	todos os componentes curriculares, encontram-se: visitas técnicas orientadas, atividades na
+	biblioteca, estudos de caso, seminários, oficinas, aulas práticas de campo ou laboratório,
 	trabalhos individuais ou em grupo, pesquisas, dentre outros.
 	}
 \paragraph{
-	Tais atividades propiciam ao processo pedagógico a articulação entre o ensino, a pesquisa e a 
-	extensão, além da teoria com a prática, componentes indissociáveis do fazer pedagógico. As 
-	atividades desenvolvidas aliam o ensino, a pesquisa e a extensão preconizados no Projeto 
-	Pedagógico da Instituição, possibilitando aos estudantes a participação, por meio das práticas 
-	de pesquisa e de extensão promovidas nos diversos componentes curriculares, o desenvolvimento da 
-	autonomia intelectual e acadêmica dos estudantes, permitindo a constante interação entre o 
-	conteúdo trabalhado nas diversas disciplinas e a realidade na qual os estudantes desenvolverão 
+	Tais atividades propiciam ao processo pedagógico a articulação entre o ensino, a pesquisa e a
+	extensão, além da teoria com a prática, componentes indissociáveis do fazer pedagógico. As
+	atividades desenvolvidas aliam o ensino, a pesquisa e a extensão preconizados no Projeto
+	Pedagógico da Instituição, possibilitando aos estudantes a participação, por meio das práticas
+	de pesquisa e de extensão promovidas nos diversos componentes curriculares, o desenvolvimento da
+	autonomia intelectual e acadêmica dos estudantes, permitindo a constante interação entre o
+	conteúdo trabalhado nas diversas disciplinas e a realidade na qual os estudantes desenvolverão
 	suas atividades profissionais.
 	}
 \paragraph{
-	Vale ressaltar que a \variable{@IES.@ACRONIMO} promove no período que antecede cada período 
-	letivo, Jornada de Mobilização Pedagógica, oficinas e minicursos, objetivando a reflexão do 
-	trabalho teórico-metodológico e aprimoramento da práxis docente, para que de modo a inseriram 
-	nos seus planos de ensino e planos Integrados de trabalho, atividades que propiciem o desenvolvimento 
-	de competências e habilidades necessárias a formação do perfil profissional do egresso, proposto no 
+	Vale ressaltar que a \variable{@IES.@ACRONIMO} promove no período que antecede cada período
+	letivo, Jornada de Mobilização Pedagógica, oficinas e minicursos, objetivando a reflexão do
+	trabalho teórico-metodológico e aprimoramento da práxis docente, para que de modo a inseriram
+	nos seus planos de ensino e planos Integrados de trabalho, atividades que propiciem o desenvolvimento
+	de competências e habilidades necessárias a formação do perfil profissional do egresso, proposto no
 	presente projeto.
 	}
 "
@@ -1164,45 +1164,45 @@ namespace Document.App.SeedData.Sections
                 Text =
 @"
 \paragraph{
-	O Trabalho de Conclusão de Curso (TCC) \footnote{Anexo: Regulamento de Trabalho de Conclusão de Curso.} 
-	é um componente curricular obrigatório e necessário para a integralização curricular. 
-	Configura-se como um momento de reflexão, crítica e aprofundamento da pesquisa e da descoberta de novos saberes na área de 
+	O Trabalho de Conclusão de Curso (TCC) \footnote{Anexo: Regulamento de Trabalho de Conclusão de Curso.}
+	é um componente curricular obrigatório e necessário para a integralização curricular.
+	Configura-se como um momento de reflexão, crítica e aprofundamento da pesquisa e da descoberta de novos saberes na área de
 	interesse do estudante, contemplando uma diversidade de aspectos fundamentais para a formação acadêmica e profissional.
-} 
+}
 \paragraph{
-	O TCC possibilita a aplicação dos conceitos e teorias adquiridas ao longo do curso por meio da elaboração e execução do 
-	projeto de pesquisa, no qual o estudante experiência, com autonomia, o aprofundamento de um tema específico, além de 
+	O TCC possibilita a aplicação dos conceitos e teorias adquiridas ao longo do curso por meio da elaboração e execução do
+	projeto de pesquisa, no qual o estudante experiência, com autonomia, o aprofundamento de um tema específico, além de
 	estimular o espírito crítico e reflexivo.
-} 
+}
 \paragraph{
-	Desenvolvido mediante orientação de um professor que faz parte do quadro docente da instituição, sua realização ocorre 
+	Desenvolvido mediante orientação de um professor que faz parte do quadro docente da instituição, sua realização ocorre
 	mediante matrícula na disciplina de Trabalho de Conclusão de Curso e acompanhamento de professor orientador.
 }
 \paragraph{
-	A carga horária destinada a disciplina é de 40 horas, cujo horário estabelecido para orientação abrangerá 02 (duas) 
-	horas semanais, sendo que o mesmo não poderá conflitar com o horário do estudante, devendo ser definido de comum acordo 
+	A carga horária destinada a disciplina é de 40 horas, cujo horário estabelecido para orientação abrangerá 02 (duas)
+	horas semanais, sendo que o mesmo não poderá conflitar com o horário do estudante, devendo ser definido de comum acordo
 	entre a Coordenação do Curso, o estudante e o professor orientador.
 }
 \paragraph{
-	O Colegiado do Curso de \variable{@CURSO.@NOME} estabelece calendário para entrega e apresentação do trabalho, que 
-	ocorrerá perante banca examinadora constituída por 03 (professores da área). A cada semestre, o Colegiado do Curso 
-	definirá o quantitativo de alunos por professor-orientador e o nome dos professores que irão desenvolver as atividades 
+	O Colegiado do Curso de \variable{@CURSO.@NOME} estabelece calendário para entrega e apresentação do trabalho, que
+	ocorrerá perante banca examinadora constituída por 03 (professores da área). A cada semestre, o Colegiado do Curso
+	definirá o quantitativo de alunos por professor-orientador e o nome dos professores que irão desenvolver as atividades
 	de orientação, em consonância com as normas internas da Instituição.
 }
 \paragraph{
-	O aluno que não entregar o TCC, ou que não se apresentar para a sua defesa oral, sem motivo justificado, está 
-	automaticamente reprovado na disciplina, podendo apresentar novo projeto somente no semestre letivo seguinte, 
+	O aluno que não entregar o TCC, ou que não se apresentar para a sua defesa oral, sem motivo justificado, está
+	automaticamente reprovado na disciplina, podendo apresentar novo projeto somente no semestre letivo seguinte,
 	mediante matrícula na disciplina de acordo com o calendário institucional.
 }
 \paragraph{
-	Ao concluir o TCC, o aluno terá a possibilidade de apresentá-lo na Semana de Pesquisa realizada pela Diretoria de 
-	Pesquisa e Extensão e desenvolver artigo científico sintetizando seu trabalho para publicação nos Cadernos de 
+	Ao concluir o TCC, o aluno terá a possibilidade de apresentá-lo na Semana de Pesquisa realizada pela Diretoria de
+	Pesquisa e Extensão e desenvolver artigo científico sintetizando seu trabalho para publicação nos Cadernos de
 	Graduação da \variable{@IES.@ACRONIMO}.
 }
 \paragraph{
-	As Normas que regem o TCC do Curso de \variable{@CURSO.@NOME} possuem regulamento próprio e tem como objetivo 
-	inteirar alunos e professores orientadores sobre as suas disposições, orientando-os quanto às normas de funcionamento, 
-	horários, orientações quanto à apresentação dos trabalhos, avaliação, etc, a fim de terem um melhor aproveitamento 
+	As Normas que regem o TCC do Curso de \variable{@CURSO.@NOME} possuem regulamento próprio e tem como objetivo
+	inteirar alunos e professores orientadores sobre as suas disposições, orientando-os quanto às normas de funcionamento,
+	horários, orientações quanto à apresentação dos trabalhos, avaliação, etc, a fim de terem um melhor aproveitamento
 	desta experiência além de outros critérios.
 }
 "
@@ -1361,11 +1361,11 @@ namespace Document.App.SeedData.Sections
                 Text =
 @"\paragraph{
     O Núcleo de Atendimento Pedagógico e Psicossocial - NAPPS tem como finalidade atender ao corpo discente,
-    integrando-os à vida acadêmica, a \variable{@IES.@ACRONIMO} oferece um importante serviço que objetiva 
-    acolhê-lo e auxiliá-lo a resolver, refletir e enfrentar seus conflitos emocionais, bem como suas 
-    dificuldades a nível pedagógico. O Núcleo de Atendimento Pedagógico e Psicossocial - NAPPS é constituído 
-    por uma equipe excelentemente preparada e multidisciplinar que busca contribuir para o desenvolvimento e 
-    adaptação do aluno à vida acadêmica, a partir de uma visão integradora dos aspectos emocionais e 
+    integrando-os à vida acadêmica, a \variable{@IES.@ACRONIMO} oferece um importante serviço que objetiva
+    acolhê-lo e auxiliá-lo a resolver, refletir e enfrentar seus conflitos emocionais, bem como suas
+    dificuldades a nível pedagógico. O Núcleo de Atendimento Pedagógico e Psicossocial - NAPPS é constituído
+    por uma equipe excelentemente preparada e multidisciplinar que busca contribuir para o desenvolvimento e
+    adaptação do aluno à vida acadêmica, a partir de uma visão integradora dos aspectos emocionais e
     pedagógicos. Nessa perspectiva, desenvolve ações, dentre as quais:
     }
 

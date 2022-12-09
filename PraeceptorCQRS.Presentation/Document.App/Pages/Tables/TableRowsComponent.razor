@@ -1,0 +1,309 @@
+﻿@using Document.App.Dialogs
+
+<table class="table table-sm table-bordered" cellpadding="1" cellspacing="1" style="border-color:coral">
+    <tbody>
+        @{
+            lineNumber = 0;
+        }
+        @foreach (var row in rows)
+        {
+            <ConfirmDialog Title="Atenção"
+                       Message="Tem certeza que deseja excluir a coluna ?"
+                       OnConfirmEvent="@Delete"
+                       ParameterId="@row.Key" />
+
+            <tr>
+                <td width="100px">
+                    <span>Linha @(++lineNumber)</span>
+                </td>
+                <td>
+                    <TableRowComponent Cells="@row.Value" Key="@row.Key" OnCellChange="@OnCellChange"></TableRowComponent>
+                </td>
+                <td align="right" style="width: 160px;">
+                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                        <button type="button"
+                            class="btn btn-sm btn-danger"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            data-bs-toggle="modal"
+                            data-bs-target="#@($"A{row.Key.ToString("N")}")"
+                            title="Excluir"
+                            style="border: none;">
+                            <i class="bi bi-x-lg"></i>
+                            Excluir
+                        </button>
+                        <button type="button"
+                            class="btn btn-sm btn-warning"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Mover para cima"
+                            @onclick="@((args) => MoveToUp(args, row.Key))"
+                            style="border: none;">
+                            <i class="bi bi-arrow-bar-up"></i>
+                        </button>
+                        <button type="button"
+                            class="btn btn-sm btn-warning"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Mover para baixo"
+                            @onclick="@((args) => MoveToDown(args, row.Key))"
+                            style="border: none;">
+                            <i class="bi bi-arrow-bar-down"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="btn-group" role="group" aria-label="First group">
+        <button type="button"
+                class="btn btn-outline-primary"
+                data-toggle="tooltip"
+                data-placement="top"
+                data-bs-toggle="modal"
+                title="Criar uma nova linha"
+                @onclick="() => OnCreateRow.Invoke()">
+            <i class="bi bi-plus-lg"></i>
+            Criar uma nova linha
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Rows { get; set; } = default!;
+    [Parameter]
+    public Action<string, bool> OnCellChanged { get; set; } = default!;
+    [Parameter]
+    public Action OnCreateRow { get; set; } = default!;
+
+    Dictionary<Guid, Dictionary<Guid, string>> rows { get; set; } = new();
+
+    protected string TextToDisplay(string? text, int maxLength = 200)
+        => text is not null && text.Length < maxLength ? text : text?.Substring(0, maxLength) + "...";
+
+    int lineNumber = 0;
+
+    private void CreateDictionaryFromString(string? text, Dictionary<Guid, string> dictionary)
+        => text?.Split('&').ToList().ForEach(o => dictionary.Add(Guid.NewGuid(), o.Trim()));
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Rows.Split("&&").ToList()
+                .ForEach(o =>
+                {
+                    Dictionary<Guid, string> row = new();
+                    CreateDictionaryFromString(o, row);
+                    rows.Add(Guid.NewGuid(), row);
+                });
+            StateHasChanged();
+        }
+
+        base.OnAfterRender(firstRender);
+    }
+
+    private static string ConvertRowToString(List<string> row)
+    {
+        string str = "";
+        for (int i = 0; i < row.Count - 1; i++)
+            str += row[i] + "&";
+        str += row[^1];
+        return str;
+    }
+
+    public void DeleteColumn(int index)
+    {
+        foreach (var row in rows.Values)
+        {
+            int i = 0;
+
+            foreach (var key in row.Keys)
+            {
+                if (i == index)
+                {
+                    row.Remove(key);
+                    break;
+                }
+                i++;
+            }
+        }
+
+        var listOfRows = rows.Values.ToList();
+        string str = "";
+        for (int i = 0; i < listOfRows.Count - 1; i++)
+            str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
+        str += ConvertRowToString(listOfRows[^1].Values.ToList());
+        OnCellChanged.Invoke(str, false);
+        StateHasChanged();
+    }
+
+    public void AddColumn()
+    {
+        foreach (var row in rows.Values)
+            row.Add(Guid.NewGuid(), "");
+        StateHasChanged();
+    }
+
+    public void AddRow(int columns)
+    {
+        var row = new Dictionary<Guid, string>();
+        for (int i = 0; i < columns; i++)
+            row.Add(Guid.NewGuid(), "");
+        rows.Add(Guid.NewGuid(), row);
+        StateHasChanged();
+    }
+
+    public void OnCellChange(Guid rowKey, Guid columnKey, string text)
+    {
+        rows[rowKey][columnKey] = text;
+
+        var listOfRows = rows.Values.ToList();
+        string str = "";
+        for (int i = 0; i < listOfRows.Count - 1; i++)
+            str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
+        str += ConvertRowToString(listOfRows[^1].Values.ToList());
+        OnCellChanged.Invoke(str, true);
+    }
+
+    private void Delete(object? source, Guid key)
+    {
+        rows.Remove(key);
+
+        var listOfRows = rows.Values.ToList();
+        string str = "";
+        for (int i = 0; i < listOfRows.Count - 1; i++)
+            str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
+        str += ConvertRowToString(listOfRows[^1].Values.ToList());
+        OnCellChanged.Invoke(str, true);
+    }
+
+    private void MoveToUp(MouseEventArgs args, Guid entityKey)
+    {
+        Guid previous = Guid.Empty;
+
+        foreach (var key in rows.Keys)
+        {
+            if (key == entityKey)
+                break;
+            previous = key;
+        }
+
+        if (previous != Guid.Empty)
+        {
+            var tmp = rows[previous];
+            rows[previous] = rows[entityKey];
+            rows[entityKey] = tmp;
+
+            var listOfRows = rows.Values.ToList();
+            string str = "";
+            for (int i = 0; i < listOfRows.Count - 1; i++)
+                str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
+            str += ConvertRowToString(listOfRows[^1].Values.ToList());
+            OnCellChanged.Invoke(str, true);
+
+            StateHasChanged();
+        }
+    }
+
+    private void MoveToDown(MouseEventArgs args, Guid entityKey)
+    {
+        Guid previous = Guid.Empty;
+
+        foreach (var key in rows.Keys)
+        {
+            if (previous == entityKey)
+            {
+                if (key != Guid.Empty)
+                {
+                    var tmp = rows[previous];
+                    rows[previous] = rows[key];
+                    rows[key] = tmp;
+
+                    var listOfRows = rows.Values.ToList();
+                    string str = "";
+                    for (int i = 0; i < listOfRows.Count - 1; i++)
+                        str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
+                    str += ConvertRowToString(listOfRows[^1].Values.ToList());
+                    OnCellChanged.Invoke(str, true);
+
+                    StateHasChanged();
+                }
+                break;
+            }
+            previous = key;
+        }
+    }
+
+    public void MoveToLeft(int column)
+    {
+        if (column > 0)
+        {
+            foreach (var row in rows.Values)
+            {
+                int index = 0;
+                Guid previous = Guid.Empty;
+                foreach (var key in row.Keys)
+                {
+                    if (index == column)
+                    {
+                        var tmp = row[key];
+                        row[key] = row[previous];
+                        row[previous] = tmp;
+                        break;
+                    }
+                    index++;
+                    previous = key;
+                }
+            }
+
+            var listOfRows = rows.Values.ToList();
+            string str = "";
+            for (int i = 0; i < listOfRows.Count - 1; i++)
+                str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
+            str += ConvertRowToString(listOfRows[^1].Values.ToList());
+            OnCellChanged.Invoke(str, false);
+        }
+    }
+
+    public void MoveToRight(int column)
+    {
+        bool modified = false;
+
+        foreach (var row in rows.Values)
+        {
+            if (column < row.Count - 1)
+            {
+                int index = 0;
+                Guid previous = Guid.Empty;
+                foreach (var key in row.Keys)
+                {
+                    if (index == column + 1)
+                    {
+                        var tmp = row[key];
+                        row[key] = row[previous];
+                        row[previous] = tmp;
+                        break;
+                    }
+                    index++;
+                    previous = key;
+                }
+                modified = true;
+            }
+        }
+
+        if (modified)
+        {
+            var listOfRows = rows.Values.ToList();
+            string str = "";
+            for (int i = 0; i < listOfRows.Count - 1; i++)
+                str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
+            str += ConvertRowToString(listOfRows[^1].Values.ToList());
+            OnCellChanged.Invoke(str, false);
+        }
+    }
+}

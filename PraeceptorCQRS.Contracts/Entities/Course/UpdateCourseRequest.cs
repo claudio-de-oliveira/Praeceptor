@@ -10,6 +10,5 @@ namespace PraeceptorCQRS.Contracts.Entities.Course
         string? Telephone,
         string? Email,
         string? Image
-    );
+        );
 }
-

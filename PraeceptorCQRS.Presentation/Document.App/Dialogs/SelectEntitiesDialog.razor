@@ -1,5 +1,7 @@
 ﻿@using Ardalis.GuardClauses
 @using Document.App.Components
+@using Document.App.Components.Toaster;
+@using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
 
 @typeparam TServer1 where TServer1 : IEntityService
@@ -29,11 +31,6 @@
                                 <td align="center">
                                     <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
                                 </td>
-                                @*
-                            <td align="center">
-                            <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="Created" OnClick="@SortBy" />
-                            </td>
-                            *@
                                 <td align="center">
                                     <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
                                 </td>
@@ -47,11 +44,6 @@
                                 <td align="center">
                                     <ClearableInputTextComponent Filter="@textFilter" Waiting="@waiting" OnTextChange="@OnTextChanged"></ClearableInputTextComponent>
                                 </td>
-                                @*
-                            <td align="center">
-                            <ClearableInputTextComponent Filter="@createdFilter" Waiting="@waiting" OnTextChange="@OnCreatedChanged"></ClearableInputTextComponent>
-                            </td>
-                            *@
                                 <td align="center">
                                     <ClearableInputTextComponent Filter="@lastModifiedFilter" Waiting="@waiting" OnTextChange="@OnLastModifiedChanged"></ClearableInputTextComponent>
                                 </td>
@@ -69,21 +61,14 @@
                                     <td>
                                         <div style="font-size:x-small">@TextToDisplay(entity.Text, 100)</div>
                                     </td>
-                                    @*
-                            <td align="center">
-                            <div style="font-size: smaller">@entity.Created.ToString("d")</div>
-                            </td>
-                            *@
                                     <td align="center">
                                         <div style="font-size: smaller">@entity.LastModified?.ToString("d")</div>
                                     </td>
                                 </tr>
                             }
                         </table>
-                        <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-outline-primary" disabled="@(currentStartPage == 0)" @onclick="@(async () => await GetPreviousPage())">Página anterior</button>
-                            <button type="button" class="btn btn-outline-primary" disabled="@(pageSize != bookEntities.Count)" @onclick="@(async () => await GetNextPage())">Página seguinte</button>
-                        </div>
+
+                        <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
                     }
                 </div>
             </div>
@@ -103,6 +88,8 @@
     private TServer1 FirstEntityService { get; set; } = default(TServer1)!;
     [Inject]
     private TServer2 SecondEntityService { get; set; } = default(TServer2)!;
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
 
     [Parameter]
     public BookEntity Entity { get; set; } = null!;
@@ -133,9 +120,13 @@
     protected string? lastModifiedFilter = "";
     protected string? lastModifiedByFilter = "";
 
-    private int entitiesCount;
-    private int currentStartPage = 0;
     private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
+
+    private int entitiesCount;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -143,7 +134,7 @@
         {
             entitiesCount = await SecondEntityService.GetEntitiesCount(InstituteId);
 
-            await PageRequest();
+            await PageRequest(currentPage);
 
             var position = await FirstEntityService.GetFirstEntityPosition(DocumentId, Entity.Id);
 
@@ -170,25 +161,9 @@
         StateHasChanged();
     }
 
-    protected virtual async Task GetPreviousPage()
+    protected async Task OnPageChange(int page)
     {
-        currentStartPage -= pageSize;
-        if (currentStartPage < 0)
-            currentStartPage = 0;
-        BookEntities = new();
-
-        await PageRequest();
-    }
-
-    protected virtual async Task GetNextPage()
-    {
-        if (entitiesCount > currentStartPage + pageSize)
-        {
-            currentStartPage += pageSize;
-            BookEntities = new();
-
-            await PageRequest();
-        }
+        await PageRequest(page);
     }
 
     private void OnChangeSelection(BookEntity entity)
@@ -208,30 +183,30 @@
     private async Task OnTitleChanged(ChangeEventArgs args)
     {
         titleFilter = args.Value.ToString();
-        await PageRequest();
+        await PageRequest(0);
     }
     private async Task OnTextChanged(ChangeEventArgs args)
     {
         textFilter = args.Value.ToString();
-        await PageRequest();
+        await PageRequest(0);
     }
     private async Task OnCreatedChanged(ChangeEventArgs args)
     {
         createdFilter = args.Value.ToString();
-        await PageRequest();
+        await PageRequest(0);
     }
     private async Task OnLastModifiedChanged(ChangeEventArgs args)
     {
         lastModifiedFilter = args.Value.ToString();
-        await PageRequest();
+        await PageRequest(0);
     }
 #pragma warning restore CS8602
 
     private async void SortBy(string SortColumn)
     {
-        sort = SortColumn;
-        await PageRequest();
         ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
     }
 
     private Task Cancel()
@@ -243,13 +218,13 @@
         return OnClose.InvokeAsync(SelectedEntities);
     }
 
-    protected virtual async Task PageRequest()
+    protected virtual async Task PageRequest(int page)
     {
         waiting = true;
         var message = await SecondEntityService.PostPage(
             new Requests.GetEntityPageRequest(
                 InstituteId,
-                currentStartPage,
+                page,
                 pageSize,
                 sort,
                 ascendingSort,
@@ -264,12 +239,25 @@
 
         if (message.IsSuccessStatusCode)
         {
-            var tmp = JsonConvert.DeserializeObject<List<BookEntity>>(await message.Content.ReadAsStringAsync());
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfBookEntity>(content);
             Guard.Against.Null(tmp);
-            BookEntities = tmp ?? new();
+            BookEntities = tmp.Entities;
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
         }
         else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+
             BookEntities = new();
+        }
 
         bookEntities = BookEntities;
         waiting = false;

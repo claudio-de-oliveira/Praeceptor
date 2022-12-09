@@ -60,52 +60,52 @@ else
                     <tr>
                         <td align="center">
                             <button type="button"
-                            class="btn btn-outline-primary"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Mover para cima"
-                            @onclick="@(() => MoveBackward(entity))"
-                            style="border: none;">
+                                    class="btn btn-outline-primary"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Mover para cima"
+                                    @onclick="@(() => MoveBackward(entity))"
+                                    style="border: none;">
                                 <i class="bi bi-chevron-double-up"></i>
                             </button>
                         </td>
                         <td align="center">
                             <button type="button"
-                            class="btn btn-outline-primary"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Mover para baixo"
-                            @onclick="@(() => MoveForward(entity))"
-                            style="border: none;">
+                                    class="btn btn-outline-primary"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Mover para baixo"
+                                    @onclick="@(() => MoveForward(entity))"
+                                    style="border: none;">
                                 <i class="bi bi-chevron-double-down"></i>
                             </button>
                         </td>
                         <td>@entity.Title</td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                            class="btn btn-outline-info"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Ver detalhes"
-                            @onclick="@(() => Details(entity))"
-                            style="border: none;">
-                                <i class="bi bi-diagram-3"></i>
+                                    class="btn btn-sm btn-success"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Ver detalhes"
+                                    @onclick="@(() => Details(entity))"
+                                    style="border: none;">
+                                Detalhes
                             </button>
                         </td>
                         <td>
                             <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
                         </td>
-                        <td align="center">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                            class="btn btn-sm btn-outline-warning"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editSubSectionModal"
-                            title="Editar"
-                            @onclick="@(() => Edit(entity))"
-                            style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editSubSectionModal"
+                                    title="Editar"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                         <td align="center">

@@ -14,19 +14,25 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<ClassType?> CreateClassType(ClassType entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<ClassType, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<ClassType?> GetClassTypeById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<ClassType?> GetClassTypeByCode(Guid instituteId, string code)
             => await ReadDefault(o => o.InstituteId == instituteId && string.Compare(o.Code, code, true) == 0);
+
         public async Task<int> GetClassTypeCountByInstitute(Guid instituteId)
             => await Count(o => o.InstituteId == instituteId);
+
         public async Task UpdateClassType(ClassType entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task DeleteClassType(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
@@ -170,7 +176,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             return isFiltered ? filteredList : list;
         }
 
-
         private static List<ClassType> SortBy(List<ClassType> list, string? column, bool ascending)
         {
             if (string.IsNullOrWhiteSpace(column))
@@ -179,11 +184,12 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             return column switch
             {
                 "Code" => Global.SortList(list, x => x.Code, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };
         }
     }
 }
-

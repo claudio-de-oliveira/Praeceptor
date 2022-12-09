@@ -1,0 +1,110 @@
+﻿<TableRowComponent Key="@(Guid.Empty)" Cells="@footer" OnCellChange="@OnCellChange"></TableRowComponent>
+
+@code {
+    [Parameter]
+    public string Footer { get; set; } = default!;
+    [Parameter]
+    public Action<string, bool> OnFooterChanged { get; set; } = default!;
+
+    private Dictionary<Guid, string> footer { get; set; } = new();
+
+    private void CreateDictionaryFromString(string? text, Dictionary<Guid, string> dictionary)
+        => text?.Split('&').ToList().ForEach(o => dictionary.Add(Guid.NewGuid(), o.Trim()));
+
+    private static string ConvertRowToString(List<string> row)
+    {
+        string str = "";
+        for (int i = 0; i < row.Count - 1; i++)
+            str += row[i] + " & ";
+        str += row[^1];
+        return str;
+    }
+
+    public void DeleteColumn(int index)
+    {
+        int i = 0;
+
+        foreach (var key in footer.Keys)
+        {
+            if (i == index)
+            {
+                footer.Remove(key);
+                break;
+            }
+            i++;
+        }
+
+        string str = ConvertRowToString(footer.Values.ToList());
+        OnFooterChanged.Invoke(str, false);
+        StateHasChanged();
+    }
+
+    public void AddColumn()
+    {
+        footer.Add(Guid.NewGuid(), "");
+        StateHasChanged();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && Footer is not null)
+        {
+            CreateDictionaryFromString(Footer, footer);
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    public void OnCellChange(Guid rowKey, Guid columnKey, string text)
+    {
+        footer[columnKey] = text;
+        string str = ConvertRowToString(footer.Values.ToList());
+        OnFooterChanged.Invoke(str, true);
+    }
+
+    public void MoveToLeft(int column)
+    {
+        if (column > 0)
+        {
+            int index = 0;
+            Guid previous = Guid.Empty;
+            foreach (var key in footer.Keys)
+            {
+                if (index == column)
+                {
+                    var tmp = footer[key];
+                    footer[key] = footer[previous];
+                    footer[previous] = tmp;
+                    break;
+                }
+                index++;
+                previous = key;
+            }
+            string str = ConvertRowToString(footer.Values.ToList());
+            OnFooterChanged.Invoke(str, false);
+        }
+    }
+
+    public void MoveToRight(int column)
+    {
+        if (column < footer.Count - 1)
+        {
+            int index = 0;
+            Guid previous = Guid.Empty;
+            foreach (var key in footer.Keys)
+            {
+                if (index == column + 1)
+                {
+                    var tmp = footer[key];
+                    footer[key] = footer[previous];
+                    footer[previous] = tmp;
+                    break;
+                }
+                index++;
+                previous = key;
+            }
+            string str = ConvertRowToString(footer.Values.ToList());
+            OnFooterChanged.Invoke(str, false);
+        }
+    }
+}

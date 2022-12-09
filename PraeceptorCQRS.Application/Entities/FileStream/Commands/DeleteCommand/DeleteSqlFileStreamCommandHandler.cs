@@ -6,7 +6,7 @@ using PraeceptorCQRS.Application.Persistence;
 namespace PraeceptorCQRS.Application.Entities.FileStream.Commands
 {
     public class DeleteSqlFileStreamCommandHandler
-        : IRequestHandler<DeleteSqlFileStreamCommand, ErrorOr<SqlFileStreamResult>>
+        : IRequestHandler<DeleteSqlFileStreamCommand, ErrorOr<FileResult>>
     {
         private readonly IFileStreamRepository _repository;
 
@@ -15,7 +15,7 @@ namespace PraeceptorCQRS.Application.Entities.FileStream.Commands
             _repository = repository;
         }
 
-        public async Task<ErrorOr<SqlFileStreamResult>> Handle(DeleteSqlFileStreamCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<FileResult>> Handle(DeleteSqlFileStreamCommand request, CancellationToken cancellationToken)
         {
             var entity = await _repository.GetFileInfo(request.Id);
             if (entity is null)
@@ -26,7 +26,7 @@ namespace PraeceptorCQRS.Application.Entities.FileStream.Commands
 
             await _repository.DeleteFile(request.Id);
 
-            return new SqlFileStreamResult(entity);
+            return new FileResult(entity);
         }
     }
 }

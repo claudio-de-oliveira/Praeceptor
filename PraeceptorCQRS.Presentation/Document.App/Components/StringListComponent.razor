@@ -1,0 +1,97 @@
+﻿@using Ardalis.GuardClauses;
+@using Document.App.Dialogs
+
+<table class="table table-sm" cellpadding="1" cellspacing="1">
+    <tbody>
+        @foreach (var entity in list)
+        {
+            <ConfirmDialog Title="Atenção"
+                       Message=@($"Tem certeza que deseja excluir o objetivo \"{entity.Value}\" ?")
+                       OnConfirmEvent="@Delete"
+                       ParameterId="@entity.Key" />
+            <tr>
+                <td>
+                    <textarea type="text"
+                              class="form-control border-0"
+                              wrap="soft"
+                              id=@($"A{entity.Key}")
+                              rows="2"
+                              @onchange="@((args) => ChangeText(entity.Key, (string)args.Value!))"
+                              contenteditable="true">
+                        @entity.Value
+                    </textarea>
+                </td>
+                <td align="center" style="width: 90px;">
+                    <button type="button"
+                            class="btn btn-sm btn-danger"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            data-bs-toggle="modal"
+                            data-bs-target="#@($"A{entity.Key.ToString("N")}")"
+                            title="Excluir"
+                            style="border: none;">
+                        Excluir
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div>
+    <!-- Button trigger modal -->
+    <button type="button"
+            class="btn btn-outline-primary"
+            data-toggle="tooltip"
+            data-placement="top"
+            data-bs-toggle="modal"
+            title="Inserir novo objetivo"
+            @onclick="@CreateObjective">
+        <i class="bi bi-plus-slash-minus"></i>
+        Novo objetivo
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public Dictionary<Guid, string>? StringList { get; set; }
+    [Parameter]
+    public EventCallback<List<string>> OnUpdateList { get; set; }
+
+    private Dictionary<Guid, string> list = new();
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!list.Any())
+        {
+            Guard.Against.Null(StringList);
+            foreach (var key in StringList.Keys)
+                list.Add(key, StringList[key]);
+            StateHasChanged();
+        }
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async void Delete(object? source, Guid key)
+    {
+        list.Remove(key);
+
+        await OnUpdateList.InvokeAsync(list.Values.ToList());
+    }
+
+    private async void ChangeText(Guid key, string txt)
+    {
+        if (string.IsNullOrWhiteSpace(txt))
+            list.Remove(key);
+        else
+            list[key] = txt;
+
+        await OnUpdateList.InvokeAsync(list.Values.ToList());
+    }
+
+    private void CreateObjective()
+    {
+        list.Add(Guid.NewGuid(), "");
+    }
+}

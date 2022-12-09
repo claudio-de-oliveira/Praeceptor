@@ -1,0 +1,19 @@
+﻿# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7073
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+
+
+## C R E A T E ###########################################
+POST {{host}}/api/toword/pea
+Content-Type: {{contentType}}
+
+{
+    "PeaId": "F443CC22-64E6-420E-ABFA-A458BA2E4FAE",
+    "CourseName": "ENGENHARIA ELÉTRICA",
+    "Season": "1"
+}
+

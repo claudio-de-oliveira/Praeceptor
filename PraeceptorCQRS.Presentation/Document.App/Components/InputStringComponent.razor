@@ -1,0 +1,23 @@
+﻿@using System.Diagnostics.CodeAnalysis;
+
+<input type="text" class="form-control"
+       @onchange="@OnChange"
+       @onkeypress="@KeyPressHandler"
+       @onkeypress:preventDefault
+       style="background-color:aliceblue; border:none" />
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnTextChanged { get; set; }
+
+    private async void OnChange(ChangeEventArgs args)
+    {
+        await OnTextChanged.InvokeAsync((string?)args.Value);
+    }
+
+    private void KeyPressHandler(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+            return;
+    }
+}

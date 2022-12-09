@@ -1,0 +1,111 @@
+﻿@using Ardalis.GuardClauses;
+@using Document.App.Dialogs
+
+<table class="table table-sm" cellpadding="1" cellspacing="1">
+    <thead>
+        <tr>
+            <td>
+                Sobrenome
+            </td>
+            <td>
+                Nome
+            </td>
+            <td>
+                <!-- Delete -->
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entity in Names)
+        {
+            @*
+            <ConfirmDialog Title="Atenção"
+                       Message=@($"Tem certeza que deseja excluir \"{@NameToString(entity.Value)}\" ?")
+                       OnConfirmEvent="@OnConfirmDeleteName"
+                       ParameterId="@entity.Key" />
+            *@
+            <tr>
+                <td>
+                    <input class="form-control form-control-sm" type="text" value=@entity.Value.Sobrenome @onchange=@((args) => OnSecondNameChanged(args, entity.Key)) style="font-size:small; background-color:aliceblue;">
+                </td>
+                <td>
+                    <input class="form-control form-control-sm" type="text" value=@entity.Value.Nome @onchange=@((args) => OnFirstNameChanged(args, entity.Key)) style="font-size:small; background-color:aliceblue;">
+                </td>
+
+                <td align="center" style="width: 90px;">
+                    <button type="button"
+                        class="btn btn-sm btn-danger"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Excluir valor selecionado"
+                        data-bs-toggle="modal"
+                        data-bs-target="#@($"A{entity.Key.ToString("N")}")"
+                        onclick="@(() => OnDeleteNameLocal(entity.Key))"
+                        style="border: none;">
+                        Excluir
+                    </button>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="btn-group" role="group" aria-label="First group">
+    <button type="button"
+            class="btn btn-outline-primary"
+            data-toggle="tooltip"
+            data-placement="top"
+            data-bs-toggle="modal"
+            title="Adicionar um novo nome"
+            @onclick="() => OnNewName()">
+        <i class="bi bi-plus-lg"></i>
+        Adicionar um novo nome
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public string Header { get; set; } = default!;
+    [Parameter]
+    public Dictionary<Guid, NameValueModel> Names { get; set; } = default!;
+    [Parameter]
+    public Action<Guid, NameValueModel> OnNomeChanged { get; set; } = default!;
+    [Parameter]
+    public EventCallback<Guid> OnDeleteName { get; set; } = default!;
+
+    private string NameToString(NameValueModel name)
+    {
+        if (!string.IsNullOrWhiteSpace(name.Sobrenome) && !string.IsNullOrWhiteSpace(name.Nome))
+            return $"{name.Sobrenome}, {name.Nome}";
+        if (string.IsNullOrWhiteSpace(name.Sobrenome) && !string.IsNullOrWhiteSpace(name.Nome))
+            return name.Nome;
+        if (!string.IsNullOrWhiteSpace(name.Sobrenome) && string.IsNullOrWhiteSpace(name.Nome))
+            return name.Sobrenome;
+        return "_______";
+    }
+
+    private void OnDeleteNameLocal(Guid key)
+    {
+        Console.WriteLine("DELETANDO NOME");
+        OnDeleteName.InvokeAsync(key);
+        Names.Remove(key);
+    }
+    private void OnFirstNameChanged(ChangeEventArgs args, Guid key)
+    {
+        Guard.Against.Null(args.Value);
+        Names[key] = new NameValueModel((string)args.Value, Names[key].Sobrenome);
+        OnNomeChanged.Invoke(key, Names[key]);
+    }
+    private void OnSecondNameChanged(ChangeEventArgs args, Guid key)
+    {
+        Guard.Against.Null(args.Value);
+        Names[key] = new NameValueModel(Names[key].Nome, (string)args.Value);
+        OnNomeChanged.Invoke(key, Names[key]);
+    }
+    private void OnNewName()
+    {
+        Names.Add(Guid.NewGuid(), new NameValueModel("", ""));
+        StateHasChanged();
+    }
+}

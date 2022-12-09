@@ -18,24 +18,24 @@
 
 <section class="p-1">
     <article class="content px-4">
-        <table class='table'>
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
             <tbody>
                 @foreach (var entity in typeList)
                 {
                     <tr>
-                        <td>@entity.Code</td>
-                        <td align="center">
+                        <td><div style="font-size: smaller">@entity.Code</div></td>
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editClassTypeModal"
-                                title="Editar"
-                                disabled="@(CanEdit(entity))"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editClassTypeModal"
+                                    title="Editar"
+                                    disabled="@(CanEdit(entity))"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                     </tr>
@@ -143,6 +143,14 @@
             Guard.Against.Null(tmp);
             typeList = tmp.Entities;
         }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
         waiting = false;
 
         StateHasChanged();
@@ -181,7 +189,9 @@
                 response = await typeService.CreateClassType(
                     new CreateClassTypeRequest(
                         entitySelected.Code,
-                        instituteId
+                        instituteId,
+                        entitySelected.IsRemote,
+                        entitySelected.DurationInMinutes
                         )
                     );
             }
@@ -189,7 +199,9 @@
             {
                 response = await typeService.UpdateClassType(
                     new UpdateClassTypeRequest(
-                        entitySelected.Id
+                        entitySelected.Id,
+                        entitySelected.IsRemote,
+                        entitySelected.DurationInMinutes
                         )
                     );
             }

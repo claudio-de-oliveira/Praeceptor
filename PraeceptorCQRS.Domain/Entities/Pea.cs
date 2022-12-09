@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+
 using PraeceptorCQRS.Domain.Base;
-using PraeceptorCQRS.Domain.Values;
-using System.Runtime.CompilerServices;
 
 namespace PraeceptorCQRS.Domain.Entities
 {
     public class Pea : BaseAuditableEntity
     {
-        public Pea(Guid id) 
+        public Pea(Guid id)
             : base(id)
         { /* Nothing more todo */ }
 
@@ -26,10 +25,15 @@ namespace PraeceptorCQRS.Domain.Entities
         [Required]
         public string Text { get; set; } = default!;
 
+        public bool Printable { get; set; }
+
         #region Entity Framework Relationships
+
         public Guid ClassId { get; set; }
+
         [Required, ForeignKey("ClassId")]
         public virtual Class Class { get; set; } = default!;
-        #endregion
+
+        #endregion Entity Framework Relationships
     }
 }

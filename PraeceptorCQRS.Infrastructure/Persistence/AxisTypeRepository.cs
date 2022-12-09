@@ -14,14 +14,19 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<int> GetAxisTypeByInstituteCount(Guid instituteId)
             => await Count(o => o.InstituteId == instituteId);
+
         public async Task<AxisType?> CreateAxisType(AxisType entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<AxisType, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<AxisType?> GetAxisTypeById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<AxisType?> GetAxisTypeByCode(Guid instituteId, string code)
             => await ReadDefault(o => o.InstituteId == instituteId && string.Compare(o.Code, code) == 0);
+
         public async Task UpdateAxisType(AxisType entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
@@ -182,7 +187,9 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             return column switch
             {
                 "Code" => Global.SortList(list, x => x.Code, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };

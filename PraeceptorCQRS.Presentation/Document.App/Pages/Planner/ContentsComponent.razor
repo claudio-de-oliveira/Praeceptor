@@ -1,0 +1,90 @@
+﻿@using Document.App.Components
+@using Document.App.Dialogs
+
+@if (conteudos is not null)
+{
+    <table class="table table-sm table-borderless" cellpadding="1" cellspacing="1">
+        <tbody>
+            @foreach (var entity in conteudos)
+            {
+                <tr>
+                    <td>
+                        <input class="form-control form-control-sm"
+                               type="text"
+                               value="@entity.Value"
+                               @onchange="@((args) => ChangeText(entity.Key, (string)args.Value!))"
+                               contenteditable="true"
+                               style="font-size:small; background-color:aliceblue; border:none;">
+                    </td>
+
+                    <td align="right" style="width: 80px;">
+                        <button type="button"
+                                class="btn btn-sm btn-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                data-bs-target="#@($"A{entity.Key.ToString("N")}")"
+                                @onclick="@(() => Delete(entity.Key))"
+                                title="Excluir"
+                                style="border: none;">
+                            Excluir
+                        </button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <br />
+
+    <div>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-primary"
+                data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
+                title="Inserir novo conteúdo"
+                @onclick="@CreateContent">
+            <i class="bi bi-plus-slash-minus"></i>
+            Novo conteúdo
+        </button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid ConceptId { get; set; }
+    [Parameter]
+    public List<string> Conteudos { get; set; } = default!;
+    [Parameter]
+    public Action<Guid, List<string>> OnConteudoChanged { get; set; } = default!;
+
+    private Dictionary<Guid, string> conteudos { get; set; } = new();
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Conteudos.ForEach(o => conteudos.Add(Guid.NewGuid(), o));
+            StateHasChanged();
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void ChangeText(Guid key, string txt)
+    {
+        conteudos[key] = txt;
+        OnConteudoChanged?.Invoke(ConceptId, conteudos.Values.ToList());
+    }
+
+    private void CreateContent()
+    {
+        conteudos.Add(Guid.NewGuid(), "");
+        // OnConteudoChanged?.Invoke(ConceptId, conteudos.Values.ToList());
+    }
+
+    private void Delete(Guid key)
+    {
+        conteudos.Remove(key);
+        OnConteudoChanged?.Invoke(ConceptId, conteudos.Values.ToList());
+    }
+}

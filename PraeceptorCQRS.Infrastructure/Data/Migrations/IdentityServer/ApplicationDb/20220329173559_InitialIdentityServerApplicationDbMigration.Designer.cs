@@ -241,7 +241,7 @@ namespace PraeceptorCQRS.Infrastructure.Data.Migrations.IdentityServer.Applicati
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

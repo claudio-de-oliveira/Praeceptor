@@ -12,8 +12,6 @@ using PraeceptorCQRS.Application.Entities.ClassType.Common;
 using PraeceptorCQRS.Application.Entities.ClassType.Queries;
 using PraeceptorCQRS.Contracts.Entities.ClassType;
 using PraeceptorCQRS.Contracts.Entities.Page;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
 {
@@ -66,7 +64,7 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<ClassTypePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<ClassTypeResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<ClassTypeResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
@@ -119,16 +117,19 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateClassType([FromBody] CreateClassTypeRequest request)
         {
             // var command = _mapper.Map<CreateClassTypeCommand>(request);
             var command = new CreateClassTypeCommand(
                 request.Code,
-                request.InstituteId
+                request.InstituteId,
+                request.IsRemote,
+                request.DurationInMinutes
                 );
 
-            ErrorOr <ClassTypeResult> result = await _mediator.Send(command);
+            ErrorOr<ClassTypeResult> result = await _mediator.Send(command);
 
             return result.Match(
                 // Use CreatedAtAction to return 201 CreatedAtAction
@@ -152,4 +153,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-

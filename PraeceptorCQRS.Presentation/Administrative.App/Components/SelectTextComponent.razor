@@ -1,5 +1,6 @@
 ﻿<div class="input-group input-group-sm mb-3">
     <input type="text" class="form-control form-control-sm"
+
            value=@Filter
            @onchange=@OnTextChange
            disabled="@Waiting"
@@ -41,6 +42,8 @@
     [Parameter]
     public EventCallback<ChangeEventArgs> OnTextChange { get; set; }
     [Parameter]
+    public EventCallback<ChangeEventArgs> OnSelectedChange { get; set; }
+    [Parameter]
     public Dictionary<Guid, string> Options { get; set; } = default!;
 
     public string? Filter { get; set; } = default!;
@@ -48,7 +51,7 @@
     private async Task ChangeSelection(MouseEventArgs args, Guid key, string filter)
     {
         Filter = filter;
-        await OnTextChange.InvokeAsync(new ChangeEventArgs { Value = key.ToString() });
+        await OnSelectedChange.InvokeAsync(new ChangeEventArgs { Value = key.ToString() });
         StateHasChanged();
     }
 

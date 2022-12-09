@@ -97,7 +97,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
             ErrorOr<SubSubSectionPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<SubSubSectionResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<SubSubSectionResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }

@@ -1,0 +1,39 @@
+﻿# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7073
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@instituteId=d6abb3f3-5e5f-4f2f-ab6f-08da7c6346f3
+
+## C R E A T E ###########################################
+POST {{host}}/api/toword/create
+Content-Type: {{contentType}}
+
+{
+    "instituteId": "58BC2E71-58AA-4439-5519-08DACCDBFBDC",
+    "documentid": "FAD31048-72D7-4CAC-959D-5EE0E09BA148",
+    "templateid": "40F88850-57F1-4DAF-941A-AC78A23D3D9F",
+    "curriculum": "2022",
+    "courseid": "C3FEC65B-63B1-445C-024B-08DACCDBFC5E",
+    "GroupValues": {
+        "@IES": "Unit/SE",
+        "@PROFISSAO.@SISTEMA": "Sistemas Elétricos",
+        "@PROFISSAO.@SINGULAR": "Engenheiro Eletricista",
+        "@PROFISSAO.@PLURAL": "Engenheiros Eletricistas",
+        "@CURSO.@PORTARIA": "Portaria",
+        "@CURSO.@HABILITACAO": "",
+        "@CURSO.@MODALIDADE": "",
+        "@CURSO.@VAGAS": "120 semestrais",
+        "@CURSO.@TURNO": "Noturno",
+        "@CURSO.@REGIMEMATRICULA": "Semestral",
+        "@CURSO.@DURACAO": "5 anos",
+        "@CURSO.@TEMPOMINIMO": "5 anos",
+        "@CURSO.@TEMPOMAXIMO": "10 anos",
+        "@CURSO.@DIMTURMASTEORICAS": "60 alunos",
+        "@CURSO.@DIMTURMASPRATICAS": "30 alunos",
+        "@CURSO.@DCN": "DCN das engenharias"
+    },
+    "CreatedBy": "Claudio de Oliveira"
+}

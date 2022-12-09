@@ -6,7 +6,7 @@ using PraeceptorCQRS.Application.Persistence;
 namespace PraeceptorCQRS.Application.Entities.FileStream.Queries
 {
     public class GetSqlFileStreamByCodeQueryHandler
-        : IRequestHandler<GetSqlFileStreamByCodeQuery, ErrorOr<SqlFileStreamResult>>
+        : IRequestHandler<GetSqlFileStreamByCodeQuery, ErrorOr<FileResult>>
     {
         private readonly IFileStreamRepository _repository;
 
@@ -15,14 +15,14 @@ namespace PraeceptorCQRS.Application.Entities.FileStream.Queries
             _repository = repository;
         }
 
-        public async Task<ErrorOr<SqlFileStreamResult>> Handle(GetSqlFileStreamByCodeQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<FileResult>> Handle(GetSqlFileStreamByCodeQuery request, CancellationToken cancellationToken)
         {
             var entity = await _repository.ReadFile(request.InstituteId, request.Code);
 
             if (entity is null)
                 return Domain.Errors.Error.SqlFileStream.NotFound;
 
-            return new SqlFileStreamResult(entity);
+            return new FileResult(entity);
         }
     }
 }

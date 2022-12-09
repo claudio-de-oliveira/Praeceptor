@@ -1,0 +1,223 @@
+﻿@using Ardalis.GuardClauses;
+@using Document.App.Components.Toaster;
+@using Document.App.Dialogs
+
+<!-- Modal: Editar referência -->
+@if (EditReferenceDialogIsOpen)
+{
+    <EditReferenceDialog OnClose="@OnEditReferenceDialogClose"
+                     Id="@selectedId"
+                     Autores="@selectedReference?.Autores"
+                     Tradutores="@selectedReference?.Tradutores"
+                     Organizadores="@selectedReference?.Organizadores"
+                     Editor="@selectedReference?.Editor"
+                     Exemplares="@selectedReference!.Exemplares"
+                     Title="@selectedReference?.Title"
+                     Publisher="@selectedReference?.Publisher"
+                     Year="@selectedReference!.Year"
+                     Volume="@selectedReference?.Volume"
+                     Series="@selectedReference?.Series"
+                     Edition="@selectedReference!.Edition"
+                     Note="@selectedReference?.Note"
+                     ISBN="@selectedReference?.ISBN"
+                     Online="@selectedReference!.Online"
+                     Details="@selectedReference?.Details" />
+}
+
+<table class="table table-sm" cellpadding="1" cellspacing="1">
+    <tbody>
+        @foreach (var entity in Bibliography)
+        {
+            <ConfirmDialog Title="Atenção"
+                       Message=@($"Tem certeza que deseja excluir a referência bibliográfica \"{entity.Value}\" ?")
+                       OnConfirmEvent="@Delete"
+                       ParameterId="@entity.Key" />
+            <tr>
+                <td>
+                    <BibliographyToTextComponent Reference="@entity.Value"></BibliographyToTextComponent>
+                </td>
+
+                <td align="center" style="width: 90px;">
+                    <button type="button"
+                        class="btn btn-sm btn-warning"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-target="#editString"
+                        title="Editar"
+                        @onclick="@(() => Edit(entity.Key, entity.Value))"
+                        style="border: none;">
+                        Editar
+                    </button>
+                </td>
+
+                <td align="center" style="width: 90px;">
+                    <button type="button"
+                        class="btn btn-sm btn-danger"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#@($"A{entity.Key.ToString("N")}")"
+                        title="Excluir"
+                        style="border: none;">
+                        Excluir
+                    </button>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<button type="button"
+        class="btn btn-outline-primary"
+        data-toggle="tooltip"
+        data-placement="top"
+        data-bs-toggle="modal"
+        title="Criar uma nova referência bibliográfica"
+        @onclick="() => Create()">
+    <i class="bi bi-plus-lg"></i>
+    Nova referência bibliográfica
+</button>
+
+
+@code {
+    [Parameter]
+    public Dictionary<Guid, BibItemValueModel> Bibliography { get; set; } = default!;
+    [Parameter]
+    public EventCallback<List<BibItemValueModel>> OnUpdadeBibliography { get; set; } = default!;
+    [Inject]
+    protected ToasterService? _toasterService { get; set; }
+
+    private bool EditReferenceDialogIsOpen = false;
+
+    private BibItemValueModel? selectedReference = null;
+    private Guid selectedId = Guid.Empty;
+
+    private string RefereceToToString(BibItemValueModel model)
+    {
+        string str = "";
+
+        if (model.Autores.Nomes.Count == 0 && model.Tradutores.Nomes.Count == 0 && model.Organizadores.Nomes.Count == 0)
+        {
+            str += $"______. ";
+        }
+        else
+        {
+            if (model.Autores.Nomes.Count > 0)
+            {
+                for (int i = 0; i < model.Autores.Nomes.Count - 1; i++)
+                    str += $"{model.Autores.Nomes[i].Sobrenome}, {model.Autores.Nomes[i].Nome}; ";
+                str += $"{model.Autores.Nomes[^1].Sobrenome}, {model.Autores.Nomes[^1].Nome}. ";
+            }
+            else if (model.Tradutores.Nomes.Count > 0)
+            {
+                for (int i = 0; i < model.Tradutores.Nomes.Count - 1; i++)
+                    str += $"{model.Tradutores.Nomes[i].Sobrenome}, {model.Tradutores.Nomes[i].Nome}; ";
+                str += $"{model.Tradutores.Nomes[^1].Sobrenome}, {model.Tradutores.Nomes[^1].Nome} (Tradutor(es)). ";
+            }
+            else if (model.Organizadores.Nomes.Count > 0)
+            {
+                for (int i = 0; i < model.Organizadores.Nomes.Count - 1; i++)
+                    str += $"{model.Organizadores.Nomes[i].Sobrenome}, {model.Organizadores.Nomes[i].Nome}; ";
+                str += $"{model.Organizadores.Nomes[^1].Sobrenome}, {model.Organizadores.Nomes[^1].Nome} (Organizador(es)). ";
+            }
+        }
+
+        if (!string.IsNullOrEmpty(model.Title))
+            str += $"{model.Title}. ";
+        if (!string.IsNullOrEmpty(model.Series))
+            str += $"Série: {model.Series}. ";
+
+        if (!string.IsNullOrEmpty(model.Editor))
+            str += $"{model.Editor}. ";
+
+        if (model.Volume is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(model.Volume.Text1))
+            {
+                if (!string.IsNullOrWhiteSpace(model.Volume.Text2))
+                    str += $"Volume {model.Volume.Text1} – {model.Volume.Text2}. ";
+                else
+                    str += $"Volume {model.Volume.Text1}. ";
+            }
+        }
+        if (model.Edition > 0)
+            str += $"{model.Edition}a edição. ";
+
+        if (model.Publisher is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(model.Publisher.Nome))
+            {
+                if (!string.IsNullOrWhiteSpace(model.Publisher.Endereco))
+                    str += $"{model.Publisher.Nome}, {model.Publisher.Endereco}. ";
+                else
+                    str += $"{model.Publisher.Nome}. ";
+            }
+        }
+        if (model.Year > 0)
+            str += $"{model.Year}. ";
+
+        return str;
+    }
+
+    private void Edit(Guid id, BibItemValueModel reference)
+    {
+        selectedReference = reference;
+        selectedId = id;
+        EditReferenceDialogIsOpen = true;
+    }
+
+    private void Create()
+    {
+        var id = Guid.NewGuid();
+        Bibliography.Add(id, new BibItemValueModel(
+            id,
+            new ListOfNomesModel(),
+            new ListOfNomesModel(),
+            new ListOfNomesModel(),
+            null,
+            0,
+            null,
+            new PublisherValueModel(null, null),
+            1900,
+            new VolumeValueModel(null, null),
+            null,
+            0,
+            null,
+            null,
+            false,
+            null
+        ));
+
+        StateHasChanged();
+    }
+
+    private async void Delete(object? source, Guid key)
+    {
+        Bibliography.Remove(key);
+        await OnUpdadeBibliography.InvokeAsync(Bibliography.Values.ToList());
+    }
+
+    private async void OnEditReferenceDialogClose(BibItemValueModel? model)
+    {
+        if (!IsNullOrEmptyReference(model))
+        {
+            Guard.Against.Null(model);
+            Bibliography[model.Id] = model;
+            selectedId = Guid.Empty;
+            selectedReference = null;
+            await OnUpdadeBibliography.InvokeAsync(Bibliography.Values.ToList());
+        }
+        EditReferenceDialogIsOpen = false;
+    }
+
+    private bool IsNullOrEmptyReference(BibItemValueModel? model)
+    {
+        if (model is null)
+            return true;
+        // O título é obrigatório
+        if (model.Title is null || string.IsNullOrWhiteSpace(model.Title))
+            return true;
+        return false;
+    }
+}

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-
 using IdentityModel;
 
 using IdentityServer4;
@@ -62,6 +61,11 @@ namespace IdentityServer.Api
                     configuration.GetSection("Pea.API:description").Value,
                     userClaims: new [] { JwtClaimTypes.Name }
                     ),
+                new ApiResource(
+                    configuration.GetSection("DocumentToWord.API:audience").Value,
+                    configuration.GetSection("DocumentToWord.API:description").Value,
+                    userClaims: new [] { JwtClaimTypes.Name }
+                    ),
             };
         }
 
@@ -94,6 +98,11 @@ namespace IdentityServer.Api
                 if (scopes.Find(x => x.Name == scope) is null)
                     scopes.Add(new ApiScope(scope));
 
+            var toWordScopes = configuration.GetSection("DocumentToWord.API:Scopes").Get<string[]>();
+            foreach (var scope in toWordScopes)
+                if (scopes.Find(x => x.Name == scope) is null)
+                    scopes.Add(new ApiScope(scope));
+
             return scopes;
         }
 
@@ -112,25 +121,24 @@ namespace IdentityServer.Api
 
             return new Client[]
             {
-                #region No interactive user, use the clientid/secret for authentication
-                #endregion
-
                 #region No interactive API client
-                // new Client
-                // {
-                //     ClientId = configuration.GetSection("TopologyAPI:audience").Value,
-                //     ClientName = configuration.GetSection("TopologyAPI:description").Value,
-                //     // secret for authentication
-                //     ClientSecrets = { new Secret(configuration.GetSection("TopologyAPI:clientSecret").Value.Sha256()) },
-                //     // no interactive user, use the clientid/secret for authentication
-                //     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                // 
-                //     // scopes that client has access to
-                //     AllowedScopes = configuration.GetSection("TopologyAPI:allowedScopes").Get<string[]>().ToList()
-                // },
-                #endregion
+
+                new Client
+                {
+                    ClientId = configuration.GetSection("DocumentToWord.API:audience").Value,
+                    ClientName = configuration.GetSection("DocumentToWord.API:description").Value,
+                    // secret for authentication
+                    ClientSecrets = { new Secret(configuration.GetSection("DocumentToWord.API:clientSecret").Value.Sha256()) },
+                    // no interactive user, use the clientid/secret for authentication
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    // scopes that client has access to
+                    AllowedScopes = configuration.GetSection("DocumentToWord.API:allowedScopes").Get<string[]>().ToList()
+                },
+
+                #endregion No interactive API client
 
                 #region Interactive ASP.NET Core MVC client
+
                 new Client
                 {
                     ClientId = configuration.GetSection("UserManager.APP:clientId").Value,
@@ -188,14 +196,15 @@ namespace IdentityServer.Api
 
                     AllowedScopes = administrativeAllowedScopes
                 },
-                #endregion
+
+                #endregion Interactive ASP.NET Core MVC client
             };
         }
     }
 }
 
 /*
- * Scope: profile 
+ * Scope: profile
  *      Climb: { name, given_name, family_name, middle_name, nickname, preferred_usename, ptofile, picture, website, gender, birthdate, zoneinfo, locale, updated_at }
  * Scope: email
  *      Climb: { email, email_verified }
@@ -203,7 +212,7 @@ namespace IdentityServer.Api
  *      Climb: { address }
  * Scope: phone
  *      Climb: { phone_number, phone_number_verified }
- *      
- *      
+ *
+ *
  *      https://localhost:7193/signin-oidc => página inválida
  */

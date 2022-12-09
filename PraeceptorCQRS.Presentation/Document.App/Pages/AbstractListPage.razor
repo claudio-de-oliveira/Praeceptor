@@ -122,12 +122,22 @@
             var content = await message.Content.ReadAsStringAsync();
             var tmp = JsonConvert.DeserializeObject<PageOfBookEntity>(content);
             Guard.Against.Null(tmp);
-            entityList = tmp.Entities.Select(o => (BookEntity)o).ToList();
+            // entityList = tmp.Entities.Select(o => (BookEntity)o).ToList();
+            entityList = tmp.Entities;
             currentPage = tmp.CurrentPage;
             previousPage = tmp.PreviousPage;
             nextPage = tmp.NextPage;
             numberOfPages = tmp.NumberOfPages;
         }
+        else
+        {
+            var result = await message.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+            Guard.Against.Null(error);
+            Guard.Against.Null(error.Title);
+            _toasterService?.AddToastError(error.Title);
+        }
+
         waiting = false;
 
         StateHasChanged();

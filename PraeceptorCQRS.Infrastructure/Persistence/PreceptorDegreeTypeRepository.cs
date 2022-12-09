@@ -14,19 +14,25 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<PreceptorDegreeType?> CreatePreceptorDegreeType(PreceptorDegreeType entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<PreceptorDegreeType, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<PreceptorDegreeType?> GetPreceptorDegreeTypeById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<PreceptorDegreeType?> GetPreceptorDegreeTypeByCode(Guid instituteId, string code)
             => await ReadDefault(o => o.InstituteId == instituteId && string.Compare(o.Code, code, true) == 0);
+
         public async Task<int> GetPreceptorDegreeTypesCountByInstitute(Guid instituteId)
             => await Count(o => o.InstituteId == instituteId);
+
         public async Task UpdatePreceptorDegreeType(PreceptorDegreeType entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task DeletePreceptorDegreeType(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
@@ -178,11 +184,12 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             return column switch
             {
                 "Code" => Global.SortList(list, x => x.Code, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };
         }
     }
 }
-

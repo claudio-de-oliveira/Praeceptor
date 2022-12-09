@@ -12,8 +12,6 @@ using PraeceptorCQRS.Application.Entities.Institute.Common;
 using PraeceptorCQRS.Application.Entities.Institute.Queries;
 using PraeceptorCQRS.Contracts.Entities.Institute;
 using PraeceptorCQRS.Contracts.Entities.Page;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
 {
@@ -68,7 +66,7 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<InstitutePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<InstituteResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<InstituteResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
@@ -90,7 +88,8 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPut("update")]
-        [Authorize("UpdatePolice")]
+        //[Authorize("UpdatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateInstitute([FromBody] UpdateInstituteRequest request)
         {
             var command = _mapper.Map<UpdateInstituteCommand>(request);
@@ -105,7 +104,8 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateInstitute([FromBody] CreateInstituteRequest request)
         {
             // var command = _mapper.Map<CreateInstituteCommand>(request);
@@ -116,7 +116,7 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
                 request.HoldingId
                 );
 
-            ErrorOr <InstituteResult> result = await _mediator.Send(command);
+            ErrorOr<InstituteResult> result = await _mediator.Send(command);
 
             return result.Match(
                 // Use CreatedAtAction to return 201 CreatedAtAction
@@ -140,4 +140,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-

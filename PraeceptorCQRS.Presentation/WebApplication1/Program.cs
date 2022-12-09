@@ -73,18 +73,20 @@ builder.Services.AddDbContext<PraeceptorCQRSDbContext>(options =>
         b.MigrationsAssembly(migrationsAssembly)));
 
 // ASP.NET Core Identity Configuration
-// We can register ASP.NET Core Identity with two extension methods: AddIdentityCore<TUser> 
+// We can register ASP.NET Core Identity with two extension methods: AddIdentityCore<TUser>
 // and AddIdentity<TUser, TRole>.
-// The AddIdentityCore method adds the services that are necessary for user-management actions, 
-// such as creating users, hashing passwords, password validation, etc. If your project doesn’t 
+// The AddIdentityCore method adds the services that are necessary for user-management actions,
+// such as creating users, hashing passwords, password validation, etc. If your project doesn’t
 // require any additional features, then you should use this method for the implementation.
-// If your project requires those features and any additional ones like supporting Roles not only 
-// Users, supporting external authentication, and SingInManager, as our application does, you have 
+// If your project requires those features and any additional ones like supporting Roles not only
+// Users, supporting external authentication, and SingInManager, as our application does, you have
 // to use the AddIdentity method.
-// Of course, we can achieve the same result with the AddIdentityCore method, but then we would 
+// Of course, we can achieve the same result with the AddIdentityCore method, but then we would
 // have to manually register Roles, SignInManager, Cookies, etc.
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+
 #region Modificações do dia 17/09/2022
+
     opt =>
     {
         opt.Password.RequiredLength = 7;
@@ -92,19 +94,21 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
         opt.Password.RequireUppercase = false;
 
         // Pay attention that showing a message about duplicated enail.
-        // That’s because, if this is a user who tries to hack our account, we have just reviled this 
+        // That’s because, if this is a user who tries to hack our account, we have just reviled this
         // email that already exists in our system and allowed them to focus only on the passwords.
-        // A better solution would be to send an email message to the owner of this account, with the 
+        // A better solution would be to send an email message to the owner of this account, with the
         // information that the account already exists.
-        // By doing this, we don’t narrow down hacking possibilities for the malicious user and our 
-        // regular user could proactively change the password or contact the system administrator to 
+        // By doing this, we don’t narrow down hacking possibilities for the malicious user and our
+        // regular user could proactively change the password or contact the system administrator to
         // report a possible account breach.
         opt.User.RequireUniqueEmail = true;
 
         opt.SignIn.RequireConfirmedEmail = true;
         opt.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
     }
-    #endregion
+
+    #endregion Modificações do dia 17/09/2022
+
     )
     .AddRoles<IdentityRole>()
     // So, next to the AddIdentity method call, we add the AddEntityFrameworkStores method to
@@ -114,9 +118,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
     .AddTokenProvider<EmailConfirmationTokenProvider<ApplicationUser>>("emailconfirmation");
 
 #region Modificações do dia 17/09/2022
+
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
     opt.TokenLifespan = TimeSpan.FromHours(2));
-#endregion
+
+#endregion Modificações do dia 17/09/2022
 
 // For the reset password functionality, a short period of time is quite ok, but for the email
 // confirmation, it is not. A user could easily get distracted and come back to confirm its email
@@ -162,6 +168,7 @@ var identityServerBuilder = builder.Services.AddIdentityServer(options =>
     );
 
 #region Modificações do dia 17/09/2022
+
 var emailConfig = builder.Configuration
     .GetSection("EmailConfiguration")
     .Get<EmailConfiguration>();
@@ -174,7 +181,8 @@ builder.Services.Configure<FormOptions>(o =>
     o.MultipartBodyLengthLimit = int.MaxValue;
     o.MemoryBufferThreshold = int.MaxValue;
 });
-#endregion
+
+#endregion Modificações do dia 17/09/2022
 
 builder.Services.AddTransient<IProfileService, ProfileService>();
 
@@ -185,7 +193,12 @@ var app = builder.Build();
 
 // this will do the initial DB population
 SeedData.InitializeDatabase(app, builder.Configuration);
-SeedData.EnsureSeedData(builder.Services);
+SeedData.EnsureSeedData(
+    builder.Services,
+    Guid.Empty.ToString(),
+    Guid.Empty.ToString(),
+    Guid.Empty.ToString()
+    );
 SeedData.CreateUserRoles(builder.Services).Wait();
 
 if (app.Environment.IsDevelopment())
@@ -224,3 +237,10 @@ static string? FindFirstFilePath(string filename)
     return null;
 }
 
+/*
+	 <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="7.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+	</ItemGroup>
+ */

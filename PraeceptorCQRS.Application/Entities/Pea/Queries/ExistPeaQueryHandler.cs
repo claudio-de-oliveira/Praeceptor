@@ -4,12 +4,6 @@ using MediatR;
 
 using PraeceptorCQRS.Application.Persistence;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace PraeceptorCQRS.Application.Entities.Pea.Queries
 {
     public class ExistPeaQueryHandler
@@ -27,7 +21,6 @@ namespace PraeceptorCQRS.Application.Entities.Pea.Queries
         public Task<ErrorOr<bool>> Handle(ExistPeaQuery request, CancellationToken cancellationToken)
         {
             var classCode = request.Code;
-
 
             throw new NotImplementedException();
         }

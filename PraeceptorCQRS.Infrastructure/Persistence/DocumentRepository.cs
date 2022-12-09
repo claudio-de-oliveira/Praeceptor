@@ -197,7 +197,9 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             {
                 "Title" => Global.SortList(list, x => x.Title, ascending),
                 "Text" => Global.SortList(list, x => x.Text, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };

@@ -4,15 +4,32 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>7A64BB31-81AE-4DC6-BC68-28C111486A7D</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="2.18.0" />
+		<PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
+
+		<PackageReference Include="Mapster" Version="7.3.0" />
+		<PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
+
+		<PackageReference Include="Hangfire.Core" Version="1.7.32" />
+		<PackageReference Include="Hangfire.SqlServer" Version="1.7.32" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.32" />
+
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Parsers\AbstractLL\AbstractLL.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\..\PraeceptorCQRS.Application\PraeceptorCQRS.Application.csproj" />
+		<ProjectReference Include="..\..\PraeceptorCQRS.Contracts\PraeceptorCQRS.Contracts.csproj" />
+		<ProjectReference Include="..\..\PraeceptorCQRS.Infrastructure\PraeceptorCQRS.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\PraeceptorCQRS.Utilities\PraeceptorCQRS.Utilities.csproj" />
 	</ItemGroup>
 
 </Project>

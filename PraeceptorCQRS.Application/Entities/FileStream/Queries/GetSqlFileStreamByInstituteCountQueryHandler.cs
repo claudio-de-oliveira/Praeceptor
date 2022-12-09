@@ -1,5 +1,7 @@
 ﻿using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.FileStream.Common;
 using PraeceptorCQRS.Application.Persistence;
 
@@ -17,7 +19,7 @@ namespace PraeceptorCQRS.Application.Entities.FileStream.Queries
 
         public async Task<ErrorOr<SqlFileStreamCountResult>> Handle(GetSqlFileStreamByInstituteCountQuery request, CancellationToken cancellationToken)
         {
-            var count = await _repository.GetClassCountByInstitute(request.Id);
+            var count = await _repository.GetFileCountByInstitute(request.Id);
 
             if (count == -1)
                 return Domain.Errors.Error.SqlFileStream.NotFound;

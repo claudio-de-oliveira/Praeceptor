@@ -1,9 +1,13 @@
 using Document.App;
 using Document.App.Components.Toaster;
+using Document.App.Download;
+using Document.App.DownloadFile.DependencyInjection;
 using Document.App.Interfaces;
 using Document.App.Notifiers;
 using Document.App.SeedData.Documents;
 using Document.App.SeedData.Images;
+using Document.App.SeedData.Planners;
+using Document.App.SeedData.SimpleTables;
 using Document.App.SeedData.Variables;
 using Document.App.Services;
 
@@ -12,6 +16,7 @@ using Hanssens.Net;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.JSInterop;
 
 using PraeceptorCQRS.Utilities;
 
@@ -25,7 +30,7 @@ string? path = FindFirstFilePath("common.settings.json");
 
 if (path is null)
 {
-    Console.WriteLine("O arquivo de configuração \"common.settings.json\" não foi encontrado.\nA aplicação não pode continuar.\n");
+    Console.WriteLine("O arquivo de configuraï¿½ï¿½o \"common.settings.json\" nï¿½o foi encontrado.\nA aplicaï¿½ï¿½o nï¿½o pode continuar.\n");
     return;
 }
 
@@ -47,6 +52,13 @@ builder.Services.AddServerSideBlazor()
                  });
 builder.Services.AddScoped<ToasterService>();
 
+// D O W N L O A D   S E R V I C E
+// builder.Services.Add(
+//     new ServiceDescriptor(
+//         typeof(IDownloadFileService),
+//         sp => new DownloadFileService(sp.GetRequiredService<IJSRuntime>()),
+//         ServiceLifetime.Scoped));
+
 Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
@@ -57,10 +69,14 @@ builder.Services.AddSingleton(new DocumentNavigationComponentNotifier());
 builder.Services.AddSingleton(builder.Configuration);
 builder.Services.AddScoped<TokenProvider>();
 
+builder.Services.AddBlazorDownloadFile();
+
 InstituteService instituteService = new(builder.Configuration);
 builder.Services.AddSingleton<IInstituteService>(instituteService);
 FileStreamService fileStreamService = new(builder.Configuration);
 builder.Services.AddSingleton<IFileStreamService>(fileStreamService);
+DocxStreamService docxStreamService = new(builder.Configuration);
+builder.Services.AddSingleton<IDocxStreamService>(docxStreamService);
 DocumentListService documentService = new(builder.Configuration);
 builder.Services.AddSingleton<IDocumentListService>(documentService);
 ChapterListService chapterService = new(builder.Configuration);
@@ -79,8 +95,23 @@ VariableService variableService = new(builder.Configuration);
 builder.Services.AddSingleton<IVariableService>(variableService);
 VariableValueService variableValueService = new(builder.Configuration);
 builder.Services.AddSingleton<IVariableValueService>(variableValueService);
+SimpleTableService simpleTableService = new(builder.Configuration);
+builder.Services.AddSingleton<ISimpleTableService>(simpleTableService);
+CourseService courseService = new(builder.Configuration);
+builder.Services.AddSingleton<ICourseService>(courseService);
+
+var classService = new ClassService(builder.Configuration);
+builder.Services.AddSingleton<IClassService>(classService);
+var classTypeService = new ClassTypeService(builder.Configuration);
+builder.Services.AddSingleton<IClassTypeService>(classTypeService);
+var plannerService = new PlannerService(builder.Configuration);
+builder.Services.AddSingleton<IPlannerService>(plannerService);
+
+var wordService = new WordService(builder.Configuration);
+builder.Services.AddSingleton<IWordService>(wordService);
 
 #region IdentityServer4
+
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 builder.Services.AddAuthentication(options =>
@@ -126,7 +157,7 @@ builder.Services.AddAuthentication(options =>
         options.ClaimActions.MapJsonKey("holdingid", "holdingid", "holdingid");
         options.ClaimActions.MapJsonKey("courseid", "courseid", "courseid");
 
-        // It's recommended to always get claims from the UserInfoEndpoint during the flow. 
+        // It's recommended to always get claims from the UserInfoEndpoint during the flow.
         options.GetClaimsFromUserInfoEndpoint = true;
 
         options.Events = new OpenIdConnectEvents
@@ -140,31 +171,17 @@ builder.Services.AddAuthentication(options =>
             }
         };
     });
-#endregion
+
+#endregion IdentityServer4
 
 var app = builder.Build();
 
-await InitializeImageTable.Initialize(
-    Guid.Parse("187c6a33-549d-4c78-f024-08daba82f5e9"), 
-    fileStreamService
-    );
-
-await InitializeDocumentTable.Initialize(
-    Guid.Parse("187c6a33-549d-4c78-f024-08daba82f5e9"), 
-    documentService, 
-    chapterService, 
-    sectionService, 
-    subSectionService, 
-    subSubSectionService
-    );
-
-await InitializeVariableTables.Initialize(
-    Guid.Parse("187c6a33-549d-4c78-f024-08daba82f5e9"),
-    groupService,
-    groupValueService,
-    variableService,
-    variableValueService
-    );
+// await Initialize(
+//     Guid.Parse("758C52BE-159D-402D-767E-08DAD959E72F"),
+//     fileStreamService, simpleTableService, classService, plannerService,
+//     documentService, chapterService, sectionService, subSectionService, subSubSectionService,
+//     groupService, groupValueService, variableService, variableValueService
+//     );
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -212,4 +229,47 @@ static string? FindFirstFilePath(string filename)
     }
 
     return null;
+}
+
+static async Task Initialize(
+    Guid instituteId,
+    FileStreamService fileStreamService,
+    SimpleTableService simpleTableService,
+    ClassService classService,
+    PlannerService plannerService,
+    DocumentListService documentService,
+    ChapterListService chapterService,
+    SectionListService sectionService,
+    SubSectionListService subSectionService,
+    SubSubSectionListService subSubSectionService,
+    GroupService groupService,
+    GroupValueService groupValueService,
+    VariableService variableService,
+    VariableValueService variableValueService
+    )
+{
+    await InitializeAdministationTable.Initialize(instituteId, simpleTableService);
+
+    await InitializeSecurityTable.Initialize(instituteId, simpleTableService);
+
+    await InitializePeaTable.Initialize(instituteId, classService, plannerService);
+
+    await InitializeImageTable.Initialize(instituteId, fileStreamService);
+
+    await InitializeDocumentTable.Initialize(
+        instituteId,
+        documentService,
+        chapterService,
+        sectionService,
+        subSectionService,
+        subSubSectionService
+        );
+
+    await InitializeVariableTables.Initialize(
+        instituteId,
+        groupService,
+        groupValueService,
+        variableService,
+        variableValueService
+        );
 }

@@ -93,5 +93,4 @@ namespace FileStream.Api.Common.Errors
             }
         }
     }
-
 }

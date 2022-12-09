@@ -15,6 +15,16 @@ namespace PraeceptorCQRS.Infrastructure.Configurations
 
             modelBuilder
                 .HasKey(x => x.Id);
+
+            modelBuilder
+                .HasOne(p => p.Institute)
+                .WithMany(d => d.Groups);
+            modelBuilder
+                .HasMany(p => p.Values)
+                .WithOne(d => d.Group);
+            modelBuilder
+                .HasMany(p => p.Variables)
+                .WithOne(d => d.Group);
         }
     }
 }

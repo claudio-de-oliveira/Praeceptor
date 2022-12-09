@@ -7,4 +7,3 @@ namespace PraeceptorCQRS.Contracts.Entities.Document
         string? CreatedBy
     );
 }
-

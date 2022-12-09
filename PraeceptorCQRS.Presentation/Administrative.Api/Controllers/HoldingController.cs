@@ -64,7 +64,7 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<HoldingPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<HoldingResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<HoldingResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
@@ -116,7 +116,8 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateHolding([FromBody] CreateHoldingRequest request)
         {
             var command = _mapper.Map<CreateHoldingCommand>(request);
@@ -145,4 +146,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-

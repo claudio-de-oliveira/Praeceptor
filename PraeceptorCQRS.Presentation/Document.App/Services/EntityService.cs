@@ -62,19 +62,9 @@ namespace Document.App.Services
             return list;
         }
         public async Task<BookEntity?> GetEntity(Guid id)
-        {
-            var item = await base.GetOne<BookEntity>("get", "id", id);
-            if (item is null)
-                return null;
-            return item;
-        }
+            => await base.GetOne<BookEntity>("get", "id", id);
         public async Task<List<BookEntity>?> GetEntityList(Guid id)
-        {
-            var list = await base.GetMany<BookEntity>("get", "list", id);
-            if (list is null)
-                return null;
-            return list;
-        }
+            => await base.GetMany<BookEntity>("get", "list", id);
 
         public async Task<HttpResponseMessage> CreateEntity(CreateEntityRequest request)
             => await base.Create<CreateEntityRequest>(request, "create");

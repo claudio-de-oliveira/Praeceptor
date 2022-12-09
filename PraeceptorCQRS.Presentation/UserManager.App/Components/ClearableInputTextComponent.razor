@@ -2,16 +2,16 @@
     <input class="form-control" type="text" value=@Filter @onchange=@OnTextChange disabled="@Waiting" style="background-color:aliceblue;">
     @if (Waiting)
     {
-        <button type="button" class="btn btn-outline-primary" disabled>
+        <button type="button" class="btn btn-sm btn-outline-primary" disabled>
             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
         </button>
     }
     else
     {
         <button class="btn btn-outline-primary btn-clear" type="button" data-toggle="tooltip" title="Limpar"
-            disabled="@(string.IsNullOrWhiteSpace(Filter))"
-            @onclick="@OnClear">
-            <i class="bi bi-x-lg"></i>
+                disabled="@(string.IsNullOrWhiteSpace(Filter))"
+                @onclick="@(() => OnClear())">
+            <i class="bi small bi-x-lg"></i>
         </button>
     }
 </div>

@@ -8,6 +8,6 @@ namespace PraeceptorCQRS.Application.Entities.FileStream.Queries
 {
     public record GetSqlFileStreamByIdQuery(
         Guid Id
-        ) : IRequest<ErrorOr<SqlFileStreamResult>>;
+        ) : IRequest<ErrorOr<FileResult>>;
 }
 

@@ -97,7 +97,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
             ErrorOr<ChapterPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<ChapterResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<ChapterResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }
@@ -180,8 +180,8 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
                 );
         }
 
-
         #region L I S T   E N D P O I N T S
+
         [HttpPost("section/create/first")]
         [Authorize("CreatePolice")]
         public async Task<IActionResult> CreateFirstSection([FromBody] CreateFirstNodeRequest request)
@@ -294,7 +294,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
                 errors => Problem(errors)
                 );
         }
-        #endregion
+
+        #endregion L I S T   E N D P O I N T S
     }
 }
-

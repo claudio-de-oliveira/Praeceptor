@@ -19,7 +19,6 @@
 else
 {
     <section class="p-1">
-
         <article class="content px-4">
             <nav style="--bs-breadcrumb-divider: ''; padding-bottom:20px;" aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -32,12 +31,8 @@ else
                             <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/axistype")">Tipos de eixo curricular</a></li>
                             <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/degreetype")">Tipos de titulação</a></li>
                             <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/regimetype")">Tipos de regime de trabalho</a></li>
+                            <li><a class="dropdown-item" href="@($"/institute/details/{instituteId}/config/roletype")">Tipos de papéis do docente</a></li>
                         </ul>
-                    </li>
-                    <li class="breadcrumb-item active">
-                        <a href="@($"/institute/details/{instituteId}/courses")">
-                            <InstituteInfoCardComponent Title="Cursos" Institute="@institute"></InstituteInfoCardComponent>
-                        </a>
                     </li>
                     <li class="breadcrumb-item">
                         <a href="@($"/institute/details/{instituteId}/classes")">
@@ -47,6 +42,11 @@ else
                     <li class="breadcrumb-item">
                         <a href="@($"/institute/details/{instituteId}/preceptors")">
                             <InstituteInfoCardComponent Title="Docentes" Institute="@institute"></InstituteInfoCardComponent>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        <a href="@($"/institute/details/{instituteId}/courses")">
+                            <InstituteInfoCardComponent Title="Cursos" Institute="@institute"></InstituteInfoCardComponent>
                         </a>
                     </li>
                 </ol>
@@ -71,6 +71,12 @@ else
                     {
                         <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando os regimes de trabalho da {institute?.Acronym}")" />
                         <RegimeTypeListPage InstituteId="@instituteId"></RegimeTypeListPage>
+                    }
+                    else
+                    @if (Table == "roletype")
+                    {
+                        <PageHeaderComponent Title="@institute?.Name" Text="@($"Você está visualizando os papéis do docente da {institute?.Acronym}")" />
+                        <RoleTypeListPage InstituteId="@instituteId"></RoleTypeListPage>
                     }
                     else
                     {

@@ -112,7 +112,7 @@ namespace Document.Api.Controllers
             ErrorOr<GroupPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<GroupResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<GroupResponse>>(result/*.Page*/)),
                 errors => Problem(errors)
                 );
         }

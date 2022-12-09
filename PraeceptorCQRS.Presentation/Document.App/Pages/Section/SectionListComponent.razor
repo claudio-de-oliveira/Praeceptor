@@ -8,6 +8,7 @@
 @using PraeceptorCQRS.Utilities
 
 @inherits AbstractListPage<ISectionListService>
+@inject NavigationManager navigationManager
 
 <!-- Modal: Editar entidade -->
 @if (EditEntityDialogIsOpen)
@@ -29,6 +30,9 @@
                     <td align="center" colspan="3">
                         <ClearableInputTextComponent Placeholder="Filtrar por Texto" Filter="@textFilter" Waiting="@waiting" OnTextChange="@OnTextChanged"></ClearableInputTextComponent>
                     </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 <!---->
                 <tr>
@@ -38,6 +42,8 @@
                     <td align="center" colspan="2">
                         <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
                     </td>
+                    <td></td>
+                    <td></td>
                     <td align="center">
                         <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
                     </td>
@@ -56,17 +62,28 @@
                         <td>
                             <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
                         </td>
-                        <td align="right">
+                        <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-outline-warning"
+                                class="btn btn-sm btn-success"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editSectionModal"
-                                title="Editar"
-                                @onclick="@(() => Edit(entity))"
+                                title="Ver detalhes"
+                                @onclick="@(() => Details(entity))"
                                 style="border: none;">
-                                <i class="bi bi-pencil"></i>
+                                Detalhes
+                            </button>
+                        </td>
+                        <td align="right" style="width: 80px;">
+                            <button type="button"
+                                    class="btn btn-sm btn-warning"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editSectionModal"
+                                    title="Editar"
+                                    @onclick="@(() => Edit(entity))"
+                                    style="border: none;">
+                                Editar
                             </button>
                         </td>
                         <td align="center" style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</td>
@@ -108,5 +125,10 @@
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void Details(BookEntity section)
+    {
+        navigationManager.NavigateTo($"/section/details/{section.Id}");
     }
 }

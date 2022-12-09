@@ -1,5 +1,4 @@
 using PraeceptorCQRS.Domain.Base;
-using PraeceptorCQRS.Domain.Values;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

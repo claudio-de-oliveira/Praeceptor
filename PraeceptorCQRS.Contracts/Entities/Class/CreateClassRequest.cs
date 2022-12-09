@@ -7,7 +7,7 @@ namespace PraeceptorCQRS.Contracts.Entities.Class
         int Theory,
         int PR,
         Guid InstituteId,
-        Guid TypeId
+        Guid TypeId,
+        bool HasPlanner
     );
 }
-

@@ -15,12 +15,19 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<bool> Exists(Func<Variable, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Variable?> CreateVariable(Variable entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<Variable?> GetVariableById(Guid id)
             => await ReadDefault(o => o.Id == id);
+
         public async Task<Variable?> GetVariableByCode(Guid groupId, string code)
             => await ReadDefault(o => o.GroupId == groupId && string.Compare(o.Code, code, true) == 0);
+
+        public async Task<List<Variable>> GetVariablesByGroup(Guid groupId)
+            => await ListDefault(o => o.GroupId == groupId);
+
         public async Task<Variable?> DeleteVariable(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
@@ -45,6 +52,7 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 
         public async Task<int> GetVariableCountByGroup(Guid groupId)
             => await Count(o => o.GroupId == groupId);
+
         public async Task<PageOf<Variable>> GetVariablePage(
             Guid groupId,
             int page,

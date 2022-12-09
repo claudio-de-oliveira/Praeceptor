@@ -1,5 +1,7 @@
 ﻿using ErrorOr;
+
 using MediatR;
+
 using PraeceptorCQRS.Application.Entities.Group.Common;
 using PraeceptorCQRS.Application.Persistence;
 
@@ -20,7 +22,7 @@ namespace PraeceptorCQRS.Application.Entities.Group.Queries
             if (cancellationToken.IsCancellationRequested)
                 return Domain.Errors.Error.Group.Canceled;
 
-            var exist = await _repository.Exists(o => o.InstituteId == request.InstituteId && string.Compare(o.Code, request.Code, true) == 0);
+            var exist = await _repository.Exists(o => o.InstituteId == request.InstituteId && o.Code == request.Code);
 
             return new GroupExistResult(exist);
         }

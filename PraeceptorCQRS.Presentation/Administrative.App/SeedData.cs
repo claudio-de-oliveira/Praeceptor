@@ -15,6 +15,8 @@ using PraeceptorCQRS.Contracts.Entities.Institute;
 using PraeceptorCQRS.Contracts.Entities.Preceptor;
 using PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType;
 using PraeceptorCQRS.Contracts.Entities.PreceptorRegimeType;
+using PraeceptorCQRS.Contracts.Entities.PreceptorRoleType;
+using PraeceptorCQRS.Contracts.Entities.SocialBody;
 
 namespace Administrative.App
 {
@@ -26,8 +28,10 @@ namespace Administrative.App
         private static readonly Dictionary<string, ClassTypeModel> classTypes = new();
         private static readonly Dictionary<string, ClassModel> classes = new();
         private static readonly Dictionary<string, AxisTypeModel> axis = new();
+        private static readonly Dictionary<string, PreceptorModel> preceptorModels = new();
         private static readonly Dictionary<string, PreceptorDegreeTypeModel> preceptorDegreeTypeModels = new();
         private static readonly Dictionary<string, PreceptorRegimeTypeModel> preceptorRegimeTypeModels = new();
+        private static readonly Dictionary<string, PreceptorRoleTypeModel> preceptorRoleTypeModels = new();
 
         public static async Task InitializeHoldingTable(IHoldingService service)
         {
@@ -105,7 +109,7 @@ namespace Administrative.App
                 service,
                 new CreateInstituteRequest(
                     "UNIT/SE",
-                    "Universidate Tiradentes, Campus Sergipe",
+                    "Universidade Tiradentes",
                     null,
                     holding.Id
                     )
@@ -117,7 +121,7 @@ namespace Administrative.App
                 service,
                 new CreateInstituteRequest(
                     "UNIT/AL",
-                    "Universidate Tiradentes, Campus Alagoas",
+                    "Universidade Tiradentes",
                     null,
                     holding.Id
                     )
@@ -129,7 +133,7 @@ namespace Administrative.App
                 service,
                 new CreateInstituteRequest(
                     "UNIT/PE",
-                    "Universidate Tiradentes, Campus Pernambuco",
+                    "Universidade Tiradentes",
                     null,
                     holding.Id
                     )
@@ -214,13 +218,63 @@ namespace Administrative.App
             {
                 ClassTypeModel? item;
 
-                item = await InitializeClassType(
+                item = s switch
+                {
+                    "ONLINE" => await InitializeClassType(
                         service,
                         new CreateClassTypeRequest(
                             s,
-                            institutes["UNIT/SE"].Id
+                            institutes["UNIT/SE"].Id,
+                            true, // IsRemote
+                            60 // DurationInMinutes
                             )
-                        );
+                        ),
+                    "NORMAL" => await InitializeClassType(
+                        service,
+                        new CreateClassTypeRequest(
+                            s,
+                            institutes["UNIT/SE"].Id,
+                            false, // IsRemote
+                            50 // DurationInMinutes
+                            )
+                        ),
+                    "HIBRIDO" => await InitializeClassType(
+                        service,
+                        new CreateClassTypeRequest(
+                            s,
+                            institutes["UNIT/SE"].Id,
+                            false, // IsRemote
+                            50 // DurationInMinutes
+                            )
+                        ),
+                    "TCC" => await InitializeClassType(
+                        service,
+                        new CreateClassTypeRequest(
+                            s,
+                            institutes["UNIT/SE"].Id,
+                            false, // IsRemote
+                            60 // DurationInMinutes
+                            )
+                        ),
+                    "ESTAGIO" => await InitializeClassType(
+                        service,
+                        new CreateClassTypeRequest(
+                            s,
+                            institutes["UNIT/SE"].Id,
+                            false, // IsRemote
+                            60 // DurationInMinutes
+                            )
+                        ),
+                    _ => await InitializeClassType(
+                        service,
+                        new CreateClassTypeRequest(
+                            s,
+                            institutes["UNIT/SE"].Id,
+                            false, // IsRemote
+                            60 // DurationInMinutes
+                            )
+                        ),
+                };
                 Guard.Against.Null(item);
 
                 classTypes.Add(s, item);
@@ -233,207 +287,207 @@ namespace Administrative.App
                 return;
 
             ClassModel[] eletrica = new[] {
-                new ClassModel { Code = "F113603", Name = "BASES MATEMÁTICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113611", Name = "QUÍMICA TECNOLÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113620", Name = "FUNDAMENTOS DE PROGRAMAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113638", Name = "MODELAGEM E SOLUÇÃO DE P EM ENGENHARIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113646", Name = "MODELAGEM E SIMULAÇÃO TRIDIMENSIONAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H118840", Name = "METODOLOGIA CIENTÍFICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F106038", Name = "CIÊNCIA E TECNOLOGIA DOS MATERIAIS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113611", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F113654", Name = "CÁLCULO DIFERENCIAL E INTEGRAL I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F113662", Name = "FENÔMENOS MECÂNICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F113670", Name = "VETORES E GEOMETRIA ANALÍTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F113689", Name = "ESTRUTURA DE DADOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113620", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F113697", Name = "PROJETO DE ENGENHARIA I", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113638", TipoRequisito.NATURAL),
-                new ClassModel { Code = "H113465", Name = "FILOSOFIA E CIDADANIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F104108", Name = "ESTATÍSTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F108472", Name = "ÁLGEBRA LINEAR", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F113700", Name = "TERMOFLUIDO-DINÂMICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113611", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F113719", Name = "FENÔMENOS ELETROMAGNÉTICOS E ONDAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114022", Name = "CÁLCULO DIFERENCIAL E INTEGRAL II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "H113341", Name = "FUNDAMENTOS ANTROPOLÓGICOS E SOCIOLÓGICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F109509", Name = "ELETRÔNICA DIGITAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113719", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F109924", Name = "ANÁLISE DE CIRCUITOS I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F108472", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F110116", Name = "MATERIAIS ELÉTRICOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F106038", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F113751", Name = "PROJETO DE ENGENHARIA II", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113697", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114030", Name = "EQUAÇÕES DIFERENCIAIS ORDINÁRIAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114740", Name = "CÁLCULO VETORIAL", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114022", TipoRequisito.NATURAL).Requisitos("F113670", TipoRequisito.NATURAL),
-                new ClassModel { Code = "H114127", Name = "EMPREENDEDORISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F113760", Name = "ENGENHARIA DA QUALIDADE", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F106038", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F114324", Name = "SINAIS E SISTEMAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114030", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114340", Name = "SISTEMAS DIGITAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109509", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114758", Name = "ANÁLISE DE CIRCUITOS II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109924", TipoRequisito.ESSENCIAL).Requisitos("F113670", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F114766", Name = "ELETROMAGNETISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114740", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "OPT0001", Name = "OPTATIVA 1", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H119315", Name = "HISTÓRIA E CULTURA AFRO-BRASILEIRA E AFRICANA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H118815", Name = "RELAÇÕES ÉTNICOS - RACIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H121956", Name = "CRIATIVIDADE E INOVAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F109274", Name = "ELETRÔNICA ANALÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109924", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F113808", Name = "PROJETO DE ENGENHARIA III", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113751", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114782", Name = "CONTROLE DE SISTEMAS LINEARES", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114030", TipoRequisito.ESSENCIAL).Requisitos("F108472", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F114790", Name = "FUNDAMENTOS DE REDES DE COMUNICAÇÃO", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114324", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F114804", Name = "MÁQUINAS ELÉTRICAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114766", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "H119714", Name = "ANÁLISE ECONÔMICA DE INVESTIMENTOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("H114127", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F109312", Name = "ACIONAMENTOS ELÉTRICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114804", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114812", Name = "INSTRUMENTAÇÃO ELETRÔNICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109274", TipoRequisito.NATURAL).Requisitos("F109509", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114820", Name = "FUNDAMENTOS DE COMUNICAÇÕES", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114324", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114839", Name = "SISTEMAS ELÉTRICOS DE POTÊNCIA I", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109312", TipoRequisito.NATURAL).Requisitos("F114758", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114847", Name = "GERAÇÃO DE ENERGIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114804", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F104779", Name = "HIGIENE E SEGURANÇA DO TRABALHO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, }, // .Requisitos("F113700", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F110175", Name = "INSTALAÇÕES ELÉTRICAS PREDIAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114855", Name = "DISTRIBUIÇÃO DE ENERGIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114863", Name = "SISTEMAS DE COMUNICAÇÕES", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114820", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114871", Name = "SISTEMAS ELÉTRICOS DE POTÊNCIA II", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114839", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F109436", Name = "ELETRÔNICA DE POTÊNCIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109274", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114472", Name = "GESTÃO DA MANUTENÇÃO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114898", Name = "INSTALAÇÕES ELÉTRICAS INDUSTRIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114812", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F114901", Name = "PROTEÇÃO CONTRA DESCARGAS ATMOSFÉRICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "H119242", Name = "GESTÃO DE PROJETOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "OPT0002", Name = "OPTATIVA 2", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H120003", Name = "DIREITO AMBIENTAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H122820", Name = "FORMAÇÃO CIDADÃ", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H113457", Name = "LIBRAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F112062", Name = "TRABALHO DE CONCLUSÃO DE CURSO", Theory = 0, Practice = 2, PR = 166, TypeId = classTypes["TCC"].Id, },
-                new ClassModel { Code = "F112828", Name = "ESTÁGIO SUPERVISIONADO", Theory = 0, Practice = 8, PR = 148, TypeId = classTypes["ESTAGIO"].Id, },
-                new ClassModel { Code = "F114910", Name = "QUALIDADE DE ENERGIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114871", TipoRequisito.DESEJAVEL),
-                new ClassModel { Code = "F114928", Name = "EQUIPAMENTOS ELÉTRICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109436", TipoRequisito.NATURAL),
-                new ClassModel { Code = "F114936", Name = "PROTEÇÃO DE SISTEMAS ELÉTRICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114871", TipoRequisito.NATURAL),
-                new ClassModel { Code = "ELETIVA", Name = "DISCIPLINA ELETIVA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["UNDEFINED"].Id, },
+                new ClassModel { Code = "F113603", HasPlanner=true, Name = "BASES MATEMÁTICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113611", HasPlanner=true, Name = "QUÍMICA TECNOLÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113620", HasPlanner=true, Name = "FUNDAMENTOS DE PROGRAMAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113638", HasPlanner=true, Name = "MODELAGEM E SOLUÇÃO DE P EM ENGENHARIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113646", HasPlanner=true, Name = "MODELAGEM E SIMULAÇÃO TRIDIMENSIONAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H118840", HasPlanner=true, Name = "METODOLOGIA CIENTÍFICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F106038", HasPlanner=true, Name = "CIÊNCIA E TECNOLOGIA DOS MATERIAIS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113611", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F113654", HasPlanner=true, Name = "CÁLCULO DIFERENCIAL E INTEGRAL I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F113662", HasPlanner=true, Name = "FENÔMENOS MECÂNICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F113670", HasPlanner=true, Name = "VETORES E GEOMETRIA ANALÍTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F113689", HasPlanner=true, Name = "ESTRUTURA DE DADOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113620", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F113697", HasPlanner=true, Name = "PROJETO DE ENGENHARIA I", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113638", TipoRequisito.NATURAL),
+                new ClassModel { Code = "H113465", HasPlanner=true, Name = "FILOSOFIA E CIDADANIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F104108", HasPlanner=true, Name = "ESTATÍSTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F108472", HasPlanner=true, Name = "ÁLGEBRA LINEAR", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F113700", HasPlanner=true, Name = "TERMOFLUIDO-DINÂMICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113611", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F113719", HasPlanner=true, Name = "FENÔMENOS ELETROMAGNÉTICOS E ONDAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113603", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114022", HasPlanner=true, Name = "CÁLCULO DIFERENCIAL E INTEGRAL II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "H113341", HasPlanner=true, Name = "FUNDAMENTOS ANTROPOLÓGICOS E SOCIOLÓGICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F109509", HasPlanner=true, Name = "ELETRÔNICA DIGITAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113719", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F109924", HasPlanner=true, Name = "ANÁLISE DE CIRCUITOS I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F108472", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F110116", HasPlanner=true, Name = "MATERIAIS ELÉTRICOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F106038", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F113751", HasPlanner=true, Name = "PROJETO DE ENGENHARIA II", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113697", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114030", HasPlanner=true, Name = "EQUAÇÕES DIFERENCIAIS ORDINÁRIAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114740", HasPlanner=true, Name = "CÁLCULO VETORIAL", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114022", TipoRequisito.NATURAL).Requisitos("F113670", TipoRequisito.NATURAL),
+                new ClassModel { Code = "H114127", HasPlanner=true, Name = "EMPREENDEDORISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F113760", HasPlanner=true, Name = "ENGENHARIA DA QUALIDADE", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F106038", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F114324", HasPlanner=true, Name = "SINAIS E SISTEMAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114030", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114340", HasPlanner=true, Name = "SISTEMAS DIGITAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109509", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114758", HasPlanner=true, Name = "ANÁLISE DE CIRCUITOS II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109924", TipoRequisito.ESSENCIAL).Requisitos("F113670", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F114766", HasPlanner=true, Name = "ELETROMAGNETISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114740", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "OPT0001", HasPlanner=false, Name = "OPTATIVA 1", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H119315", HasPlanner=true, Name = "HISTÓRIA E CULTURA AFRO-BRASILEIRA E AFRICANA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H118815", HasPlanner=true, Name = "RELAÇÕES ÉTNICOS - RACIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H121956", HasPlanner=true, Name = "CRIATIVIDADE E INOVAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F109274", HasPlanner=true, Name = "ELETRÔNICA ANALÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109924", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F113808", HasPlanner=true, Name = "PROJETO DE ENGENHARIA III", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113751", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114782", HasPlanner=true, Name = "CONTROLE DE SISTEMAS LINEARES", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114030", TipoRequisito.ESSENCIAL).Requisitos("F108472", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F114790", HasPlanner=true, Name = "FUNDAMENTOS DE REDES DE COMUNICAÇÃO", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114324", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F114804", HasPlanner=true, Name = "MÁQUINAS ELÉTRICAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114766", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "H119714", HasPlanner=true, Name = "ANÁLISE ECONÔMICA DE INVESTIMENTOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("H114127", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F109312", HasPlanner=true, Name = "ACIONAMENTOS ELÉTRICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114804", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114812", HasPlanner=true, Name = "INSTRUMENTAÇÃO ELETRÔNICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109274", TipoRequisito.NATURAL).Requisitos("F109509", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114820", HasPlanner=true, Name = "FUNDAMENTOS DE COMUNICAÇÕES", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114324", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114839", HasPlanner=true, Name = "SISTEMAS ELÉTRICOS DE POTÊNCIA I", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109312", TipoRequisito.NATURAL).Requisitos("F114758", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114847", HasPlanner=true, Name = "GERAÇÃO DE ENERGIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114804", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F104779", HasPlanner=true, Name = "HIGIENE E SEGURANÇA DO TRABALHO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, }, // .Requisitos("F113700", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F110175", HasPlanner=true, Name = "INSTALAÇÕES ELÉTRICAS PREDIAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114855", HasPlanner=true, Name = "DISTRIBUIÇÃO DE ENERGIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114863", HasPlanner=true, Name = "SISTEMAS DE COMUNICAÇÕES", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114820", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114871", HasPlanner=true, Name = "SISTEMAS ELÉTRICOS DE POTÊNCIA II", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114839", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F109436", HasPlanner=true, Name = "ELETRÔNICA DE POTÊNCIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109274", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114472", HasPlanner=true, Name = "GESTÃO DA MANUTENÇÃO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114898", HasPlanner=true, Name = "INSTALAÇÕES ELÉTRICAS INDUSTRIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114812", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F114901", HasPlanner=true, Name = "PROTEÇÃO CONTRA DESCARGAS ATMOSFÉRICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "H119242", HasPlanner=true, Name = "GESTÃO DE PROJETOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "OPT0002", HasPlanner=false, Name = "OPTATIVA 2", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H120003", HasPlanner=true, Name = "DIREITO AMBIENTAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H122820", HasPlanner=true, Name = "FORMAÇÃO CIDADÃ", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H113457", HasPlanner=true, Name = "LIBRAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F112062", HasPlanner=true, Name = "TRABALHO DE CONCLUSÃO DE CURSO", Theory = 0, Practice = 2, PR = 166, TypeId = classTypes["TCC"].Id, },
+                new ClassModel { Code = "F112828", HasPlanner=true, Name = "ESTÁGIO SUPERVISIONADO", Theory = 0, Practice = 8, PR = 148, TypeId = classTypes["ESTAGIO"].Id, },
+                new ClassModel { Code = "F114910", HasPlanner=true, Name = "QUALIDADE DE ENERGIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114758", TipoRequisito.NATURAL).Requisitos("F114871", TipoRequisito.DESEJAVEL),
+                new ClassModel { Code = "F114928", HasPlanner=true, Name = "EQUIPAMENTOS ELÉTRICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109436", TipoRequisito.NATURAL),
+                new ClassModel { Code = "F114936", HasPlanner=true, Name = "PROTEÇÃO DE SISTEMAS ELÉTRICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114871", TipoRequisito.NATURAL),
+                new ClassModel { Code = "ELETIVA", HasPlanner=false, Name = "DISCIPLINA ELETIVA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["UNDEFINED"].Id, },
             };
 
             ClassModel[] mecanica = new[] {
-                new ClassModel { Code = "F113603", Name = "BASES MATEMÁTICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113611", Name = "QUÍMICA TECNOLÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113620", Name = "FUNDAMENTOS DE PROGRAMAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113638", Name = "MODELAGEM E SOLUÇÃO DE P EM ENGENHARIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113646", Name = "MODELAGEM E SIMULAÇÃO TRIDIMENSIONAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H118840", Name = "METODOLOGIA CIENTÍFICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F106038", Name = "CIÊNCIA E TECNOLOGIA DOS MATERIAIS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113654", Name = "CÁLCULO DIFERENCIAL E INTEGRAL I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113662", Name = "FENÔMENOS MECÂNICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113670", Name = "VETORES E GEOMETRIA ANALÍTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113689", Name = "ESTRUTURA DE DADOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113697", Name = "PROJETO DE ENGENHARIA I", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H113465", Name = "FILOSOFIA E CIDADANIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F104108", Name = "ESTATÍSTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F108472", Name = "ÁLGEBRA LINEAR", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113700", Name = "TERMOFLUIDO-DINÂMICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113719", Name = "FENÔMENOS ELETROMAGNÉTICOS E ONDAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114022", Name = "CÁLCULO DIFERENCIAL E INTEGRAL II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "H113341", Name = "FUNDAMENTOS ANTROPOLÓGICOS E SOCIOLÓGICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F107271", Name = "METROLOGIA INDUSTRIAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113751", Name = "PROJETO DE ENGENHARIA II", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114030", Name = "EQUAÇÕES DIFERENCIAIS ORDINÁRIAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114049", Name = "ISOSTÁTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113662", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114502", Name = "ENGENHARIA DOS MATERIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H114127", Name = "EMPREENDEDORISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F112909", Name = "RESISTÊNCIA DOS MATERIAIS I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113760", Name = "ENGENHARIA DA QUALIDADE", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113778", Name = "FENÔMENOS DE TRANSPORTE I", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114499", Name = "TECNOLOGIA MECÂNICA I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114510", Name = "MÁQUINAS ELÉTRICAS ROTATIVAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "OPT0001", Name = "OPTATIVA 1", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H119315", Name = "HISTÓRIA E CULTURA AFRO-BRASILEIRA E AFRICANA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H118815", Name = "RELAÇÕES ÉTNICOS - RACIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H121956", Name = "CRIATIVIDADE E INOVAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F106780", Name = "FENÔMENOS DE TRANSPORTE II", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F112917", Name = "RESISTÊNCIA DOS MATERIAIS II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F112909", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F113808", Name = "PROJETO DE ENGENHARIA III", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114529", Name = "TECNOLOGIA MECÂNICA II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114499", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "H119714", Name = "ANÁLISE ECONÔMICA DE INVESTIMENTOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F112216", Name = "ELEMENTOS DE MÁQUINAS I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114081", Name = "TERMODINÂMICA I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114375", Name = "INSTRUMENTAÇÃO", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114421", Name = "ENSAIOS MECÂNICOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114537", Name = "COMANDOS ELÉTRICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114545", Name = "MÁQUINAS DE FLUXO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F106780", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F104779", Name = "HIGIENE E SEGURANÇA DO TRABALHO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F111996", Name = "CONTROLE E INSTRUMENTAÇÃO DE PROCESSOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F112372", Name = "INSTALAÇÕES INDUSTRIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114456", Name = "ACIONAMENTOS PNEUMÁTICOS E HIDRÁULICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114553", Name = "ELEMENTOS DE MÁQUINAS II", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F112216", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114570", Name = "TERMODINÂMICA APLICADA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114081", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F109460", Name = "SISTEMAS INTEGRADOS DE MANUFATURA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114472", Name = "GESTÃO DA MANUTENÇÃO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114588", Name = "MÁQUINAS TÉRMICAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114570", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "H119242", Name = "GESTÃO DE PROJETOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "OPT0002", Name = "OPTATIVA 2", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H120003", Name = "DIREITO AMBIENTAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H122820", Name = "FORMAÇÃO CIDADÃ", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H113457", Name = "LIBRAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F112062", Name = "TRABALHO DE CONCLUSÃO DE CURSO", Theory = 0, Practice = 2, PR = 164, TypeId = classTypes["TCC"].Id, },
-                new ClassModel { Code = "F112267", Name = "TECNOLOGIA DE COMANDO NUMÉRICO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F112828", Name = "ESTÁGIO SUPERVISIONADO", Theory = 0, Practice = 8, PR = 146, TypeId = classTypes["ESTAGIO"].Id, },
-                new ClassModel { Code = "F114596", Name = "MECANISMOS E DINÂMICA DAS MÁQUINAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "ELETIVA", Name = "DISCIPLINA ELETIVA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113603", HasPlanner=true, Name = "BASES MATEMÁTICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113611", HasPlanner=true, Name = "QUÍMICA TECNOLÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113620", HasPlanner=true, Name = "FUNDAMENTOS DE PROGRAMAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113638", HasPlanner=true, Name = "MODELAGEM E SOLUÇÃO DE P EM ENGENHARIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113646", HasPlanner=true, Name = "MODELAGEM E SIMULAÇÃO TRIDIMENSIONAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H118840", HasPlanner=true, Name = "METODOLOGIA CIENTÍFICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F106038", HasPlanner=true, Name = "CIÊNCIA E TECNOLOGIA DOS MATERIAIS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113654", HasPlanner=true, Name = "CÁLCULO DIFERENCIAL E INTEGRAL I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113662", HasPlanner=true, Name = "FENÔMENOS MECÂNICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113670", HasPlanner=true, Name = "VETORES E GEOMETRIA ANALÍTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113689", HasPlanner=true, Name = "ESTRUTURA DE DADOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113697", HasPlanner=true, Name = "PROJETO DE ENGENHARIA I", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H113465", HasPlanner=true, Name = "FILOSOFIA E CIDADANIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F104108", HasPlanner=true, Name = "ESTATÍSTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F108472", HasPlanner=true, Name = "ÁLGEBRA LINEAR", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113700", HasPlanner=true, Name = "TERMOFLUIDO-DINÂMICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113719", HasPlanner=true, Name = "FENÔMENOS ELETROMAGNÉTICOS E ONDAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114022", HasPlanner=true, Name = "CÁLCULO DIFERENCIAL E INTEGRAL II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "H113341", HasPlanner=true, Name = "FUNDAMENTOS ANTROPOLÓGICOS E SOCIOLÓGICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F107271", HasPlanner=true, Name = "METROLOGIA INDUSTRIAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113751", HasPlanner=true, Name = "PROJETO DE ENGENHARIA II", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114030", HasPlanner=true, Name = "EQUAÇÕES DIFERENCIAIS ORDINÁRIAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114049", HasPlanner=true, Name = "ISOSTÁTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113662", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114502", HasPlanner=true, Name = "ENGENHARIA DOS MATERIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H114127", HasPlanner=true, Name = "EMPREENDEDORISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F112909", HasPlanner=true, Name = "RESISTÊNCIA DOS MATERIAIS I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113760", HasPlanner=true, Name = "ENGENHARIA DA QUALIDADE", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113778", HasPlanner=true, Name = "FENÔMENOS DE TRANSPORTE I", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114499", HasPlanner=true, Name = "TECNOLOGIA MECÂNICA I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114510", HasPlanner=true, Name = "MÁQUINAS ELÉTRICAS ROTATIVAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "OPT0001", HasPlanner=false, Name = "OPTATIVA 1", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H119315", HasPlanner=true, Name = "HISTÓRIA E CULTURA AFRO-BRASILEIRA E AFRICANA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H118815", HasPlanner=true, Name = "RELAÇÕES ÉTNICOS - RACIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H121956", HasPlanner=true, Name = "CRIATIVIDADE E INOVAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F106780", HasPlanner=true, Name = "FENÔMENOS DE TRANSPORTE II", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F112917", HasPlanner=true, Name = "RESISTÊNCIA DOS MATERIAIS II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F112909", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F113808", HasPlanner=true, Name = "PROJETO DE ENGENHARIA III", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114529", HasPlanner=true, Name = "TECNOLOGIA MECÂNICA II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114499", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "H119714", HasPlanner=true, Name = "ANÁLISE ECONÔMICA DE INVESTIMENTOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F112216", HasPlanner=true, Name = "ELEMENTOS DE MÁQUINAS I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114081", HasPlanner=true, Name = "TERMODINÂMICA I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114375", HasPlanner=true, Name = "INSTRUMENTAÇÃO", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114421", HasPlanner=true, Name = "ENSAIOS MECÂNICOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114537", HasPlanner=true, Name = "COMANDOS ELÉTRICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114545", HasPlanner=true, Name = "MÁQUINAS DE FLUXO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F106780", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F104779", HasPlanner=true, Name = "HIGIENE E SEGURANÇA DO TRABALHO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F111996", HasPlanner=true, Name = "CONTROLE E INSTRUMENTAÇÃO DE PROCESSOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F112372", HasPlanner=true, Name = "INSTALAÇÕES INDUSTRIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114456", HasPlanner=true, Name = "ACIONAMENTOS PNEUMÁTICOS E HIDRÁULICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114553", HasPlanner=true, Name = "ELEMENTOS DE MÁQUINAS II", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F112216", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114570", HasPlanner=true, Name = "TERMODINÂMICA APLICADA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114081", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F109460", HasPlanner=true, Name = "SISTEMAS INTEGRADOS DE MANUFATURA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114472", HasPlanner=true, Name = "GESTÃO DA MANUTENÇÃO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114588", HasPlanner=true, Name = "MÁQUINAS TÉRMICAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114570", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "H119242", HasPlanner=true, Name = "GESTÃO DE PROJETOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "OPT0002", HasPlanner=false, Name = "OPTATIVA 2", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H120003", HasPlanner=true, Name = "DIREITO AMBIENTAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H122820", HasPlanner=true, Name = "FORMAÇÃO CIDADÃ", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H113457", HasPlanner=true, Name = "LIBRAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F112062", HasPlanner=true, Name = "TRABALHO DE CONCLUSÃO DE CURSO", Theory = 0, Practice = 2, PR = 164, TypeId = classTypes["TCC"].Id, },
+                new ClassModel { Code = "F112267", HasPlanner=true, Name = "TECNOLOGIA DE COMANDO NUMÉRICO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F112828", HasPlanner=true, Name = "ESTÁGIO SUPERVISIONADO", Theory = 0, Practice = 8, PR = 146, TypeId = classTypes["ESTAGIO"].Id, },
+                new ClassModel { Code = "F114596", HasPlanner=true, Name = "MECANISMOS E DINÂMICA DAS MÁQUINAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "ELETIVA", HasPlanner=false, Name = "DISCIPLINA ELETIVA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
             };
 
             ClassModel[] mecatronica = new[] {
-                new ClassModel { Code = "F113603", Name = "BASES MATEMÁTICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113611", Name = "QUÍMICA TECNOLÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113620", Name = "FUNDAMENTOS DE PROGRAMAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113638", Name = "MODELAGEM E SOLUÇÃO DE P EM ENGENHARIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113646", Name = "MODELAGEM E SIMULAÇÃO TRIDIMENSIONAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H118840", Name = "METODOLOGIA CIENTÍFICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F106038", Name = "CIÊNCIA E TECNOLOGIA DOS MATERIAIS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113654", Name = "CÁLCULO DIFERENCIAL E INTEGRAL I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113662", Name = "FENÔMENOS MECÂNICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113670", Name = "VETORES E GEOMETRIA ANALÍTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113689", Name = "ESTRUTURA DE DADOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113697", Name = "PROJETO DE ENGENHARIA I", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H113465", Name = "FILOSOFIA E CIDADANIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F104108", Name = "ESTATÍSTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F108472", Name = "ÁLGEBRA LINEAR", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113700", Name = "TERMOFLUIDO-DINÂMICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113719", Name = "FENÔMENOS ELETROMAGNÉTICOS E ONDAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114022", Name = "CÁLCULO DIFERENCIAL E INTEGRAL II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "H113341", Name = "FUNDAMENTOS ANTROPOLÓGICOS E SOCIOLÓGICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F107271", Name = "METROLOGIA INDUSTRIAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F109240", Name = "CIRCUITOS ELÉTRICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F109509", Name = "ELETRÔNICA DIGITAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113751", Name = "PROJETO DE ENGENHARIA II", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114030", Name = "EQUAÇÕES DIFERENCIAIS ORDINÁRIAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "H114127", Name = "EMPREENDEDORISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F113760", Name = "ENGENHARIA DA QUALIDADE", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113778", Name = "FENÔMENOS DE TRANSPORTE I", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114324", Name = "SINAIS E SISTEMAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114332", Name = "PROCESSOS DE FABRICAÇÃO MECÂNICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114340", Name = "SISTEMAS DIGITAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109509", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "OPT0001", Name = "OPTATIVA 1", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H119315", Name = "HISTÓRIA E CULTURA AFRO-BRASILEIRA E AFRICANA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H118815", Name = "RELAÇÕES ÉTNICOS - RACIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H121956", Name = "CRIATIVIDADE E INOVAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F109274", Name = "ELETRÔNICA ANALÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F113808", Name = "PROJETO DE ENGENHARIA III", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114359", Name = "CONTROLE DE SISTEMAS DINÂMICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114030", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114367", Name = "ROBÓTICA INDUSTRIAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H119714", Name = "ANÁLISE ECONÔMICA DE INVESTIMENTOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114375", Name = "INSTRUMENTAÇÃO", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114383", Name = "CONTROLE DIGITAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109509", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114391", Name = "MECÂNISMOS E ELEMENTOS DE MÁQUINAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114405", Name = "CONTROLE E SERVOMECANISMOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114359", TipoRequisito.ESSENCIAL),
-                new ClassModel { Code = "F114413", Name = "ACIONAMENTOS E MÁQUINAS ELÉTRICAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114421", Name = "ENSAIOS MECÂNICOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F104779", Name = "HIGIENE E SEGURANÇA DO TRABALHO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F110051", Name = "AUTOMAÇÃO INDUSTRIAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114430", Name = "MODELAGEM E SIMULAÇÃO DE SEDS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114448", Name = "SISTEMA EMBARCADOS E MICROCONTROLADORES", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114456", Name = "ACIONAMENTOS PNEUMÁTICOS E HIDRÁULICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114464", Name = "CONTROLE PREDITIVO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F107310", Name = "REDES E PROTOCOLOS INDUSTRIAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F109436", Name = "ELETRÔNICA DE POTÊNCIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F109460", Name = "SISTEMAS INTEGRADOS DE MANUFATURA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F114472", Name = "GESTÃO DA MANUTENÇÃO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "H119242", Name = "GESTÃO DE PROJETOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "OPT0002", Name = "OPTATIVA 2", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H122820", Name = "FORMAÇÃO CIDADÃ", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H120003", Name = "DIREITO AMBIENTAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "H113457", Name = "LIBRAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
-                new ClassModel { Code = "F112062", Name = "TRABALHO DE CONCLUSÃO DE CURSO", Theory = 0, Practice = 2, PR = 164, TypeId = classTypes["TCC"].Id, },
-                new ClassModel { Code = "F112267", Name = "TECNOLOGIA DE COMANDO NUMÉRICO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "F112828", Name = "ESTÁGIO SUPERVISIONADO", Theory = 0, Practice = 8, PR = 144, TypeId = classTypes["ESTAGIO"].Id, },
-                new ClassModel { Code = "F115002", Name = "SISTEMAS SUPERVISÓRIOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
-                new ClassModel { Code = "ELETIVA", Name = "DISCIPLINA ELETIVA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113603", HasPlanner=true, Name = "BASES MATEMÁTICAS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113611", HasPlanner=true, Name = "QUÍMICA TECNOLÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113620", HasPlanner=true, Name = "FUNDAMENTOS DE PROGRAMAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113638", HasPlanner=true, Name = "MODELAGEM E SOLUÇÃO DE P EM ENGENHARIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113646", HasPlanner=true, Name = "MODELAGEM E SIMULAÇÃO TRIDIMENSIONAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H118840", HasPlanner=true, Name = "METODOLOGIA CIENTÍFICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F106038", HasPlanner=true, Name = "CIÊNCIA E TECNOLOGIA DOS MATERIAIS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113654", HasPlanner=true, Name = "CÁLCULO DIFERENCIAL E INTEGRAL I", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113662", HasPlanner=true, Name = "FENÔMENOS MECÂNICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113670", HasPlanner=true, Name = "VETORES E GEOMETRIA ANALÍTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113689", HasPlanner=true, Name = "ESTRUTURA DE DADOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113697", HasPlanner=true, Name = "PROJETO DE ENGENHARIA I", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H113465", HasPlanner=true, Name = "FILOSOFIA E CIDADANIA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F104108", HasPlanner=true, Name = "ESTATÍSTICA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F108472", HasPlanner=true, Name = "ÁLGEBRA LINEAR", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113700", HasPlanner=true, Name = "TERMOFLUIDO-DINÂMICA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113719", HasPlanner=true, Name = "FENÔMENOS ELETROMAGNÉTICOS E ONDAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114022", HasPlanner=true, Name = "CÁLCULO DIFERENCIAL E INTEGRAL II", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "H113341", HasPlanner=true, Name = "FUNDAMENTOS ANTROPOLÓGICOS E SOCIOLÓGICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F107271", HasPlanner=true, Name = "METROLOGIA INDUSTRIAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F109240", HasPlanner=true, Name = "CIRCUITOS ELÉTRICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F109509", HasPlanner=true, Name = "ELETRÔNICA DIGITAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113751", HasPlanner=true, Name = "PROJETO DE ENGENHARIA II", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114030", HasPlanner=true, Name = "EQUAÇÕES DIFERENCIAIS ORDINÁRIAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F113654", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "H114127", HasPlanner=true, Name = "EMPREENDEDORISMO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F113760", HasPlanner=true, Name = "ENGENHARIA DA QUALIDADE", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113778", HasPlanner=true, Name = "FENÔMENOS DE TRANSPORTE I", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114324", HasPlanner=true, Name = "SINAIS E SISTEMAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114332", HasPlanner=true, Name = "PROCESSOS DE FABRICAÇÃO MECÂNICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114340", HasPlanner=true, Name = "SISTEMAS DIGITAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109509", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "OPT0001", HasPlanner=false, Name = "OPTATIVA 1", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H119315", HasPlanner=true, Name = "HISTÓRIA E CULTURA AFRO-BRASILEIRA E AFRICANA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H118815", HasPlanner=true, Name = "RELAÇÕES ÉTNICOS - RACIAIS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H121956", HasPlanner=true, Name = "CRIATIVIDADE E INOVAÇÃO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F109274", HasPlanner=true, Name = "ELETRÔNICA ANALÓGICA", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F113808", HasPlanner=true, Name = "PROJETO DE ENGENHARIA III", Theory = 0, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114359", HasPlanner=true, Name = "CONTROLE DE SISTEMAS DINÂMICOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114030", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114367", HasPlanner=true, Name = "ROBÓTICA INDUSTRIAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H119714", HasPlanner=true, Name = "ANÁLISE ECONÔMICA DE INVESTIMENTOS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114375", HasPlanner=true, Name = "INSTRUMENTAÇÃO", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114383", HasPlanner=true, Name = "CONTROLE DIGITAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F109509", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114391", HasPlanner=true, Name = "MECÂNISMOS E ELEMENTOS DE MÁQUINAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114405", HasPlanner=true, Name = "CONTROLE E SERVOMECANISMOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, }, // .Requisitos("F114359", TipoRequisito.ESSENCIAL),
+                new ClassModel { Code = "F114413", HasPlanner=true, Name = "ACIONAMENTOS E MÁQUINAS ELÉTRICAS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114421", HasPlanner=true, Name = "ENSAIOS MECÂNICOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F104779", HasPlanner=true, Name = "HIGIENE E SEGURANÇA DO TRABALHO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F110051", HasPlanner=true, Name = "AUTOMAÇÃO INDUSTRIAL", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114430", HasPlanner=true, Name = "MODELAGEM E SIMULAÇÃO DE SEDS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114448", HasPlanner=true, Name = "SISTEMA EMBARCADOS E MICROCONTROLADORES", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114456", HasPlanner=true, Name = "ACIONAMENTOS PNEUMÁTICOS E HIDRÁULICOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114464", HasPlanner=true, Name = "CONTROLE PREDITIVO", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F107310", HasPlanner=true, Name = "REDES E PROTOCOLOS INDUSTRIAIS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F109436", HasPlanner=true, Name = "ELETRÔNICA DE POTÊNCIA", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F109460", HasPlanner=true, Name = "SISTEMAS INTEGRADOS DE MANUFATURA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F114472", HasPlanner=true, Name = "GESTÃO DA MANUTENÇÃO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "H119242", HasPlanner=true, Name = "GESTÃO DE PROJETOS", Theory = 2, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "OPT0002", HasPlanner=false, Name = "OPTATIVA 2", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H122820", HasPlanner=true, Name = "FORMAÇÃO CIDADÃ", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H120003", HasPlanner=true, Name = "DIREITO AMBIENTAL", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "H113457", HasPlanner=true, Name = "LIBRAS", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["ONLINE"].Id, },
+                new ClassModel { Code = "F112062", HasPlanner=true, Name = "TRABALHO DE CONCLUSÃO DE CURSO", Theory = 0, Practice = 2, PR = 164, TypeId = classTypes["TCC"].Id, },
+                new ClassModel { Code = "F112267", HasPlanner=true, Name = "TECNOLOGIA DE COMANDO NUMÉRICO", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "F112828", HasPlanner=true, Name = "ESTÁGIO SUPERVISIONADO", Theory = 0, Practice = 8, PR = 144, TypeId = classTypes["ESTAGIO"].Id, },
+                new ClassModel { Code = "F115002", HasPlanner=true, Name = "SISTEMAS SUPERVISÓRIOS", Theory = 2, Practice = 2, PR = 0, TypeId = classTypes["NORMAL"].Id, },
+                new ClassModel { Code = "ELETIVA", HasPlanner=false, Name = "DISCIPLINA ELETIVA", Theory = 4, Practice = 0, PR = 0, TypeId = classTypes["NORMAL"].Id, },
             };
 
             foreach (var item in eletrica)
@@ -459,7 +513,8 @@ namespace Administrative.App
                         classes[code].Theory,
                         classes[code].PR,
                         institutes["UNIT/SE"].Id,
-                        classes[code].TypeId
+                        classes[code].TypeId,
+                        classes[code].HasPlanner
                         )
                     );
 
@@ -475,21 +530,55 @@ namespace Administrative.App
 
             string[] codes = { "GRADUADO", "ESPECIALISTA", "MESTRE", "DOUTOR" };
 
-            foreach (var s in codes)
-            {
-                PreceptorDegreeTypeModel? item;
+            PreceptorDegreeTypeModel? item;
 
-                item = await InitializePreceptorDegreeType(
-                        service,
-                        new CreatePreceptorDegreeTypeRequest(
-                            s,
-                            institutes["UNIT/SE"].Id
-                            )
-                        );
-                Guard.Against.Null(item);
+            item = await InitializePreceptorDegreeType(
+                    service,
+                    new CreatePreceptorDegreeTypeRequest(
+                        "GRADUADO",
+                        false,
+                        false,
+                        institutes["UNIT/SE"].Id
+                        )
+                    );
+            Guard.Against.Null(item);
+            preceptorDegreeTypeModels.Add("GRADUADO", item);
 
-                preceptorDegreeTypeModels.Add(s, item);
-            }
+            item = await InitializePreceptorDegreeType(
+                    service,
+                    new CreatePreceptorDegreeTypeRequest(
+                        "ESPECIALISTA",
+                        true,
+                        false,
+                        institutes["UNIT/SE"].Id
+                        )
+                    );
+            Guard.Against.Null(item);
+            preceptorDegreeTypeModels.Add("ESPECIALISTA", item);
+
+            item = await InitializePreceptorDegreeType(
+                    service,
+                    new CreatePreceptorDegreeTypeRequest(
+                        "MESTRE",
+                        false,
+                        true,
+                        institutes["UNIT/SE"].Id
+                        )
+                    );
+            Guard.Against.Null(item);
+            preceptorDegreeTypeModels.Add("MESTRE", item);
+
+            item = await InitializePreceptorDegreeType(
+                    service,
+                    new CreatePreceptorDegreeTypeRequest(
+                        "DOUTOR",
+                        false,
+                        true,
+                        institutes["UNIT/SE"].Id
+                        )
+                    );
+            Guard.Against.Null(item);
+            preceptorDegreeTypeModels.Add("DOUTOR", item);
         }
 
         public static async Task InitializePreceptorRegimeTable(IPreceptorRegimeService service)
@@ -513,6 +602,30 @@ namespace Administrative.App
                 Guard.Against.Null(item);
 
                 preceptorRegimeTypeModels.Add(s, item);
+            }
+        }
+
+        public static async Task InitializePreceptorRoleTable(IPreceptorRoleService service)
+        {
+            if (holding is null)
+                return;
+
+            string[] codes = { "COORDENADOR", "NDE", "SUPLENTE" };
+
+            foreach (var s in codes)
+            {
+                PreceptorRoleTypeModel? item;
+
+                item = await InitializePreceptorRoleType(
+                        service,
+                        new CreatePreceptorRoleTypeRequest(
+                            s,
+                            institutes["UNIT/SE"].Id
+                            )
+                        );
+                Guard.Against.Null(item);
+
+                preceptorRoleTypeModels.Add(s, item);
             }
         }
 
@@ -609,20 +722,23 @@ namespace Administrative.App
                 new PreceptorModel { Code = "016589", Name = "ANDERSON ALLES DE JESUS", DegreeTypeId = preceptorDegreeTypeModels["DOUTOR"].Id, RegimeTypeId = preceptorRegimeTypeModels["INTEGRAL"].Id },
             };
 
-            foreach (var preceptor in preceptors)
+            foreach (var p in preceptors)
             {
-                await InitializePreceptor(
+                var preceptor = await InitializePreceptor(
                     service,
                     new CreatePreceptorRequest(
-                        preceptor.Code,
-                        preceptor.Name,
-                        preceptor.Email,
-                        preceptor.Image,
-                        preceptor.DegreeTypeId,
-                        preceptor.RegimeTypeId,
+                        p.Code,
+                        p.Name,
+                        $"{p.Code}@unit.br", // p.Email,
+                        p.Image,
+                        p.DegreeTypeId,
+                        p.RegimeTypeId,
                         institutes["UNIT/SE"].Id
                         )
                     );
+
+                if (preceptor is not null)
+                    preceptorModels.Add(preceptor.Code, preceptor);
             }
         }
 
@@ -641,6 +757,7 @@ namespace Administrative.App
                         service,
                         new CreateAxisTypeRequest(
                             s,
+                            s[..3],
                             institutes["UNIT/SE"].Id
                             )
                         );
@@ -741,12 +858,41 @@ namespace Administrative.App
             }
         }
 
+        public static async Task InitializeSocialBodyTable(ISocialBodyService service)
+        {
+            if (holding is null)
+                return;
+
+            SocialBodyEntryModel[] models = new[] {
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["003654"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["003885"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["004363"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["004492"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["004559"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["004729"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["004732"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["004851"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["005031"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["005271"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["005375"], Role = preceptorRoleTypeModels["NDE"] },
+                new SocialBodyEntryModel { Course = courses["ELETRICA"], Preceptor = preceptorModels["005535"], Role = preceptorRoleTypeModels["NDE"] },
+            };
+
+            foreach (var entry in models)
+            {
+                await InitializeSocialBodyEntry(service, new CreateSocialBodyEntryRequest(
+                    entry.Course.Id,
+                    entry.Preceptor.Id,
+                    entry.Role.Id
+                    )
+                );
+            }
+        }
+
+        #region Funções auxiliares
+
         private static async Task<HoldingModel?> InitializeHolding(IHoldingService service, CreateHoldingRequest request)
         {
-            var count = await service.GetHoldingCount();
-            if (count > 0)
-                return null;
-
             HoldingModel? holding;
 
             var result = await service.CreateHolding(request);
@@ -767,6 +913,7 @@ namespace Administrative.App
 
             return holding;
         }
+
         private static async Task<InstituteModel?> InitializeInstitute(IInstituteService service, CreateInstituteRequest request)
         {
             var result = await service.CreateInstitute(request);
@@ -787,6 +934,7 @@ namespace Administrative.App
 
             return institute;
         }
+
         private static async Task<CourseModel?> InitializeCourse(ICourseService service, CreateCourseRequest request)
         {
             var result = await service.CreateCourse(request);
@@ -807,6 +955,7 @@ namespace Administrative.App
 
             return course;
         }
+
         private static async Task<ClassTypeModel?> InitializeClassType(IClassTypeService service, CreateClassTypeRequest request)
         {
             ClassTypeModel? classType;
@@ -828,6 +977,7 @@ namespace Administrative.App
 
             return classType;
         }
+
         private static async Task<ClassModel?> InitializeClass(IClassService service, CreateClassRequest request)
         {
             ClassModel? cls;
@@ -850,6 +1000,7 @@ namespace Administrative.App
 
             return cls;
         }
+
         private static async Task<PreceptorDegreeTypeModel?> InitializePreceptorDegreeType(IPreceptorDegreeService service, CreatePreceptorDegreeTypeRequest request)
         {
             PreceptorDegreeTypeModel? degreeType;
@@ -871,6 +1022,7 @@ namespace Administrative.App
 
             return degreeType;
         }
+
         private static async Task<PreceptorRegimeTypeModel?> InitializePreceptorRegimeType(IPreceptorRegimeService service, CreatePreceptorRegimeTypeRequest request)
         {
             PreceptorRegimeTypeModel? regimeType;
@@ -892,6 +1044,29 @@ namespace Administrative.App
 
             return regimeType;
         }
+
+        private static async Task<PreceptorRoleTypeModel?> InitializePreceptorRoleType(IPreceptorRoleService service, CreatePreceptorRoleTypeRequest request)
+        {
+            PreceptorRoleTypeModel? roleType;
+
+            var result = await service.CreatePreceptorRoleType(request);
+
+            if (result.IsSuccessStatusCode)
+            {
+                roleType = JsonConvert.DeserializeObject<PreceptorRoleTypeModel>(await result.Content.ReadAsStringAsync());
+            }
+            else if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                roleType = await service.GetPreceptorRoleTypeByCode(request.InstituteId, request.Code);
+            }
+            else
+            {
+                throw new Exception($"Não foi possível criar ou ler o papel do docente '{request.Code}'.");
+            }
+
+            return roleType;
+        }
+
         private static async Task<PreceptorModel?> InitializePreceptor(IPreceptorService service, CreatePreceptorRequest request)
         {
             PreceptorModel? preceptor;
@@ -900,7 +1075,8 @@ namespace Administrative.App
 
             if (result.IsSuccessStatusCode)
             {
-                preceptor = JsonConvert.DeserializeObject<PreceptorModel>(await result.Content.ReadAsStringAsync());
+                var content = await result.Content.ReadAsStringAsync();
+                preceptor = JsonConvert.DeserializeObject<PreceptorModel>(content);
             }
             else if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
@@ -908,11 +1084,12 @@ namespace Administrative.App
             }
             else
             {
-                throw new Exception($"Não foi possível criar ou ler a disciplina '{request.Code}'.");
+                throw new Exception($"Não foi possível criar ou ler o preceptor '{request.Code}'.");
             }
 
             return preceptor;
         }
+
         private static async Task<AxisTypeModel?> InitializeAxisType(IAxisTypeService service, CreateAxisTypeRequest request)
         {
             AxisTypeModel? axisType;
@@ -934,6 +1111,7 @@ namespace Administrative.App
 
             return axisType;
         }
+
         private static async Task<ComponentModel?> InitializeComponent(IComponentService service, CreateComponentRequest request)
         {
             ComponentModel? component;
@@ -955,5 +1133,21 @@ namespace Administrative.App
 
             return component;
         }
+
+        private static async Task<SocialBodyEntryModel?> InitializeSocialBodyEntry(ISocialBodyService service, CreateSocialBodyEntryRequest request)
+        {
+            var result = await service.CreateSocialBodyEntry(request);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<SocialBodyEntryModel>(await result.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                throw new Exception($"Não foi possível criar o objeto.");
+            }
+        }
+
+        #endregion Funções auxiliares
     }
 }

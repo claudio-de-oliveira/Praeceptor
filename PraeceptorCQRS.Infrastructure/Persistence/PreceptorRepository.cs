@@ -1,5 +1,7 @@
 using Ardalis.GuardClauses;
 
+using Microsoft.EntityFrameworkCore;
+
 using PraeceptorCQRS.Application.Persistence;
 using PraeceptorCQRS.Domain.Entities;
 using PraeceptorCQRS.Infrastructure.Common;
@@ -10,37 +12,44 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
 {
     public class PreceptorRepository : AbstractRepository<Preceptor>, IPreceptorRepository
     {
-        // private readonly AbstractRepository<PreceptorDegreeType> _degreeRepository;
-        // private readonly AbstractRepository<PreceptorRegimeType> _regimeRepository;
-        private readonly IPreceptorDegreeTypeRepository _degreeRepository;
-        private readonly IPreceptorRegimeTypeRepository _regimeRepository;
-
         public PreceptorRepository(PraeceptorCQRSDbContext dbContext)
             : base(dbContext)
-        {
-            _degreeRepository = new PreceptorDegreeTypeRepository(dbContext);
-            _regimeRepository = new PreceptorRegimeTypeRepository(dbContext);
-        }
+        { /* Nothing more todo */ }
 
         public async Task<Preceptor?> CreatePreceptor(Preceptor entityToCreate)
             => await CreateDefault(entityToCreate);
+
         public async Task<bool> Exists(Func<Preceptor, bool> predicate)
             => await ReadDefault(predicate) is not null;
+
         public async Task<Preceptor?> GetPreceptorById(Guid id)
-            => await ReadDefault(o => o.Id == id);
+        {
+            var table = _context.Set<Preceptor>();
+            var result = await Task.Run(
+                () => table.Include(p => p.DegreeType).Include(p => p.RegimeType).FirstOrDefault(o => o.Id == id));
+            return result;
+        }
+
         public async Task<Preceptor?> GetPreceptorByCode(string code)
-            => await ReadDefault(o => string.Compare(o.Code, code, true) == 0);
+        {
+            var table = _context.Set<Preceptor>();
+            var result = await Task.Run(
+                () => table.Include(p => p.DegreeType).Include(p => p.RegimeType).FirstOrDefault(o => o.Code == code));
+            return result;
+        }
+
         public async Task<int> GetPreceptorsCountByInstitute(Guid instituteId)
             => await Count(o => o.InstituteId == instituteId);
+
         public async Task UpdatePreceptor(Preceptor entityToUpdate)
         {
             DetachLocal(o => o.Id == entityToUpdate.Id);
             await UpdateDefault(entityToUpdate);
         }
+
         public async Task DeletePreceptor(Guid id)
         {
             var entityToDelete = await ReadDefault(o => o.Id == id);
-
             if (entityToDelete is not null)
                 await DeleteDefault(entityToDelete);
         }
@@ -116,20 +125,17 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             string? lastModifiedByFilter
             )
         {
-            var list = await ListDefault(o => o.InstituteId == instituteId);
+            var table = _context.Set<Preceptor>();
+            // ToList() is needed here
+            var list = await Task.Run(
+                () => table.Include(p => p.DegreeType).Include(p => p.RegimeType).Where(o => o.InstituteId == instituteId).ToList());
+            Guard.Against.Null(list);
+
             var filteredList = new List<Preceptor>();
             bool isFiltered = false;
 
             foreach (var entity in list)
             {
-                var t1 = await _degreeRepository.GetPreceptorDegreeTypeById(entity.DegreeTypeId);
-                Guard.Against.Null(t1);
-                entity.DegreeType = t1;
-
-                var t2 = await _regimeRepository.GetPreceptorRegimeTypeById(entity.RegimeTypeId);
-                Guard.Against.Null(t2);
-                entity.RegimeType = t2;
-
                 if (!string.IsNullOrWhiteSpace(codeFilter))
                 {
                     isFiltered = true;
@@ -264,7 +270,9 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                 "Email" => Global.SortList(list, x => x.Email, ascending),
                 "Regime" => Global.SortList(list, x => x.RegimeType, ascending),
                 "Degree" => Global.SortList(list, x => x.DegreeType, ascending),
+                "Created" => Global.SortList(list, x => x.Created, ascending),
                 "CreatedBy" => Global.SortList(list, x => x.CreatedBy, ascending),
+                "LastModified" => Global.SortList(list, x => x.LastModified, ascending),
                 "LastModifiedBy" => Global.SortList(list, x => x.LastModifiedBy, ascending),
                 _ => list
             };

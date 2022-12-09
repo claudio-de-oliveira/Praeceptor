@@ -1,5 +1,4 @@
 using PraeceptorCQRS.Domain.Base;
-using PraeceptorCQRS.Domain.Values;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,6 +15,8 @@ namespace PraeceptorCQRS.Domain.Entities
 
         public static PreceptorDegreeType Create(
             string code,
+            bool latoSensu,
+            bool strictoSensu,
             Guid instituteId,
             DateTime created,
             string? createdBy
@@ -23,6 +24,8 @@ namespace PraeceptorCQRS.Domain.Entities
             => new(Guid.Empty)
             {
                 Code = code,
+                StrictoSensu = strictoSensu,
+                LatoSensu = latoSensu,
                 InstituteId = instituteId,
                 Created = created,
                 CreatedBy = createdBy,
@@ -40,11 +43,14 @@ namespace PraeceptorCQRS.Domain.Entities
         [Required, MaxLength(20)]
         public string Code { get; set; } = null!;
 
+        public bool StrictoSensu { get; set; }
+        public bool LatoSensu { get; set; }
+
         public Guid InstituteId { get; set; }
+
         [Required, ForeignKey("InstituteId")]
         public virtual Institute Institute { get; set; } = null!;
 
         public virtual ICollection<Preceptor> Preceptors { get; set; } = null!;
     }
 }
-

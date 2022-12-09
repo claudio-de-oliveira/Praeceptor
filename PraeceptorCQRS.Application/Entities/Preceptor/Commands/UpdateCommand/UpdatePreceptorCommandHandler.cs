@@ -24,24 +24,23 @@ namespace PraeceptorCQRS.Application.Entities.Preceptor.Commands
             if (entity is null)
                 return Domain.Errors.Error.Preceptor.NotFound;
 
-            var updated = new Domain.Entities.Preceptor(request.Id)
-            {
-                // don't change code!
-                Code = entity.Code,
-                Name = request.Name,
-                Email = request.Email,
-                Image = request.Image,
-                DegreeTypeId = request.DegreeTypeId,
-                RegimeTypeId = request.RegimeTypeId,
+            var updated = Domain.Entities.Preceptor.Create( //request.Id)
+                entity.Code,
+                request.Name,
+                request.Email,
+                request.Image,
+                request.DegreeTypeId,
+                request.RegimeTypeId,
                 // don't change institute!
-                InstituteId = entity.InstituteId,
+                entity.InstituteId,
                 // don't change Created!
-                Created = entity.Created,
-                // don't change CreatedBy!
-                CreatedBy = entity.CreatedBy,
-                LastModified = _dateTimeProvider.UtcNow,
-                LastModifiedBy = string.Empty
-            };
+                entity.Created,
+                // // don't change CreatedBy!
+                entity.CreatedBy
+                // _dateTimeProvider.UtcNow,
+                // string.Empty
+                );
+            //};
 
             if (cancellationToken.IsCancellationRequested)
                 return Domain.Errors.Error.Preceptor.Canceled;

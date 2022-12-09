@@ -12,8 +12,6 @@ using PraeceptorCQRS.Application.Entities.Course.Common;
 using PraeceptorCQRS.Application.Entities.Course.Queries;
 using PraeceptorCQRS.Contracts.Entities.Course;
 using PraeceptorCQRS.Contracts.Entities.Page;
-using PraeceptorCQRS.Domain.Entities;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
 {
@@ -49,29 +47,29 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [Authorize("ReadPolice")]
         public async Task<IActionResult> GetCoursePage([FromBody] GetCoursePageRequest request)
         {
-            var query = _mapper.Map<GetCoursePageQuery>(request);
-            // var query = new GetCoursePageQuery(
-            //     request.InstituteId,
-            //     request.Start,
-            //     request.Count,
-            //     request.Sort,
-            //     request.Ascending,
-            //     request.CodeFilter,
-            //     request.NameFilter,
-            //     request.CEOFilter,
-            //     request.ACFilter,
-            //     request.SeasonsFilter,
-            //     request.MinimumWorkloadFilter,
-            //     request.CreatedByFilter,
-            //     request.CreatedFilter,
-            //     request.LastModifiedFilter,
-            //     request.LastModifiedByFilter
-            //     );
+            // var query = _mapper.Map<GetCoursePageQuery>(request);
+            var query = new GetCoursePageQuery(
+                request.InstituteId,
+                request.Start,
+                request.Count,
+                request.Sort,
+                request.Ascending,
+                request.CodeFilter,
+                request.NameFilter,
+                request.CEOFilter,
+                request.ACFilter,
+                request.SeasonsFilter,
+                request.MinimumWorkloadFilter,
+                request.CreatedByFilter,
+                request.CreatedFilter,
+                request.LastModifiedFilter,
+                request.LastModifiedByFilter
+                );
 
             ErrorOr<CoursePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<CourseResponse>>(result.Page)),
+                result => Ok(_mapper.Map<PageResponse<CourseResponse>>(result)),
                 errors => Problem(errors)
                 );
         }
@@ -96,7 +94,18 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [Authorize("UpdatePolice")]
         public async Task<IActionResult> UpdateCourse([FromBody] UpdateCourseRequest request)
         {
-            var command = _mapper.Map<UpdateCourseCommand>(request);
+            // var command = _mapper.Map<UpdateCourseCommand>(request);
+            var command = new UpdateCourseCommand(
+                request.Id,
+                request.Name,
+                request.CEO,
+                request.AC,
+                request.NumberOfSeasons,
+                request.MinimumWorkload,
+                request.Telephone,
+                request.Email,
+                request.Image
+                );
 
             ErrorOr<CourseResult> result = await _mediator.Send(command);
 
@@ -107,22 +116,11 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize("CreatePolice")]
+        // [Authorize("CreatePolice")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest request)
         {
-            // var command = _mapper.Map<CreateCourseCommand>(request);
-            var command = new CreateCourseCommand(
-                request.Code,
-                request.Name,
-                request.CEO,
-                request.AC,
-                request.NumberOfSeasons,
-                request.MinimumWorkload,
-                request.Telephone,
-                request.Email,
-                request.Image,
-                request.InstituteId
-                );
+            var command = _mapper.Map<CreateCourseCommand>(request);
 
             ErrorOr<CourseResult> result = await _mediator.Send(command);
 
@@ -148,4 +146,3 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         }
     }
 }
-
