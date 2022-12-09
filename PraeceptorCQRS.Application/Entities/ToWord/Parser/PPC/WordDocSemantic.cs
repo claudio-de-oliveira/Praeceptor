@@ -1026,7 +1026,7 @@ namespace PraeceptorCQRS.Application.Entities.ToWord.Parser.PPC
                             heightEmus = (long)(widthEmus * ratio);
 
                             MemoryStream memory = new(buffer);
-                            imagePart.FeedData(memory);
+                            imagePart?.FeedData(memory);
 
                             // A escala é um percentual da largura do texto
                             widthEmus = (long)(scale * widthEmus);
@@ -1090,7 +1090,7 @@ namespace PraeceptorCQRS.Application.Entities.ToWord.Parser.PPC
                                                          )
 
                                                          {
-                                                             Embed = ((WordDocEnvironment?)environment)?.WordDocument?.TheMainDocumentPart?.GetIdOfPart(imagePart),
+                                                             Embed = ((WordDocEnvironment?)environment)?.WordDocument?.TheMainDocumentPart?.GetIdOfPart(imagePart!),
                                                              CompressionState = A.BlipCompressionValues.Print
                                                          },
                                                          new A.Stretch(

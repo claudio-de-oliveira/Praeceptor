@@ -54,7 +54,7 @@ public partial class WordDocument
 
     public string AddCommentPartToPackage()
     {
-        string id = "0";
+        string? id = "0";
 
         // Verify that the document contains a
         // WordProcessingCommentsPart part; if not, add a new one.
@@ -66,7 +66,7 @@ public partial class WordDocument
             if (comments.HasChildren)
             {
                 // Obtain an unused ID.
-                id = comments.Descendants<Comment>().Select(e => e.Id.Value).Max();
+                id = comments.Descendants<Comment>().Select(e => e.Id?.Value)?.Max();
             }
         }
         else
@@ -77,6 +77,7 @@ public partial class WordDocument
             commentPart.Comments = new Comments();
         }
 
+        Guard.Against.Null(id);
         return id;
     }
 
@@ -102,7 +103,8 @@ public partial class WordDocument
 
             if (numbering.HasChildren)
             {
-                id = numbering.Descendants<AbstractNum>().Select(e => e.AbstractNumberId.Value).Max();
+                var x = numbering.Descendants<AbstractNum>().Select(e => e.AbstractNumberId?.Value);
+                id = x.Max() ?? 0;
             }
         }
         else
@@ -150,7 +152,8 @@ public partial class WordDocument
 
             if (glossary.HasChildren)
             {
-                id = glossary.Descendants<AbstractNum>().Select(e => e.AbstractNumberId.Value).Max();
+                var x = glossary.Descendants<AbstractNum>().Select(e => e.AbstractNumberId?.Value);
+                id = x.Max() ?? 0;
             }
         }
         else
@@ -190,7 +193,8 @@ public partial class WordDocument
 
             if (styles.HasChildren)
             {
-                id = styles.Descendants<Style>().Select(e => e.StyleId.Value).Max();
+                var x = styles.Descendants<Style>().Select(e => e.StyleId?.Value);
+                id = x.Max() ?? "";
             }
         }
         else
@@ -731,10 +735,14 @@ public partial class WordDocument
 
     public int CreateAbstractNum(AbstractNum newAbstractNum)
     {
+        Guard.Against.Null(WDocument);
+        Guard.Against.Null(WDocument.MainDocumentPart);
+        Guard.Against.Null(WDocument.MainDocumentPart.NumberingDefinitionsPart);
         if (WDocument.MainDocumentPart.NumberingDefinitionsPart.Numbering.HasChildren)
         {
             AbstractNum lastAbstract =
                 WDocument.MainDocumentPart.NumberingDefinitionsPart.Numbering.Elements<AbstractNum>().Last();
+            Guard.Against.Null(lastAbstract.AbstractNumberId);
             newAbstractNum.AbstractNumberId =
                 lastAbstract.AbstractNumberId + 1;
 
@@ -800,7 +808,7 @@ public partial class WordDocument
             if (IsStyleIdInDocument(mainDocumentPart, styleid) != true)
             {
                 // No match on styleid, so let's try style name.
-                string styleidFromName = GetStyleIdFromStyleName(mainDocumentPart, stylename);
+                string ?styleidFromName = GetStyleIdFromStyleName(mainDocumentPart, stylename);
 
                 if (styleidFromName == null)
                     AddNewStyle(part, styleid, stylename);
@@ -838,7 +846,7 @@ public partial class WordDocument
     }
 
     // Return styleid that matches the styleName, or null when there's no match.
-    protected static string GetStyleIdFromStyleName(MainDocumentPart mainDocumentPart, string styleName)
+    protected static string? GetStyleIdFromStyleName(MainDocumentPart mainDocumentPart, string styleName)
     {
         Guard.Against.Null(mainDocumentPart.StyleDefinitionsPart);
         StyleDefinitionsPart stylePart = mainDocumentPart.StyleDefinitionsPart;
@@ -848,9 +856,10 @@ public partial class WordDocument
             .Where(s => s.Val!.Value!.Equals(styleName) &&
                 (((Style)s.Parent!).Type! == StyleValues.Paragraph));
 
-        var styles = descendants!.Select(n => ((Style)n.Parent).StyleId);
+        var styles = descendants!.Select(n => ((Style)n.Parent!).StyleId);
 
-        return styles!.FirstOrDefault();
+        Guard.Against.Null(styles);
+        return styles.FirstOrDefault();
     }
 
     // Create a new style with the specified styleid and stylename and add it to the specified

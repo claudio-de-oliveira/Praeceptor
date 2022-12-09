@@ -11,12 +11,9 @@ using Document.App.SeedData.SimpleTables;
 using Document.App.SeedData.Variables;
 using Document.App.Services;
 
-using Hanssens.Net;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.JSInterop;
 
 using PraeceptorCQRS.Utilities;
 
@@ -52,19 +49,10 @@ builder.Services.AddServerSideBlazor()
                  });
 builder.Services.AddScoped<ToasterService>();
 
-// D O W N L O A D   S E R V I C E
-// builder.Services.Add(
-//     new ServiceDescriptor(
-//         typeof(IDownloadFileService),
-//         sp => new DownloadFileService(sp.GetRequiredService<IJSRuntime>()),
-//         ServiceLifetime.Scoped));
-
 Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
 
-var storage = new LocalStorage();
-builder.Services.AddSingleton<ILocalStorage>(storage);
 builder.Services.AddSingleton(new DocumentNavigationComponentNotifier());
 builder.Services.AddSingleton(builder.Configuration);
 builder.Services.AddScoped<TokenProvider>();
@@ -231,6 +219,7 @@ static string? FindFirstFilePath(string filename)
     return null;
 }
 
+#pragma warning disable CS8321 // A função local foi declarada, mas nunca usada
 static async Task Initialize(
     Guid instituteId,
     FileStreamService fileStreamService,
@@ -273,3 +262,4 @@ static async Task Initialize(
         variableValueService
         );
 }
+#pragma warning restore CS8321 // A função local foi declarada, mas nunca usada

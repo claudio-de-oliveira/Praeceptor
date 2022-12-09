@@ -3,7 +3,7 @@ using Administrative.App.Components.Toaster;
 using Administrative.App.Interfaces;
 using Administrative.App.Services;
 
-using Hanssens.Net;
+//using Hanssens.Net;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -48,8 +48,8 @@ Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
 
-var storage = new LocalStorage();
-builder.Services.AddSingleton<ILocalStorage>(storage);
+//var storage = new LocalStorage();
+//builder.Services.AddSingleton<ILocalStorage>(storage);
 builder.Services.AddSingleton<IAdminService>(new AdminService(builder.Configuration));
 builder.Services.AddSingleton(builder.Configuration);
 builder.Services.AddScoped<TokenProvider>();

@@ -87,20 +87,6 @@
     private string groupValues = "";
     private Guid templateSelected = Guid.Empty;
 
-    // private List<CourseModel> courseList = new();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (Courses is not null)
-            {
-                // courseList = Courses;
-            }
-            StateHasChanged();
-        }
-    }
-
     private Task Cancel()
     {
         return OnClose.InvokeAsync(null);

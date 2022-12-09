@@ -122,8 +122,6 @@
 
 @code {
     [Inject]
-    protected IJSRuntime JSRuntime { get; set; }
-    [Inject]
     protected IInstituteService InstituteService { get; set; } = default!;
     [Inject]
     private IDocxStreamService docxStreamService { get; set; } = default!;
@@ -151,8 +149,6 @@
     protected string? descriptionFilter = string.Empty;
     protected string? dateCreatedFilter = string.Empty;
     protected string? contentTypeFilter = string.Empty;
-
-    // protected bool EditEntityDialogIsOpen = false;
 
     private readonly int pageSize = 10;
     protected int currentPage = 0;
@@ -261,14 +257,9 @@
         if (model is not null)
         {
             using var writer = new BinaryWriter(File.OpenWrite($"D:\\Download\\{model.Id}.docx"));
-            // using var writer = new BinaryWriter(File.OpenWrite("D:\\users\\clalu\\Source\\repos\\PraeceptorCQRS\\PraeceptorCQRS.Presentation\\DocumentToWord.Api\\Teste.docx"));
             writer.Write(model.Data);
             writer.Close();
 
-            // // await downloadFileService.DownloadFileAsync($"{model.Id}.docx", model.Data, MimeTypeMap.GetMimeType(".docx"));
-            // // Send the data to JS to actually download the file
-            // await JSRuntime.InvokeVoidAsync("blazorDownloadFile", $"{model.Id}.docx", model.ContentType, model.Data);
-            // // await JSRuntime.InvokeVoidAsync("blazorDownloadFile", $"{model.Id}.docx", model.ContentType, stream.GetBuffer());
             _toasterService?.AddToastSuccess($"Documento salvo como {model.Id}.docx");
         }
         else

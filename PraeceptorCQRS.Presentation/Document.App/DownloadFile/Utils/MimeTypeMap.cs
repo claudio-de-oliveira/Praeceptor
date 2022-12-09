@@ -741,7 +741,7 @@
         /// <param name="mimeType">The variable to store the MIME type.</param>
         /// <returns>The MIME type.</returns>
         /// <exception cref="ArgumentNullException" />
-        public static bool TryGetMimeType(string str, out string mimeType)
+        public static bool TryGetMimeType(string str, out string? mimeType)
         {
             if (string.IsNullOrWhiteSpace(str))
                 throw new ArgumentNullException(nameof(str));
@@ -771,7 +771,7 @@
             if (string.IsNullOrWhiteSpace(str))
                 throw new ArgumentNullException(nameof(str));
 
-            return TryGetMimeType(str, out var result) ? result : DefaultMimeType;
+            return TryGetMimeType(str, out var result) ? result! : DefaultMimeType;
         }
 
         /// <summary>
@@ -794,7 +794,7 @@
                 throw new ArgumentException("Requested mime type is not valid: " + mimeType);
             }
 
-            if (_mappings.Value.TryGetValue(mimeType, out string extension))
+            if (_mappings.Value.TryGetValue(mimeType, out string? extension))
             {
                 return extension;
             }

@@ -15,7 +15,7 @@ namespace Document.App.DownloadFile.JavaScript
             var assembly = typeof(JavaScriptLoader).GetTypeInfo().Assembly;
 
             using var stream = assembly.GetManifestResourceStream(Resource);
-            using var reader = new StreamReader(stream);
+            using var reader = new StreamReader(stream!);
 
             JavaScript = reader.ReadToEnd();
         }
