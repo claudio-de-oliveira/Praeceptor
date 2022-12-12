@@ -2,10 +2,14 @@
 
 using PraeceptorCQRS.Contracts.Entities.VariableValue;
 
+using System.Net;
+
 namespace Document.App.Interfaces
 {
     public interface IVariableValueService
     {
+        HttpResponseMessage? GetHttpResponseMessage();
+
         Task<HttpResponseMessage> CreateVariableValue(CreateVariableValueRequest request);
         Task<VariableValueModel?> GetVariableValueById(Guid id);
         Task<VariableValueModel?> GetVariableValueByVariableAndGroupValue(Guid groupValueId, Guid variableId);

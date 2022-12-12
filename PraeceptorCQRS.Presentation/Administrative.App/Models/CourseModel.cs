@@ -4,8 +4,6 @@
     {
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public Guid? CEO { get; set; }
-        public string? CEO_Email { get; set; }
         public int AC { get; set; }
         public int NumberOfSeasons { get; set; }
         public int MinimumWorkload { get; set; }

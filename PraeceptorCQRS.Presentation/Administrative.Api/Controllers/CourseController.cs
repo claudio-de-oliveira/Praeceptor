@@ -47,24 +47,23 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [Authorize("ReadPolice")]
         public async Task<IActionResult> GetCoursePage([FromBody] GetCoursePageRequest request)
         {
-            // var query = _mapper.Map<GetCoursePageQuery>(request);
-            var query = new GetCoursePageQuery(
-                request.InstituteId,
-                request.Start,
-                request.Count,
-                request.Sort,
-                request.Ascending,
-                request.CodeFilter,
-                request.NameFilter,
-                request.CEOFilter,
-                request.ACFilter,
-                request.SeasonsFilter,
-                request.MinimumWorkloadFilter,
-                request.CreatedByFilter,
-                request.CreatedFilter,
-                request.LastModifiedFilter,
-                request.LastModifiedByFilter
-                );
+            var query = _mapper.Map<GetCoursePageQuery>(request);
+            // var query = new GetCoursePageQuery(
+            //     request.InstituteId,
+            //     request.Start,
+            //     request.Count,
+            //     request.Sort,
+            //     request.Ascending,
+            //     request.CodeFilter,
+            //     request.NameFilter,
+            //     request.ACFilter,
+            //     request.SeasonsFilter,
+            //     request.MinimumWorkloadFilter,
+            //     request.CreatedByFilter,
+            //     request.CreatedFilter,
+            //     request.LastModifiedFilter,
+            //     request.LastModifiedByFilter
+            //     );
 
             ErrorOr<CoursePageResult> result = await _mediator.Send(query);
 
@@ -98,7 +97,6 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             var command = new UpdateCourseCommand(
                 request.Id,
                 request.Name,
-                request.CEO,
                 request.AC,
                 request.NumberOfSeasons,
                 request.MinimumWorkload,

@@ -162,6 +162,11 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Code3")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -233,9 +238,6 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
 
                     b.Property<int>("AC")
                         .HasColumnType("int");
-
-                    b.Property<Guid?>("CEO")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -588,6 +590,11 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Code3")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -627,6 +634,11 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Code3")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -659,6 +671,11 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Code3")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");

@@ -3,6 +3,7 @@
 @using Document.App.Components.Toaster;
 @using Microsoft.AspNetCore.Mvc;
 @using Newtonsoft.Json
+@using System.Runtime.CompilerServices;
 
 @typeparam TServer1 where TServer1 : IEntityService
 @typeparam TServer2 where TServer2 : IEntityService
@@ -250,11 +251,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
 
             BookEntities = new();
         }
@@ -263,5 +260,23 @@
         waiting = false;
 
         StateHasChanged();
+    }
+
+    protected async Task OnHttpErrorMessage(
+        HttpResponseMessage message,
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string? caller = null
+        )
+    {
+        var result = await message.Content.ReadAsStringAsync();
+        var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+        if (error is null || error.Title is null)
+        {
+            _toasterService?.AddToastError($"Erro não identifiacdo em {caller}, linha {lineNumber}");
+        }
+        else
+        {
+            _toasterService?.AddToastError(error.Title);
+        }
     }
 }

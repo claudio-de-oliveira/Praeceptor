@@ -26,10 +26,11 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Commands
 
             var updated = new Domain.Entities.PreceptorDegreeType(request.Id)
             {
-                Code = entity.Code,
-                // don't change institute!
+                Code = request.Code,
+                Code3 = request.Code3,
+                LatoSensu = request.LatoSensu,
+                StrictoSensu = request.StrictoSensu,
                 InstituteId = entity.InstituteId,
-                // ...
                 Created = entity.Created,
                 CreatedBy = entity.CreatedBy,
                 LastModified = _dateTimeProvider.UtcNow,

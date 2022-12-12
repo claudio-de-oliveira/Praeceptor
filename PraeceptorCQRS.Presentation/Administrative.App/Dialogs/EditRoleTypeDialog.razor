@@ -19,6 +19,12 @@
                             <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="false" style="background-color:aliceblue;">
                         </div>
                     </div>
+                    <div class="form-group purple-border">
+                        <div class="mb-3">
+                            <label for="recipient-code3" class="col-form-label">Código resumido (3 letras)</label>
+                            <input type="text" class="form-control" @bind-value="@_code3" id="recipient-code3" contenteditable="false" style="background-color:aliceblue;">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -43,15 +49,19 @@
     [Parameter]
     public string Code { get; set; } = default!;
     [Parameter]
+    public string Code3 { get; set; } = default!;
+    [Parameter]
     public EventCallback<PreceptorRoleTypeModel?> OnClose { get; set; }
 
     private string _code = default!;
+    private string _code3 = default!;
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
             _code = Code;
+            _code3 = Code3;
 
             StateHasChanged();
         }
@@ -65,8 +75,8 @@
 
     private Task Ok()
     {
-        if (string.Compare(_code, Code) != 0)
-            return OnClose.InvokeAsync(new PreceptorRoleTypeModel { Code = _code });
+        if (string.Compare(_code, Code) != 0 || string.Compare(_code3, Code3) != 0)
+            return OnClose.InvokeAsync(new PreceptorRoleTypeModel { Code = _code, Code3 = _code3 });
         else
             return OnClose.InvokeAsync(null);
     }

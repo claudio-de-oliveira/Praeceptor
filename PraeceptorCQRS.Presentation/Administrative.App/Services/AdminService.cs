@@ -5,6 +5,8 @@ using IdentityModel.Client;
 using PraeceptorCQRS.Contracts.Entities.Admin;
 using PraeceptorCQRS.Utilities;
 
+using System.Net;
+
 using static IdentityModel.OidcConstants;
 
 namespace Administrative.App.Services

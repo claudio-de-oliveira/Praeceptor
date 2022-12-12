@@ -125,6 +125,8 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             string? lastModifiedByFilter
             )
         {
+            Console.WriteLine($"Procurando por {nameFilter!}");
+
             var table = _context.Set<Preceptor>();
             // ToList() is needed here
             var list = await Task.Run(

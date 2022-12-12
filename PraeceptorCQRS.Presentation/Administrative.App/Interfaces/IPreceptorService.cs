@@ -2,10 +2,14 @@
 
 using PraeceptorCQRS.Contracts.Entities.Preceptor;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces
 {
     public interface IPreceptorService
     {
+        HttpResponseMessage? GetHttpResponseMessage();
+
         Task<int> GetPreceptorCount(Guid instituteId);
         Task<HttpResponseMessage> PostPage(GetPreceptorPageRequest request);
         Task<PreceptorModel?> GetPreceptorById(Guid id);

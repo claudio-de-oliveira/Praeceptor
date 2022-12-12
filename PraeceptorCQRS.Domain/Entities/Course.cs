@@ -17,7 +17,6 @@ namespace PraeceptorCQRS.Domain.Entities
         public static Course Create(
             string code,
             string name,
-            Guid? ceo,
             int ac,
             int seasons,
             int minimumWorkload,
@@ -33,7 +32,6 @@ namespace PraeceptorCQRS.Domain.Entities
             {
                 Code = code,
                 Name = name,
-                CEO = ceo,
                 AC = ac,
                 NumberOfSeasons = seasons,
                 MinimumWorkload = minimumWorkload,
@@ -52,7 +50,6 @@ namespace PraeceptorCQRS.Domain.Entities
         public string Code { get; set; } = default!;
         [Required, MaxLength(250)]
         public string Name { get; set; } = default!;
-        public Guid? CEO { get; set; } = default!;
         public int AC { get; set; }
         public int NumberOfSeasons { get; set; }
         public int MinimumWorkload { get; set; }

@@ -121,11 +121,12 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreatePreceptorRoleType([FromBody] CreatePreceptorRoleTypeRequest request)
         {
-            // var command = _mapper.Map<CreatePreceptorRoleTypeCommand>(request);
-            var command = new CreatePreceptorRoleTypeCommand(
-                request.Code,
-                request.InstituteId
-                );
+            var command = _mapper.Map<CreatePreceptorRoleTypeCommand>(request);
+            // var command = new CreatePreceptorRoleTypeCommand(
+            //     request.Code,
+            //     request.Code3,
+            //     request.InstituteId
+            //     );
 
             ErrorOr<PreceptorRoleTypeResult> result = await _mediator.Send(command);
 

@@ -32,16 +32,16 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreatePreceptor([FromBody] CreatePreceptorRequest request)
         {
-            // var command = _mapper.Map<CreatePreceptorCommand>(request);
-            var command = new CreatePreceptorCommand(
-                request.Code,
-                request.Name,
-                request.Email,
-                request.Image,
-                request.DegreeTypeId,
-                request.RegimeTypeId,
-                request.InstituteId
-                );
+            var command = _mapper.Map<CreatePreceptorCommand>(request);
+            // var command = new CreatePreceptorCommand(
+            //     request.Code,
+            //     request.Name,
+            //     request.Email,
+            //     request.Image,
+            //     request.DegreeTypeId,
+            //     request.RegimeTypeId,
+            //     request.InstituteId
+            //     );
 
             ErrorOr<PreceptorResult> result = await _mediator.Send(command);
 
@@ -93,7 +93,7 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<PreceptorPageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<PreceptorResponse>>(result/*.Page*/)),
+                result => Ok(_mapper.Map<PageResponse<PreceptorResponse>>(result)),
                 errors => Problem(errors)
                 );
         }

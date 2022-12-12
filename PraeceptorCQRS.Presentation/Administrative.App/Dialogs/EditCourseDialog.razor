@@ -49,18 +49,6 @@
                                 <label for="recipient-image" class="col-form-label">Imagem</label>
                                 <input type="text" class="form-control" @bind-value="@image" id="recipient-image" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
                             </div>
-                            @if (!IsCourseAdmin)
-                            {
-                                <div class="mb-3">
-                                    <label for="recipient-ceo" class="col-form-label">Coordenador</label>
-                                    <input type="text" class="form-control" @onchange="@ChangeECO" id="recipient-ceo" contenteditable="true" style="background-color:aliceblue;">
-                                </div>
-                                <div class="mb-3">
-                                    <!-- Tem que ser um endereço válido -->
-                                    <label for="message-email-ceo" class="col-form-label">Email do coordenador</label>
-                                    <input type="text" class="form-control" @bind-value="@email_ceo" id="recipient-email_coordenador" contenteditable="true" style="background-color:aliceblue;">
-                                </div>
-                            }
                         </form>
                     </div>
                 </div>
@@ -90,8 +78,6 @@
     public string Code { get; set; } = default!;
     [Parameter]
     public string Name { get; set; } = default!;
-    [Parameter]
-    public PreceptorModel? CEO { get; set; }
     [Parameter]
     public int AC { get; set; }
     [Parameter]
@@ -128,9 +114,6 @@
     {
         if (firstRender)
         {
-            ceo = CEO;
-            if (ceo is not null)
-                email_ceo = ceo.Email;
             _code = Code;
             name = Name;
             ac = AC;
@@ -143,28 +126,6 @@
             StateHasChanged();
         }
         base.OnAfterRender(firstRender);
-    }
-
-    private async Task ChangeECO(ChangeEventArgs args)
-    {
-        Guard.Against.Null(args.Value);
-        var code = (string)args.Value;
-
-        if (!string.IsNullOrWhiteSpace(code))
-            ceo = await preceptorService.GetPreceptorByCode(code);
-        else
-            ceo = null!;
-
-        if (ceo is not null && CEO is not null)
-            ceo_changed = ceo.Id != CEO.Id;
-        else if (ceo is not null && CEO is null || ceo is null && CEO is not null)
-            ceo_changed = true;
-        // else if (ceo is null && CEO is null)
-        //     ceo_changed = true;
-        else
-            ceo_changed = false;
-
-        StateHasChanged();
     }
 
     private Task Cancel()
@@ -183,8 +144,6 @@
                 {
                     Code = _code,
                     Name = name,
-                    CEO = ceo is not null ? ceo.Id : Guid.Empty,
-                    CEO_Email = ceo?.Email,
                     AC = ac,
                     NumberOfSeasons = seasons,
                     MinimumWorkload = minimumWorkload,

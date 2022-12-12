@@ -15,7 +15,7 @@ namespace PraeceptorCQRS.Utilities
 
         private readonly JsonConverter jsonConverter;
 
-        protected HttpResponseMessage? ResponseMessage { get; private set; }
+        protected HttpResponseMessage? responseMessage { get; private set; }
 
         public readonly string? TokenEndpoint;
 
@@ -40,6 +40,9 @@ namespace PraeceptorCQRS.Utilities
             return string.Empty;
         }
 
+        public HttpResponseMessage? GetHttpResponseMessage() 
+            => responseMessage;
+
         protected async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage)
         {
             try
@@ -48,18 +51,18 @@ namespace PraeceptorCQRS.Utilities
                 if (!string.IsNullOrWhiteSpace(accessToken))
                     _httpClient.SetBearerToken(accessToken);
 
-                ResponseMessage = await _httpClient.SendAsync(requestMessage);
+                responseMessage = await _httpClient.SendAsync(requestMessage);
             }
             catch (Exception ex)
             {
-                ResponseMessage = new HttpResponseMessage()
+                responseMessage = new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
                     Content = new StringContent(ex.Message)
                 };
             }
 
-            return ResponseMessage;
+            return responseMessage;
         }
 
         private string GetUri(params object[] keys)

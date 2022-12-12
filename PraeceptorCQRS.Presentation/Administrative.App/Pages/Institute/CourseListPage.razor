@@ -16,7 +16,7 @@
 @if (EditDialogIsOpen)
 {
     <EditCourseDialog Code="@previousCode"
-                  Name="@previousName" CEO="@previousCEO"
+                  Name="@previousName" 
                   AC="@previousAC" NumberOfSeasons="@previousSeasons" MinimumWorkload="@previousMinimumWorkload" Telephone="@previousTelephone"
                   Email="@previousEmail" Image="@previousImage"
                   IsCourseAdmin="@_isCourseAdmin"
@@ -37,9 +37,6 @@
                     </td>
                     <td align="center">
                         <ClearableInputTextComponent Placeholder="Filtrar por Nome" Filter="@nameFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td align="center">
-                        <ClearableInputTextComponent Placeholder="Filtrar por C.E.O." Filter="@ceoFilter.ToString()" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
                     </td>
                     <td align="center">
                         <ClearableInputTextComponent Placeholder="Filtrar por Atividades Complementares" Filter="@acFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
@@ -63,9 +60,6 @@
                         <ButtonSortComponent Waiting="@waiting" Text="Nome" SortBy="Name" OnClick="@SortBy" />
                     </td>
                     <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="CEO" SortBy="CEO" OnClick="@SortBy" />
-                    </td>
-                    <td align="center">
                         <ButtonSortComponent Waiting="@waiting" Text="AC" SortBy="AC" OnClick="@SortBy" />
                     </td>
                     <td align="center">
@@ -86,7 +80,6 @@
                     <tr>
                         <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
                         <td><div style="font-size: smaller">@entity.Name</div></td>
-                        <td align="center"><div style="font-size: smaller">@entity.CEO</div></td>
                         <td align="center"><div style="font-size: smaller">@entity.AC</div></td>
                         <td align="center"><div style="font-size: smaller">@entity.NumberOfSeasons</div></td>
                         <td align="center"><div style="font-size: smaller">@entity.MinimumWorkload</div></td>
@@ -173,15 +166,12 @@
     protected string previousCode = string.Empty;
     protected string previousName = string.Empty;
 
-    protected PreceptorModel? previousCEO = default!;
-    protected Guid? previousCEOId;
     protected int previousAC;
     protected int previousSeasons;
     protected int previousMinimumWorkload;
     protected string? previousTelephone;
     protected string? previousEmail;
     protected string? previousImage;
-    protected string? previousCEOEmail;
 
     private Guid instituteId;
     private InstituteModel? institute;
@@ -263,7 +253,7 @@
     {
         waiting = true;
         var message = await courseService.PostPage(
-        new GetCoursePageRequest(
+            new GetCoursePageRequest(
                 instituteId,
                 page,
                 pageSize,
@@ -271,7 +261,6 @@
                 ascendingSort,
                 codeFilter,
                 nameFilter,
-                ceoFilter,
                 !string.IsNullOrWhiteSpace(acFilter) ? int.Parse(acFilter) : -1,
                 !string.IsNullOrWhiteSpace(seasonsFilter) ? int.Parse(seasonsFilter) : -1,
                 !string.IsNullOrWhiteSpace(minimumWorkloadFilter) ? int.Parse(minimumWorkloadFilter) : -1,
@@ -295,11 +284,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
         }
         waiting = false;
 
@@ -313,15 +298,12 @@
         entitySelected = entity;
         previousCode = entitySelected.Code;
         previousName = entitySelected.Name;
-        previousCEOId = entitySelected.CEO;
         previousAC = entitySelected.AC;
         previousSeasons = entitySelected.NumberOfSeasons;
         previousMinimumWorkload = entitySelected.MinimumWorkload;
         previousTelephone = entitySelected.Telephone;
         previousEmail = entitySelected.Email;
         previousImage = entitySelected.Image;
-        previousCEOId = entitySelected.CEO;
-        previousCEOEmail = entitySelected.CEO_Email;
 
         EditDialogIsOpen = true;
         StateHasChanged();
@@ -334,7 +316,6 @@
         entitySelected = new CourseModel() { InstituteId = instituteId };
         previousCode = "";
         previousName = "";
-        previousCEO = null;
         previousAC = 0;
         previousSeasons = 0;
         previousMinimumWorkload = 0;
@@ -351,7 +332,6 @@
             new CreateCourseRequest(
                 course.Code,
                 course.Name,
-                course.CEO,
                 course.AC,
                 course.NumberOfSeasons,
                 course.MinimumWorkload,
@@ -370,23 +350,11 @@
 
             await PageRequest(currentPage);
 
-            if (course.CEO is not null && course.CEO != Guid.Empty)
-            {
-                Guard.Against.Null(course.CEO);
-                var preceptor = await preceptorService.GetPreceptorById((Guid)course.CEO);
-                Guard.Against.Null(preceptor);
-                var r = await CreateAdmin(courseCreated.Id.ToString(), preceptor.Code, preceptor.Email, "CourseAdmin");
-                if (r && string.IsNullOrWhiteSpace(course.CEO_Email))
-                    _toasterService?.AddToastSuccess($"Um email para confirmação de senha foi enviado para {course.CEO_Email}");
-            }
-
             _toasterService?.AddToastSuccess("As modificações foram salvas.");
 
             Guard.Against.Null(entitySelected);
             entitySelected.Code = course.Code;
             entitySelected.Name = course.Name;
-            entitySelected.CEO = course.CEO;
-            entitySelected.CEO_Email = course.CEO_Email;
             entitySelected.AC = course.AC;
             entitySelected.NumberOfSeasons = course.NumberOfSeasons;
             entitySelected.MinimumWorkload = course.MinimumWorkload;
@@ -396,11 +364,7 @@
         }
         else
         {
-            var result = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(response);
         }
     }
 
@@ -410,7 +374,6 @@
                     new UpdateCourseRequest(
                         course.Id,
                         course.Name,
-                        course.CEO,
                         course.AC,
                         course.NumberOfSeasons,
                         course.MinimumWorkload,
@@ -424,21 +387,9 @@
         {
             await PageRequest(currentPage);
 
-            if (course.CEO != previousCEOId && course.CEO != Guid.Empty)
-            {
-                Guard.Against.Null(course.CEO);
-                var preceptor = await preceptorService.GetPreceptorById((Guid)course.CEO);
-                Guard.Against.Null(preceptor);
-                var r = await CreateAdmin(course.Id.ToString(), preceptor.Code, preceptor.Email, "CourseAdmin");
-                if (r && string.IsNullOrWhiteSpace(course.CEO_Email))
-                    _toasterService?.AddToastSuccess($"Um email para confirmação de senha foi enviado para {course.CEO_Email}");
-            }
-
             Guard.Against.Null(entitySelected);
             entitySelected.Code = course.Code;
             entitySelected.Name = course.Name;
-            entitySelected.CEO = course.CEO;
-            entitySelected.CEO_Email = course.CEO_Email;
             entitySelected.AC = course.AC;
             entitySelected.NumberOfSeasons = course.NumberOfSeasons;
             entitySelected.MinimumWorkload = course.MinimumWorkload;
@@ -448,15 +399,10 @@
         }
         else
         {
-            var result = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(response);
 
             entitySelected.Code = previousCode;
             entitySelected.Name = previousName;
-            entitySelected.CEO = previousCEO is not null ? previousCEO.Id : Guid.Empty;
             entitySelected.AC = previousAC;
             entitySelected.NumberOfSeasons = previousSeasons;
             entitySelected.MinimumWorkload = previousMinimumWorkload;
@@ -490,24 +436,24 @@
     }
 
 #pragma warning disable CS8602
-    protected async Task OnCodeChanged(ChangeEventArgs args)
+    protected async Task OnCodeChanged(string? text)
     {
-        codeFilter = args.Value.ToString();
+        codeFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnNameChanged(ChangeEventArgs args)
+    protected async Task OnNameChanged(string? text)
     {
-        nameFilter = args.Value.ToString();
+        nameFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnSeasonsChanged(ChangeEventArgs args)
+    protected async Task OnSeasonsChanged(string? text)
     {
-        seasonsFilter = args.Value.ToString();
+        seasonsFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnMinimumWorkloadChanged(ChangeEventArgs args)
+    protected async Task OnMinimumWorkloadChanged(string? text)
     {
-        minimumWorkloadFilter = args.Value.ToString();
+        minimumWorkloadFilter = text;
         await PageRequest(0);
     }
     protected async Task OnCreatedChanged(ChangeEventArgs args)

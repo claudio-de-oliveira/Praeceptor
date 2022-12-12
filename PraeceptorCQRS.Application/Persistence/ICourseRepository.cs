@@ -11,7 +11,6 @@ namespace PraeceptorCQRS.Application.Persistence
             bool ascending,
             string? codeFilter,
             string? nameFilter,
-            Guid? CEOFilter,
             int? AC,
             int? NumberOfSeasons,
             int? MinimumWorkload,

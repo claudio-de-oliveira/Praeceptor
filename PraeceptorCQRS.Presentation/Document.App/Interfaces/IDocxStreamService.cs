@@ -3,10 +3,14 @@
 using PraeceptorCQRS.Contracts.Entities.SqlDocxStream;
 using PraeceptorCQRS.Contracts.Entities.ToWord;
 
+using System.Net;
+
 namespace Document.App.Interfaces
 {
     public interface IDocxStreamService
     {
+        HttpResponseMessage? GetHttpResponseMessage();
+
         Task<int> GetDocxStreamByInstituteCount(Guid instituteId);
 
         Task<DocxModel?> GetDocxStreamById(Guid id);

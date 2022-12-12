@@ -122,11 +122,12 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreatePreceptorRegimeType([FromBody] CreatePreceptorRegimeTypeRequest request)
         {
-            // var command = _mapper.Map<CreatePreceptorRegimeTypeCommand>(request);
-            var command = new CreatePreceptorRegimeTypeCommand(
-                request.Code,
-                request.InstituteId
-                );
+            var command = _mapper.Map<CreatePreceptorRegimeTypeCommand>(request);
+            // var command = new CreatePreceptorRegimeTypeCommand(
+            //     request.Code,
+            //     request.Code3,
+            //     request.InstituteId
+            //     );
 
             ErrorOr<PreceptorRegimeTypeResult> result = await _mediator.Send(command);
 

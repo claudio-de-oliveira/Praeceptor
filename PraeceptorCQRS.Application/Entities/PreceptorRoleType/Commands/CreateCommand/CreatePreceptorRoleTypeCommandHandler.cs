@@ -24,21 +24,11 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorRoleType.Commands
         {
             var entity = Domain.Entities.PreceptorRoleType.Create(
                 request.Code,
+                request.Code3,
                 request.InstituteId,
                 _dateTimeProvider.UtcNow,
                 string.Empty
                 );
-
-            // var entity = new Domain.Entities.PreceptorRoleType
-            // {
-            //     Code = request.Code,
-            //     InstituteId = request.InstituteId,
-            //     // ...
-            //     Created = _dateTimeProvider.UtcNow,
-            //     CreatedBy = string.Empty,
-            //     LastModified = _dateTimeProvider.UtcNow,
-            //     LastModifiedBy = string.Empty
-            // };
 
             if (cancellationToken.IsCancellationRequested)
                 return Domain.Errors.Error.PreceptorRoleType.Canceled;

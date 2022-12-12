@@ -10,7 +10,6 @@ namespace PraeceptorCQRS.Application.Entities.Course.Commands
     public record CreateCourseCommand(
         string Code,
         string Name,
-        Guid? CEO,
         int AC,
         int NumberOfSeasons,
         int MinimumWorkload,

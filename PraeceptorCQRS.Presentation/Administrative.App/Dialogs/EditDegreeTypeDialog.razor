@@ -6,7 +6,7 @@
      aria-hidden="true"
      aria-modal="true"
      role="dialog">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
@@ -19,15 +19,21 @@
                             <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="false" style="background-color:aliceblue;">
                         </div>
                     </div>
+                    <div class="form-group purple-border">
+                        <div class="mb-3">
+                            <label for="recipient-code3" class="col-form-label">Código resumido (3 letras)</label>
+                            <input type="text" class="form-control" @bind-value="@_code3" id="recipient-code3" contenteditable="false" style="background-color:aliceblue;">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input-lato" value="@_latoSensu" type="checkbox" id="flexSwitchLatoCheckChecked" checked>
-                <label class="form-check-label" for="flexSwitchLatoCheckChecked">Lato Sensu</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input-strict" value="@_strictoSensu" type="checkbox" id="flexSwitchStrictoCheckChecked" checked>
-                <label class="form-check-label" for="flexSwitchStrictoCheckChecked">Stricto Sensu</label>
+                <div class="form-check form-switch">
+                    <input class="form-check-input-lato" @bind-value="@_latoSensu" type="checkbox" id="flexSwitchLatoCheckChecked" checked="@_latoSensu">
+                    <label class="form-check-label" for="flexSwitchLatoCheckChecked">Lato Sensu</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input-strict" @bind-value="@_strictoSensu" type="checkbox" id="flexSwitchStrictoCheckChecked" checked="@_strictoSensu">
+                    <label class="form-check-label" for="flexSwitchStrictoCheckChecked">Stricto Sensu</label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button"
@@ -51,6 +57,8 @@
     [Parameter]
     public string Code { get; set; } = default!;
     [Parameter]
+    public string Code3 { get; set; } = default!;
+    [Parameter]
     public bool LatoSensu { get; set; } = default!;
     [Parameter]
     public bool StrictoSensu { get; set; } = default!;
@@ -58,6 +66,7 @@
     public EventCallback<PreceptorDegreeTypeModel?> OnClose { get; set; }
 
     private string _code = default!;
+    private string _code3 = default!;
     private bool _latoSensu = default!;
     private bool _strictoSensu = default!;
 
@@ -66,6 +75,7 @@
         if (firstRender)
         {
             _code = Code;
+            _code3 = Code3;
             _latoSensu = LatoSensu;
             _strictoSensu = StrictoSensu;
 
@@ -81,8 +91,8 @@
 
     private Task Ok()
     {
-        if (string.Compare(_code, Code) != 0)
-            return OnClose.InvokeAsync(new PreceptorDegreeTypeModel { Code = _code, LatoSensu = _latoSensu, StrictoSensu = _strictoSensu });
+        if (string.Compare(_code, Code) != 0 || string.Compare(_code3, Code3) != 0 || LatoSensu != _latoSensu || StrictoSensu != _strictoSensu)
+            return OnClose.InvokeAsync(new PreceptorDegreeTypeModel { Code = _code, Code3 = _code3, LatoSensu = _latoSensu, StrictoSensu = _strictoSensu });
         else
             return OnClose.InvokeAsync(null);
     }

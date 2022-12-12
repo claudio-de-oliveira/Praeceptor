@@ -11,84 +11,87 @@
 @using PraeceptorCQRS.Utilities
 @using PraeceptorCQRS.Contracts.Entities.ToWord
 @using PraeceptorCQRS.Contracts.Entities.SqlFileStream;
+@using System.Net;
 
 @inject NavigationManager navigationManager
 
 @inherits AbstractListPage<IDocumentListService>
 
-<!-- Modal: Editar entidade -->
-@if (EditEntityDialogIsOpen)
+@if (institute is not null)
 {
-    <EditEntityDialog Title="@previousTitle" Text="@previousText" OnClose="@OnEditEntityDialogClose" />
-}
-@if (ToDocxDialogIsOpen)
-{
-    <ToDocxDialog Courses="@courseList" Templates="@templates" OnClose="@OnToDocxDialogClose" />
-}
+    <!-- Modal: Editar entidade -->
+    @if (EditEntityDialogIsOpen)
+    {
+        <EditEntityDialog Title="@previousTitle" Text="@previousText" OnClose="@OnEditEntityDialogClose" />
+    }
+    @if (ToDocxDialogIsOpen)
+    {
+        <ToDocxDialog Courses="@courseList" Templates="@templates" OnClose="@OnToDocxDialogClose" />
+    }
 
-<section class="p-1">
+    <section class="p-1">
 
-    <PageHeaderComponent Institute="@institute" Text="PLANOS PEDAGÓGICOS DE CURSO" />
+        <PageHeaderComponent Institute="@institute" Text="PLANOS PEDAGÓGICOS DE CURSO" />
 
-    <article class="content px-4">
-        <table class="table table-sm" cellpadding="1" cellspacing="1">
-            <thead>
-                <tr>
-                    <td align="center" colspan="4">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td align="center" colspan="2">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Criador" Filter="@createdByFilter" Waiting="@waiting" OnTextChange="@OnCreatedByChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td align="center" colspan="2">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Modificador" Filter="@lastModifiedByFilter" Waiting="@waiting" OnTextChange="@OnLastModifiedByChanged"></ClearableInputTextComponent>
-                    </td>
-                </tr>
-                <!---->
-                <tr>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
-                    </td>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="Created" OnClick="@SortBy" />
-                    </td>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Criado por ..." SortBy="CreatedBy" OnClick="@SortBy" />
-                    </td>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
-                    </td>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Modificado por ..." SortBy="LastModifiedBy" OnClick="@SortBy" />
-                    </td>
-                </tr>
-                <!---->
-            </thead>
-            <tbody>
-                @foreach (var entity in entityList)
-                {
+        <article class="content px-4">
+            <table class="table table-sm" cellpadding="1" cellspacing="1">
+                <thead>
                     <tr>
-                        <td>
-                            <div style="font-size: smaller">
-                                @TextToDisplay(entity.Title, 50)
-                            </div>
+                        <td align="center" colspan="4">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
                         </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
+                        <td align="center" colspan="2">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Criador" Filter="@createdByFilter" Waiting="@waiting" OnTextChange="@OnCreatedByChanged"></ClearableInputTextComponent>
+                        </td>
+                        <td align="center" colspan="2">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Modificador" Filter="@lastModifiedByFilter" Waiting="@waiting" OnTextChange="@OnLastModifiedByChanged"></ClearableInputTextComponent>
+                        </td>
+                    </tr>
+                    <!---->
+                    <tr>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
+                        </td>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="Created" OnClick="@SortBy" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Criado por ..." SortBy="CreatedBy" OnClick="@SortBy" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Modificado por ..." SortBy="LastModifiedBy" OnClick="@SortBy" />
+                        </td>
+                    </tr>
+                    <!---->
+                </thead>
+                <tbody>
+                    @foreach (var entity in entityList)
+                    {
+                        <tr>
+                            <td>
+                                <div style="font-size: smaller">
+                                    @TextToDisplay(entity.Title, 50)
+                                </div>
+                            </td>
+                            <td align="right" style="width: 80px;">
+                                <button type="button"
                                     class="btn btn-sm btn-success"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     title="Ver detalhes"
                                     @onclick="@(() => Details(entity))"
                                     style="border: none;">
-                                Detalhes
-                            </button>
-                        </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
+                                    Detalhes
+                                </button>
+                            </td>
+                            <td align="right" style="width: 80px;">
+                                <button type="button"
                                     class="btn btn-sm btn-warning"
                                     data-toggle="tooltip"
                                     data-placement="top"
@@ -97,39 +100,39 @@
                                     title="Editar"
                                     @onclick="@(() => Edit(entity))"
                                     style="border: none;">
-                                Editar
-                            </button>
-                        </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
+                                    Editar
+                                </button>
+                            </td>
+                            <td align="right" style="width: 80px;">
+                                <button type="button"
                                     class="btn btn-sm btn-primary"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     title="Gerar documento Word"
                                     @onclick="@(() => Print(entity))"
                                     style="border: none;">
-                                Word
-                            </button>
-                        </td>
-                        <td align="center">
-                            <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.Created)</div>
-                        </td>
-                        <td align="center">
-                            <div style="font-size: smaller">@entity.CreatedBy</div>
-                        </td>
-                        <td align="center">
-                            <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</div>
-                        </td>
-                        <td align="center">
-                            <div style="font-size: smaller">@entity.LastModifiedBy</div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group" role="group" aria-label="First group">
-                <button type="button"
+                                    Word
+                                </button>
+                            </td>
+                            <td align="center">
+                                <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.Created)</div>
+                            </td>
+                            <td align="center">
+                                <div style="font-size: smaller">@entity.CreatedBy</div>
+                            </td>
+                            <td align="center">
+                                <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</div>
+                            </td>
+                            <td align="center">
+                                <div style="font-size: smaller">@entity.LastModifiedBy</div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                    <button type="button"
                         class="btn btn-outline-primary"
                         data-toggle="tooltip"
                         data-placement="top"
@@ -137,14 +140,15 @@
                         disabled="@waiting"
                         title="Criar um novo documento"
                         @onclick="() => OnCreate()">
-                    <i class="bi bi-plus-lg"></i>
-                    Criar um novo documento
-                </button>
+                        <i class="bi bi-plus-lg"></i>
+                        Criar um novo documento
+                    </button>
+                </div>
+                <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
             </div>
-            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
-        </div>
-    </article>
-</section>
+        </article>
+    </section>
+}
 
 @code {
     [Inject]
@@ -169,7 +173,18 @@
         if (firstRender)
         {
             institute = await InstituteService.GetInstituteById(_userInstituteId);
-            Guard.Against.Null(institute);
+
+            if (institute is null)
+            {
+                var responseMessage = InstituteService.GetHttpResponseMessage();
+
+                _toasterService?.AddToastError(responseMessage?.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => "Você não está autorizado a acessar as informações sobre este instituto",
+                    HttpStatusCode.NotFound => "O instituto em que você foi alocado não foi encontrado",
+                    _ => "Não foi possível acessar as informações sobre o instituto."
+                });
+            }
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -202,11 +217,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
             }
         }
 
@@ -247,11 +258,7 @@
         }
         else
         {
-            var result = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(response);
 
             return null;
         }
@@ -266,7 +273,6 @@
                 int.MaxValue,
                 "Name",
                 true,
-                null,
                 null,
                 null,
                 -1,
@@ -291,11 +297,7 @@
         }
         else
         {
-            var result = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(response);
 
             return null;
         }

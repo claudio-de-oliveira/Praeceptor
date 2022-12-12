@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using PraeceptorCQRS.Contracts.Entities.SocialBody;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces;
 
 public interface ISocialBodyService
 {
+    HttpResponseMessage? GetHttpResponseMessage();
+
     Task<HttpResponseMessage> CreateSocialBodyEntry([FromBody] CreateSocialBodyEntryRequest request);
     Task<int> GetSocialBodyEntriesCountByCourse(Guid courseId);
     Task<List<SocialBodyEntryModel>?> GetSocialBodyEntriesList(Guid courseId);

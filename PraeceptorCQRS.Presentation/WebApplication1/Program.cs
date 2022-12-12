@@ -237,10 +237,3 @@ static string? FindFirstFilePath(string filename)
     return null;
 }
 
-/*
-	 <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-		<PackageReference Include="NETCore.MailKit" Version="2.1.0" />
-	</ItemGroup>
- */

@@ -15,7 +15,6 @@ Content-Type: {{contentType}}
     "Acronym": "Mecatronica",
     "Code": "8135",
     "Name": "Engenharia Mecatrônica",
-    "CEO": "8124",
     "AC": "12",
     "Seasons": "10",
     "MinimumWorkload": "3600",

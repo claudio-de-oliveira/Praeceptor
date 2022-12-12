@@ -9,6 +9,7 @@
 
 @using PraeceptorCQRS.Contracts.Entities.AxisType
 @using PraeceptorCQRS.Contracts.Entities.Class
+@using System.Runtime.CompilerServices;
 
 <div class="modal t-modal primary fade show"
      data-backdrop="static"
@@ -135,11 +136,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
         }
     }
 
@@ -168,5 +165,23 @@
     private Task Ok()
     {
         return OnClose.InvokeAsync(Component);
+    }
+
+    protected async Task OnHttpErrorMessage(
+        HttpResponseMessage message,
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string? caller = null
+        )
+    {
+        var result = await message.Content.ReadAsStringAsync();
+        var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+        if (error is null || error.Title is null)
+        {
+            _toasterService?.AddToastError($"Erro não identifiacdo em {caller}, linha {lineNumber}");
+        }
+        else
+        {
+            _toasterService?.AddToastError(error.Title);
+        }
     }
 }

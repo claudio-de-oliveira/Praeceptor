@@ -143,11 +143,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 entitySelected.Title = previousTitle;
                 entitySelected.Text = previousText;

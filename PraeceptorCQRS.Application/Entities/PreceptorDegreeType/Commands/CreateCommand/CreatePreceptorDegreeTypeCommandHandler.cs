@@ -24,6 +24,7 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Commands
         {
             var entity = Domain.Entities.PreceptorDegreeType.Create(
                 request.Code,
+                request.Code3,
                 request.LatoSensu,
                 request.StrictoSensu,
                 request.InstituteId,

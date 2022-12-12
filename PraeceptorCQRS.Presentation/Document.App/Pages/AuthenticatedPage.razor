@@ -1,5 +1,8 @@
 ﻿@using Document.App.Components.Toaster
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Runtime.CompilerServices;
+@using Microsoft.AspNetCore.Mvc;
+@using Newtonsoft.Json;
 
 @code {
     [CascadingParameter]
@@ -40,5 +43,23 @@
         var nameClaim = principal.Claims.FirstOrDefault(x => x.Type == "name");
         if (nameClaim is not null)
             _userName = nameClaim.Value;
+    }
+
+    protected async Task OnHttpErrorMessage(
+        HttpResponseMessage message,
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string? caller = null
+        )
+    {
+        var result = await message.Content.ReadAsStringAsync();
+        var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
+        if (error is null || error.Title is null)
+        {
+            _toasterService?.AddToastError($"Erro não identifiacdo em {caller}, linha {lineNumber}");
+        }
+        else
+        {
+            _toasterService?.AddToastError(error.Title);
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace PraeceptorCQRS.Domain.Entities
 
         public static PreceptorRoleType Create(
             string code,
+            string code3,
             Guid instituteId,
             DateTime created,
             string? createdBy
@@ -22,6 +23,7 @@ namespace PraeceptorCQRS.Domain.Entities
             => new(Guid.Empty)
             {
                 Code = code,
+                Code3 = code3,
                 InstituteId = instituteId,
                 Created = created,
                 CreatedBy = createdBy,
@@ -38,6 +40,8 @@ namespace PraeceptorCQRS.Domain.Entities
 
         [Required, MaxLength(20)]
         public string Code { get; set; } = null!;
+        [Required, MaxLength(3)]
+        public string Code3 { get; set; } = null!;
 
         public Guid InstituteId { get; set; }
         [Required, ForeignKey("InstituteId")]

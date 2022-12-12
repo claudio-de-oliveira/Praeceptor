@@ -3,6 +3,8 @@
 using PraeceptorCQRS.Contracts.Entities.User;
 using PraeceptorCQRS.Utilities;
 
+using System.Net;
+
 using UserManager.App.Interfaces;
 using UserManager.App.Models;
 

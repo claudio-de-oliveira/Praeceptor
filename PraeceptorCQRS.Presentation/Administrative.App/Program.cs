@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 
 using PraeceptorCQRS.Utilities;
 
@@ -25,6 +26,8 @@ if (path is null)
     Console.WriteLine("O arquivo de configuração \"common.settings.json\" não foi encontrado.\nA aplicação não pode continuar.\n");
     return;
 }
+
+IdentityModelEventSource.ShowPII = true;
 
 builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
 {
@@ -148,31 +151,20 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// await SeedData.InitializeHoldingTable(holdingService);
-// Console.WriteLine("Passou pelas Holdings");
-// await SeedData.InitializeInstituteTable(instituteService);
-// Console.WriteLine("Passou pelos Institutos");
-// await SeedData.InitializeCourseTable(courseService);
-// Console.WriteLine("Passou pelos Cursos");
-// await SeedData.InitializeClassTypeTable(classTypeService);
-// Console.WriteLine("Passou pelos Tipos de Disciplinas");
-// await SeedData.InitializeClassTable(classService);
-// Console.WriteLine("Passou pelas Disciplinas");
-// await SeedData.InitializeAxisTypeTable(axisTypeService);
-// Console.WriteLine("Passou pelos Eixos");
-// await SeedData.InitializeSyllabusTable(componentService);
-// Console.WriteLine("Passou pelos Componentes");
-//
-// await SeedData.InitializePreceptorDegreeTable(preceptorDegreeService);
-// Console.WriteLine("Passou pelas Titulações");
-// await SeedData.InitializePreceptorRegimeTable(preceptorRegimeService);
-// Console.WriteLine("Passou pelos Regimes");
-// await SeedData.InitializePreceptorRoleTable(preceptorRoleService);
-// Console.WriteLine("Passou pelos Papéis dos Docentes");
-// await SeedData.InitializePreceptorTable(preceptorService);
-// Console.WriteLine("Passou pelos Professores");
-// await SeedData.InitializeSocialBodyTable(socialBodyService);
-// Console.WriteLine("Passou pelo Corpo Social");
+// await Initialize(
+//     axisTypeService,
+//     componentService,
+//     classService,
+//     classTypeService,
+//     courseService,
+//     holdingService,
+//     instituteService,
+//     preceptorDegreeService,
+//     preceptorRegimeService,
+//     preceptorRoleService,
+//     preceptorService,
+//     socialBodyService
+//     );
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -221,3 +213,46 @@ static string? FindFirstFilePath(string filename)
 
     return null;
 }
+
+#pragma warning disable CS8321 // A função local foi declarada, mas nunca usada
+static async Task Initialize(
+    IAxisTypeService axisTypeService,
+    IComponentService componentService,
+    IClassService classService,
+    IClassTypeService classTypeService,
+    ICourseService courseService,
+    IHoldingService holdingService,
+    IInstituteService instituteService,
+    IPreceptorDegreeService preceptorDegreeService,
+    IPreceptorRegimeService preceptorRegimeService,
+    IPreceptorRoleService preceptorRoleService,
+    IPreceptorService preceptorService,
+    ISocialBodyService socialBodyService
+    )
+{
+    await SeedData.InitializeHoldingTable(holdingService);
+    Console.WriteLine("Passou pelas Holdings");
+    await SeedData.InitializeInstituteTable(instituteService);
+    Console.WriteLine("Passou pelos Institutos");
+    await SeedData.InitializeCourseTable(courseService);
+    Console.WriteLine("Passou pelos Cursos");
+    await SeedData.InitializeClassTypeTable(classTypeService);
+    Console.WriteLine("Passou pelos Tipos de Disciplinas");
+    await SeedData.InitializeClassTable(classService);
+    Console.WriteLine("Passou pelas Disciplinas");
+    await SeedData.InitializeAxisTypeTable(axisTypeService);
+    Console.WriteLine("Passou pelos Eixos");
+    await SeedData.InitializeSyllabusTable(componentService);
+    Console.WriteLine("Passou pelos Componentes");
+    await SeedData.InitializePreceptorDegreeTable(preceptorDegreeService);
+    Console.WriteLine("Passou pelas Titulações");
+    await SeedData.InitializePreceptorRegimeTable(preceptorRegimeService);
+    Console.WriteLine("Passou pelos Regimes");
+    await SeedData.InitializePreceptorRoleTable(preceptorRoleService);
+    Console.WriteLine("Passou pelos Papéis dos Docentes");
+    await SeedData.InitializePreceptorTable(preceptorService);
+    Console.WriteLine("Passou pelos Professores");
+    await SeedData.InitializeSocialBodyTable(socialBodyService);
+    Console.WriteLine("Passou pelo Corpo Social");
+}
+#pragma warning restore CS8321 // A função local foi declarada, mas nunca usada

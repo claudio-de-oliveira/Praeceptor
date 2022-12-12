@@ -1,6 +1,5 @@
 using Document.App;
 using Document.App.Components.Toaster;
-using Document.App.Download;
 using Document.App.DownloadFile.DependencyInjection;
 using Document.App.Interfaces;
 using Document.App.Notifiers;

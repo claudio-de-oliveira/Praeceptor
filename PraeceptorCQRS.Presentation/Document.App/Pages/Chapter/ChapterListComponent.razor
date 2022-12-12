@@ -6,6 +6,7 @@
 @using Document.App.Components
 @using Document.App.Dialogs
 @using PraeceptorCQRS.Utilities
+@using System.Net;
 
 @inherits AbstractListPage<IChapterListService>
 @inject NavigationManager navigationManager
@@ -16,67 +17,69 @@
     <EditEntityDialog Title="@previousTitle" Text="@previousText" OnClose="@OnEditEntityDialogClose" />
 }
 
-<section class="p-1">
+@if (institute is not null)
+{
+    <section class="p-1">
 
-    <PageHeaderComponent Institute="@institute" Text="CAPÍTULOS" />
+        <PageHeaderComponent Institute="@institute" Text="CAPÍTULOS" />
 
-    <article class="content px-4">
-        <table class="table table-sm" cellpadding="1" cellspacing="1">
-            <thead>
-                <tr>
-                    <td align="center">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td align="center" colspan="3">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Texto" Filter="@textFilter" Waiting="@waiting" OnTextChange="@OnTextChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <!---->
-                <tr>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
-                    </td>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
-                    </td>
-                </tr>
-                <!---->
-            </thead>
-            <tbody>
-                @foreach (var entity in entityList)
-                {
+        <article class="content px-4">
+            <table class="table table-sm" cellpadding="1" cellspacing="1">
+                <thead>
                     <tr>
-                        <td>
-                            <div style="font-size: smaller">
-                                @TextToDisplay(entity.Title, 50)
-                            </div>
+                        <td align="center">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
                         </td>
-                        <td>
-                            <div style="font-size: smaller">
-                                @TextToDisplay(entity.Text)
-                            </div>
+                        <td align="center" colspan="3">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Texto" Filter="@textFilter" Waiting="@waiting" OnTextChange="@OnTextChanged"></ClearableInputTextComponent>
                         </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <!---->
+                    <tr>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Modificação" SortBy="LastModified" OnClick="@SortBy" />
+                        </td>
+                    </tr>
+                    <!---->
+                </thead>
+                <tbody>
+                    @foreach (var entity in entityList)
+                    {
+                        <tr>
+                            <td>
+                                <div style="font-size: smaller">
+                                    @TextToDisplay(entity.Title, 50)
+                                </div>
+                            </td>
+                            <td>
+                                <div style="font-size: smaller">
+                                    @TextToDisplay(entity.Text)
+                                </div>
+                            </td>
+                            <td align="right" style="width: 80px;">
+                                <button type="button"
                                 class="btn btn-sm btn-success"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Ver detalhes"
                                 @onclick="@(() => Details(entity))"
                                 style="border: none;">
-                                Detalhes
-                            </button>
-                        </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
+                                    Detalhes
+                                </button>
+                            </td>
+                            <td align="right" style="width: 80px;">
+                                <button type="button"
                                     class="btn btn-sm btn-warning"
                                     data-toggle="tooltip"
                                     data-placement="top"
@@ -85,17 +88,17 @@
                                     title="Editar"
                                     @onclick="@(() => Edit(entity))"
                                     style="border: none;">
-                                Editar
-                            </button>
-                        </td>
-                        <td align="center" style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group" role="group" aria-label="First group">
-                <button type="button"
+                                    Editar
+                                </button>
+                            </td>
+                            <td align="center" style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                    <button type="button"
                         class="btn btn-outline-primary"
                         data-toggle="tooltip"
                         data-placement="top"
@@ -103,14 +106,15 @@
                         disabled="@waiting"
                         title="Criar um novo capítulo"
                         @onclick="() => OnCreate()">
-                    <i class="bi bi-plus-lg"></i>
-                    Criar um novo capítulo
-                </button>
+                        <i class="bi bi-plus-lg"></i>
+                        Criar um novo capítulo
+                    </button>
+                </div>
+                <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
             </div>
-            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
-        </div>
-    </article>
-</section>
+        </article>
+    </section>
+}
 
 @code {
     [Inject]
@@ -123,7 +127,18 @@
         if (firstRender)
         {
             institute = await InstituteService.GetInstituteById(_userInstituteId);
-            Guard.Against.Null(institute);
+
+            if (institute is null)
+            {
+                var responseMessage = InstituteService.GetHttpResponseMessage();
+
+                _toasterService?.AddToastError(responseMessage?.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => "Você não está autorizado a acessar as informações sobre este instituto",
+                    HttpStatusCode.NotFound => "O instituto em que você foi alocado não foi encontrado",
+                    _ => "Não foi possível acessar as informações sobre o instituto."
+                });
+            }
         }
 
         await base.OnAfterRenderAsync(firstRender);

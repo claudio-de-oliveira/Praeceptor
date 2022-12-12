@@ -2,10 +2,14 @@
 
 using PraeceptorCQRS.Contracts.Entities.PreceptorRoleType;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces;
 
 public interface IPreceptorRoleService
 {
+    HttpResponseMessage? GetHttpResponseMessage();
+
     Task<int> GetPreceptorRoleTypeCount(Guid instituteId);
     Task<HttpResponseMessage> PostPage(GetPreceptorRoleTypePageRequest request);
     Task<PreceptorRoleTypeModel?> GetPreceptorRoleTypeById(Guid id);

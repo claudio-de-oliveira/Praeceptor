@@ -9,6 +9,7 @@
 @using PraeceptorCQRS.Contracts.Entities.Course
 @using Administrative.App.Components
 @using Administrative.App.Dialogs
+@using System.Runtime.CompilerServices;
 
 @implements IDisposable
 
@@ -254,11 +255,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
         }
         waiting = false;
     }
@@ -299,11 +296,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
         }
         waiting = false;
 
@@ -399,11 +392,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 entitySelected.Code = previousCode;
                 entitySelected.Name = previousName;
@@ -422,29 +411,29 @@
     }
 
 #pragma warning disable CS8602
-    protected async Task OnCodeChanged(ChangeEventArgs args)
+    protected async Task OnCodeChanged(string? text)
     {
-        codeFilter = args.Value.ToString();
+        codeFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnNameChanged(ChangeEventArgs args)
+    protected async Task OnNameChanged(string? text)
     {
-        nameFilter = args.Value.ToString();
+        nameFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnPracticeChanged(ChangeEventArgs args)
+    protected async Task OnPracticeChanged(string? text)
     {
-        practiceFilter = args.Value.ToString();
+        practiceFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnTheoryChanged(ChangeEventArgs args)
+    protected async Task OnTheoryChanged(string? text)
     {
-        theoryFilter = args.Value.ToString();
+        theoryFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnPRChanged(ChangeEventArgs args)
+    protected async Task OnPRChanged(string? text)
     {
-        prFilter = args.Value.ToString();
+        prFilter = text;
         await PageRequest(0);
     }
     protected async Task OnTypeChanged(ChangeEventArgs args)

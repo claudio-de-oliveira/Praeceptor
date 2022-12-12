@@ -2,10 +2,14 @@
 
 using PraeceptorCQRS.Contracts.Entities.Component;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces
 {
     public interface IComponentService
     {
+        HttpResponseMessage? GetHttpResponseMessage();
+
         Task<HttpResponseMessage> CreateComponent(CreateComponentRequest request);
         Task<HttpResponseMessage> UpdateComponent(UpdateComponentRequest request);
         Task<ComponentModel?> GetComponentByCourseAndCurriculumAndClass(Guid courseId, int curriculum, Guid classId);

@@ -4,6 +4,7 @@ namespace PraeceptorCQRS.Contracts.Entities.PreceptorRegimeType
         Guid Id,
 
         string Code,
+        string Code3,
         Guid InstituteId,
 
         DateTime Created,

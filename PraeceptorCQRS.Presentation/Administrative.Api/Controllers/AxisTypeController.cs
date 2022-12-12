@@ -54,7 +54,7 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
             ErrorOr<AxisTypePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<AxisTypeResponse>>(result/*.Page*/)),
+                result => Ok(_mapper.Map<PageResponse<AxisTypeResponse>>(result)),
                 errors => Problem(errors)
                 );
         }
@@ -111,12 +111,12 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreateAxisType([FromBody] CreateAxisTypeRequest request)
         {
-            // var command = _mapper.Map<CreateAxisTypeCommand>(request);
-            var command = new CreateAxisTypeCommand(
-                request.Code,
-                request.Code3,
-                request.InstituteId
-                );
+            var command = _mapper.Map<CreateAxisTypeCommand>(request);
+            // var command = new CreateAxisTypeCommand(
+            //     request.Code,
+            //     request.Code3,
+            //     request.InstituteId
+            //     );
 
             ErrorOr<AxisTypeResult> result = await _mediator.Send(command);
 

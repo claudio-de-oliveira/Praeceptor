@@ -122,13 +122,14 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreatePreceptorDegreeType([FromBody] CreatePreceptorDegreeTypeRequest request)
         {
-            // var command = _mapper.Map<CreatePreceptorDegreeTypeCommand>(request);
-            var command = new CreatePreceptorDegreeTypeCommand(
-                request.Code,
-                request.LatoSensu,
-                request.StrictoSensu,
-                request.InstituteId
-                );
+            var command = _mapper.Map<CreatePreceptorDegreeTypeCommand>(request);
+            // var command = new CreatePreceptorDegreeTypeCommand(
+            //     request.Code,
+            //     request.Code3,
+            //     request.LatoSensu,
+            //     request.StrictoSensu,
+            //     request.InstituteId
+            //     );
 
             ErrorOr<PreceptorDegreeTypeResult> result = await _mediator.Send(command);
 

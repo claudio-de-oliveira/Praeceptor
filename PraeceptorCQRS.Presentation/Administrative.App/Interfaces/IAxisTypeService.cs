@@ -2,10 +2,13 @@
 
 using PraeceptorCQRS.Contracts.Entities.AxisType;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces
 {
     public interface IAxisTypeService
     {
+        HttpResponseMessage? GetHttpResponseMessage();
         Task<int> GetAxisTypeCount(Guid instituteId);
         Task<AxisTypeModel?> GetAxisTypeById(Guid id);
         Task<AxisTypeModel?> GetAxisTypeByCode(Guid instituteId, string code);

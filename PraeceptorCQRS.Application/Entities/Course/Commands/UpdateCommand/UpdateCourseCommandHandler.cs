@@ -29,7 +29,6 @@ namespace PraeceptorCQRS.Application.Entities.Course.Commands
             {
                 Code = entity.Code,
                 Name = request.Name,
-                CEO = request.CEO,
                 AC = request.AC,
                 NumberOfSeasons = request.NumberOfSeasons,
                 MinimumWorkload = request.MinimumWorkload,

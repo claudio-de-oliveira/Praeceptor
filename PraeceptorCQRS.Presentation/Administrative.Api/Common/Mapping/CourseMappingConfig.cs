@@ -24,7 +24,6 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Common.Mapping
                 .MapWith(source => MapCourseResultToCourseResponse(source));
             config.NewConfig<CoursePageResult, PageResponse<CourseResponse>>()
                 .MapWith(source => MapCoursePageResultToCourseResponse(source));
-            // .Map(dest => dest, src => src.Page);
         }
 
         private static PageResponse<CourseResponse> MapCoursePageResultToCourseResponse(CoursePageResult source)
@@ -38,7 +37,6 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Common.Mapping
                         src.Id,
                         src.Code,
                         src.Name,
-                        src.CEO,
                         src.AC,
                         src.NumberOfSeasons,
                         src.MinimumWorkload,
@@ -69,7 +67,6 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Common.Mapping
                 source.Course.Id,
                 source.Course.Code,
                 source.Course.Name,
-                source.Course.CEO,
                 source.Course.AC,
                 source.Course.NumberOfSeasons,
                 source.Course.MinimumWorkload,

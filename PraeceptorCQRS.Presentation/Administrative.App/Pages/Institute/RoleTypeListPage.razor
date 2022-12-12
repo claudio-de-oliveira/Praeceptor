@@ -14,12 +14,13 @@
 <!-- Modal: Editar entidade -->
 @if (EditDialogIsOpen)
 {
-    <EditRoleTypeDialog Code="@previousCode" OnClose="@OnEditDialogClose" />
+    <EditRoleTypeDialog Code="@previousCode" Code3="@previousCode3" OnClose="@OnEditDialogClose" />
 }
 
 <section class="p-1">
     <article class="content px-4">
         <table class="table table-sm" cellpadding="1" cellspacing="1">
+            @*
             <thead>
                 <tr>
                     <td align="center">
@@ -28,11 +29,12 @@
                     <td align="center"></td>
                 </tr>
             </thead>
+            *@
             <tbody>
                 @foreach (var entity in typeList)
                 {
                     <tr>
-                        <td><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Code (@entity.Code3)</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
                                     class="btn btn-sm btn-warning"
@@ -81,6 +83,7 @@
     protected List<PreceptorRoleTypeModel> typeList = new();
     protected PreceptorRoleTypeModel entitySelected = new();
     protected string previousCode = string.Empty;
+    protected string previousCode3 = string.Empty;
 
     private Guid instituteId;
     private InstituteModel? institute;
@@ -156,11 +159,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
 
             typeList = new();
         }
@@ -169,26 +168,27 @@
         StateHasChanged();
     }
 
-    private void OnCodeChanged(ChangeEventArgs args)
-    {
-    }
-    private void OnNameChanged(ChangeEventArgs args)
-    {
-    }
-    private void OnDegreeChanged(ChangeEventArgs args)
-    {
-    }
-    private void OnRegimeChanged(ChangeEventArgs args)
-    {
-    }
-    private void OnRoleChanged(ChangeEventArgs args)
-    {
-    }
+    // private void OnCodeChanged(ChangeEventArgs args)
+    // {
+    // }
+    // private void OnNameChanged(ChangeEventArgs args)
+    // {
+    // }
+    // private void OnDegreeChanged(ChangeEventArgs args)
+    // {
+    // }
+    // private void OnRegimeChanged(ChangeEventArgs args)
+    // {
+    // }
+    // private void OnRoleChanged(ChangeEventArgs args)
+    // {
+    // }
 
     protected void Edit(PreceptorRoleTypeModel entity)
     {
         entitySelected = entity;
         previousCode = entitySelected.Code;
+        previousCode3 = entitySelected.Code3;
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -199,6 +199,7 @@
 
         entitySelected = new PreceptorRoleTypeModel() { InstituteId = instituteId };
         previousCode = "";
+        previousCode3 = "";
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -211,6 +212,7 @@
 
             Guard.Against.Null(entitySelected);
             entitySelected.Code = modifiednewEntity.Code;
+            entitySelected.Code3 = modifiednewEntity.Code3;
             HttpResponseMessage response;
 
             if (created)
@@ -218,6 +220,7 @@
                 response = await typeService.CreatePreceptorRoleType(
                     new CreatePreceptorRoleTypeRequest(
                         entitySelected.Code,
+                        entitySelected.Code3,
                         instituteId
                         )
                     );
@@ -226,7 +229,9 @@
             {
                 response = await typeService.UpdatePreceptorRoleType(
                     new UpdatePreceptorRoleTypeRequest(
-                        entitySelected.Id
+                        entitySelected.Id,
+                        entitySelected.Code,
+                        entitySelected.Code3
                         )
                     );
             }
@@ -236,18 +241,16 @@
                 var result = await response.Content.ReadAsStringAsync();
                 _toasterService?.AddToastSuccess("As modificações foram salvas.");
                 previousCode = entitySelected.Code;
+                previousCode3 = entitySelected.Code3;
 
                 await PageRequest();
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 entitySelected.Code = previousCode;
+                entitySelected.Code3 = previousCode3;
             }
 
             waiting = false;

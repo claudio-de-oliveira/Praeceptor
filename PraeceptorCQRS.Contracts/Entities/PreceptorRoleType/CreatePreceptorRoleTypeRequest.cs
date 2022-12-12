@@ -2,5 +2,6 @@
 
 public record CreatePreceptorRoleTypeRequest(
     string Code,
+    string Code3,
     Guid InstituteId
 );

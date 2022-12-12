@@ -108,6 +108,8 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         {
             var command = _mapper.Map<UpdateClassTypeCommand>(request);
 
+            Console.WriteLine(request.Code3);
+
             ErrorOr<ClassTypeResult> result = await _mediator.Send(command);
 
             return result.Match(
@@ -121,13 +123,14 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreateClassType([FromBody] CreateClassTypeRequest request)
         {
-            // var command = _mapper.Map<CreateClassTypeCommand>(request);
-            var command = new CreateClassTypeCommand(
-                request.Code,
-                request.InstituteId,
-                request.IsRemote,
-                request.DurationInMinutes
-                );
+            var command = _mapper.Map<CreateClassTypeCommand>(request);
+            // var command = new CreateClassTypeCommand(
+            //     request.Code,
+            //     request.Code3,
+            //     request.InstituteId,
+            //     request.IsRemote,
+            //     request.DurationInMinutes
+            //     );
 
             ErrorOr<ClassTypeResult> result = await _mediator.Send(command);
 

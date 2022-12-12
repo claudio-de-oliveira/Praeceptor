@@ -8,7 +8,6 @@
         bool Ascending,
         string? CodeFilter,
         string? NameFilter,
-        Guid? CEOFilter,
         int ACFilter,
         int SeasonsFilter,
         int MinimumWorkloadFilter,

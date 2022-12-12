@@ -14,7 +14,7 @@
 <!-- Modal: Editar entidade -->
 @if (EditDialogIsOpen)
 {
-    <EditDegreeTypeDialog Code="@previousCode" LatoSensu=@previousLatoSensu StrictoSensu=@previousStrictoSensu OnClose="@OnEditDialogClose" />
+    <EditDegreeTypeDialog Code="@previousCode" Code3="@previousCode3" LatoSensu=@previousLatoSensu StrictoSensu=@previousStrictoSensu OnClose="@OnEditDialogClose" />
 }
 
 <section class="p-1">
@@ -24,7 +24,7 @@
                 @foreach (var entity in typeList)
                 {
                     <tr>
-                        <td><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Code (@entity.Code3)</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
                                     class="btn btn-sm btn-warning"
@@ -74,6 +74,7 @@
     protected PreceptorDegreeTypeModel entitySelected = new();
 
     protected string previousCode = string.Empty;
+    protected string previousCode3 = string.Empty;
     protected bool previousLatoSensu = false;
     protected bool previousStrictoSensu = false;
 
@@ -146,14 +147,12 @@
             var tmp = JsonConvert.DeserializeObject<PageOfPreceptorDegreeTypeModel>(await message.Content.ReadAsStringAsync());
             Guard.Against.Null(tmp);
             typeList = tmp.Entities;
+            // typeList = new Dictionary<Guid, PreceptorDegreeTypeModel>();
+            // tmp.Entities.ForEach(o => typeList.Add(o.Id, o));
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
         }
         waiting = false;
 
@@ -164,6 +163,7 @@
     {
         entitySelected = entity;
         previousCode = entitySelected.Code;
+        previousCode3 = entitySelected.Code3;
         previousLatoSensu = entitySelected.LatoSensu;
         previousStrictoSensu = entitySelected.StrictoSensu;
         EditDialogIsOpen = true;
@@ -176,6 +176,7 @@
 
         entitySelected = new PreceptorDegreeTypeModel() { InstituteId = instituteId };
         previousCode = "";
+        previousCode3 = "";
         previousLatoSensu = false;
         previousStrictoSensu = false;
         EditDialogIsOpen = true;
@@ -190,8 +191,9 @@
 
             Guard.Against.Null(entitySelected);
             entitySelected.Code = modifiednewEntity.Code;
-            previousLatoSensu = modifiednewEntity.LatoSensu;
-            previousStrictoSensu = modifiednewEntity.StrictoSensu;
+            entitySelected.Code3 = modifiednewEntity.Code3;
+            entitySelected.LatoSensu = modifiednewEntity.LatoSensu;
+            entitySelected.StrictoSensu = modifiednewEntity.StrictoSensu;
             HttpResponseMessage response;
 
             if (created)
@@ -199,6 +201,7 @@
                 response = await typeService.CreatePreceptorDegreeType(
                     new CreatePreceptorDegreeTypeRequest(
                         entitySelected.Code,
+                        entitySelected.Code3,
                         entitySelected.LatoSensu,
                         entitySelected.StrictoSensu,
                         instituteId
@@ -209,7 +212,11 @@
             {
                 response = await typeService.UpdatePreceptorDegreeType(
                     new UpdatePreceptorDegreeTypeRequest(
-                        entitySelected.Id
+                        entitySelected.Id,
+                        entitySelected.Code,
+                        entitySelected.Code3,
+                        entitySelected.LatoSensu,
+                        entitySelected.StrictoSensu
                         )
                     );
             }
@@ -219,6 +226,7 @@
                 var result = await response.Content.ReadAsStringAsync();
                 _toasterService?.AddToastSuccess("As modificações foram salvas.");
                 previousCode = entitySelected.Code;
+                previousCode3 = entitySelected.Code3;
                 previousLatoSensu = entitySelected.LatoSensu;
                 previousStrictoSensu = entitySelected.StrictoSensu;
 
@@ -226,13 +234,10 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 entitySelected.Code = previousCode;
+                entitySelected.Code3 = previousCode3;
                 entitySelected.LatoSensu = previousLatoSensu;
                 entitySelected.StrictoSensu = previousStrictoSensu;
             }

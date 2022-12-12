@@ -5,7 +5,6 @@ namespace PraeceptorCQRS.Contracts.Entities.Course
 
         string Code,
         string Name,
-        Guid? CEO,
         int AC,
         int NumberOfSeasons,
         int MinimumWorkload,

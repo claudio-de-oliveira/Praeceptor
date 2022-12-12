@@ -3,12 +3,12 @@ using ErrorOr;
 using MediatR;
 
 using PraeceptorCQRS.Application.Entities.PreceptorRegimeType.Common;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Application.Entities.PreceptorRegimeType.Commands
 {
     public record CreatePreceptorRegimeTypeCommand(
         string Code,
+        string Code3,
         Guid InstituteId
         ) : IRequest<ErrorOr<PreceptorRegimeTypeResult>>;
 }

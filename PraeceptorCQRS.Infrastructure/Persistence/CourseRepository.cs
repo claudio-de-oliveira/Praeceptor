@@ -49,7 +49,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             bool ascending,
             string? codeFilter,
             string? nameFilter,
-            Guid? CEOFilter,
             int? AC,
             int? NumberOfSeasons,
             int? MinimumWorkload,
@@ -63,7 +62,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                 instituteId,
                 codeFilter,
                 nameFilter,
-                CEOFilter,
                 AC,
                 NumberOfSeasons,
                 MinimumWorkload,
@@ -105,7 +103,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             Guid instituteId,
             string? codeFilter,
             string? nameFilter,
-            Guid? CEOFilter,
             int? AC,
             int? NumberOfSeasons,
             int? MinimumWorkload,
@@ -139,19 +136,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
                     isFiltered = true;
 
                     if (Global.MatchStringFilter(nameFilter, entity.Name))
-                    {
-                        if (filteredList.Find(o => o.Id == entity.Id) is null)
-                        {
-                            filteredList.Add(entity);
-                        }
-                        continue;
-                    }
-                }
-                if (CEOFilter is not null && entity.CEO != Guid.Empty)
-                {
-                    isFiltered = true;
-
-                    if (Global.MatchGuidFilter(CEOFilter, entity.CEO))
                     {
                         if (filteredList.Find(o => o.Id == entity.Id) is null)
                         {
@@ -265,7 +249,6 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             {
                 "Code" => Global.SortList(list, x => x.Code, ascending),
                 "Name" => Global.SortList(list, x => x.Name, ascending),
-                "CEO" => Global.SortList(list, x => x.CEO, ascending),
                 "AC" => Global.SortList(list, x => x.AC, ascending),
                 "Seasons" => Global.SortList(list, x => x.NumberOfSeasons, ascending),
                 "MinimumWorkload" => Global.SortList(list, x => x.MinimumWorkload, ascending),

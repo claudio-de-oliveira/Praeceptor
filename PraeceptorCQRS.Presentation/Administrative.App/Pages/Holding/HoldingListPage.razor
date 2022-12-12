@@ -213,11 +213,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
         }
         waiting = false;
 
@@ -234,19 +230,19 @@
     }
 
 #pragma warning disable CS8602
-    protected async Task OnAcronymChanged(ChangeEventArgs args)
+    protected async Task OnAcronymChanged(string? text)
     {
-        acronymFilter = args.Value.ToString();
+        acronymFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnNameChanged(ChangeEventArgs args)
+    protected async Task OnNameChanged(string? text)
     {
-        nameFilter = args.Value.ToString();
+        nameFilter = text;
         await PageRequest(0);
     }
-    protected async Task OnAddressChanged(ChangeEventArgs args)
+    protected async Task OnAddressChanged(string? text)
     {
-        addressFilter = args.Value.ToString();
+        addressFilter = text;
         await PageRequest(0);
     }
     protected async Task OnCreatedChanged(ChangeEventArgs args)
@@ -383,9 +379,12 @@
             else
             {
                 var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                if (error is not null)
+                {
+                    Guard.Against.Null(error);
+                    Guard.Against.Null(error.Title);
+                    _toasterService?.AddToastError(error.Title);
+                }
 
                 entitySelected.Acronym = previousAcronym;
                 entitySelected.Name = previousName;

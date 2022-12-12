@@ -2,10 +2,14 @@
 
 using PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces
 {
     public interface IPreceptorDegreeService
     {
+        HttpResponseMessage? GetHttpResponseMessage();
+
         Task<int> GetPreceptorDegreeTypeCount(Guid instituteId);
         Task<HttpResponseMessage> PostPage(GetPreceptorDegreeTypePageRequest request);
         Task<PreceptorDegreeTypeModel?> GetPreceptorDegreeTypeById(Guid id);

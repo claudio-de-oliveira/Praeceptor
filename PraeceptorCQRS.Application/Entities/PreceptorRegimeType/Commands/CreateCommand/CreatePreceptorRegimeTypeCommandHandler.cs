@@ -22,6 +22,7 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorRegimeType.Commands
         {
             var entity = Domain.Entities.PreceptorRegimeType.Create(
                 request.Code,
+                request.Code3,
                 request.InstituteId,
                 _dateTimeProvider.UtcNow,
                 string.Empty

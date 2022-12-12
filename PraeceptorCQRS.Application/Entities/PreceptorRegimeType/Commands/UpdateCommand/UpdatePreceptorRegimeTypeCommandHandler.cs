@@ -27,7 +27,8 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorRegimeType.Commands
 
             var updated = new Domain.Entities.PreceptorRegimeType(request.Id)
             {
-                Code = entity.Code,
+                Code = request.Code,
+                Code3 = request.Code3,
                 // don't change institute!
                 InstituteId = entity.InstituteId,
                 // ...

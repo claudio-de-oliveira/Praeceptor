@@ -4,6 +4,7 @@ namespace PraeceptorCQRS.Contracts.Entities.PreceptorDegreeType
         Guid Id,
 
         string Code,
+        string Code3,
         bool LatoSensu,
         bool StrictoSensu,
 

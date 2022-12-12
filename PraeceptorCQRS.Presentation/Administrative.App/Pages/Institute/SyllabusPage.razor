@@ -28,6 +28,10 @@
                      Component="@selectedComponent"
                      OnClose="@OnEditClose" />
 }
+@if (CreateCurriculumDialogIsOpen)
+{
+    <CreateCurriculumDialog OnClose="@OnCurriculumClose" />
+}
 
 @if (waiting)
 {
@@ -207,6 +211,22 @@ else
                     </tr>
                 </tfoot>
             </table>
+            <br />
+            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                    <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@(waiting || !CanCreate())"
+                        title="Criar um novo currículo"
+                        @onclick="() => OnCreate()">
+                        <i class="bi bi-plus-slash-minus"></i>
+                        Criar um novo currículo
+                    </button>
+                </div>
+            </div>
         </article>
     </section>
 }
@@ -245,8 +265,9 @@ else
 
     private bool EditDialogIsOpen = false;
     private bool CreateDialogIsOpen = false;
+    private bool CreateCurriculumDialogIsOpen = false;
 
-    public int curriculum { get; set; }
+    public int curriculum;
 
     private bool created = false;
 
@@ -284,9 +305,10 @@ else
             courseModel = result;
 
             var curList = await componentService.GetCurriculumsByCourseId(courseId);
-            Guard.Against.Null(curList);
-
-            curriculumList = curList;
+            if (curList is null)
+                curriculumList = new();
+            else
+                curriculumList = curList;
 
             seasons = new();
 
@@ -300,6 +322,15 @@ else
 
             StateHasChanged();
         }
+    }
+
+    protected override bool CanCreate()
+    { 
+        if (_isInstituteAdmin && _userInstituteId == InstituteId)
+            return true;
+        if (_isHoldingAdmin)
+            return true;
+        return base.CanCreate();
     }
 
     protected override bool CanEdit(Entity? course)
@@ -317,6 +348,7 @@ else
 
     private async Task InitializeSeasons()
     {
+        seasons = new();
         for (int season = 0; season < courseModel.NumberOfSeasons; season++)
             seasons.Add(await InitializeSeason(courseId, curriculum, season));
     }
@@ -357,17 +389,20 @@ else
         {
             if (tmp != curriculum)
             {
+                curriculum = tmp;
                 waiting = true;
                 await InitializeSeasons();
                 waiting = false;
+
+                StateHasChanged();
             }
         }
     }
 
     private async Task Delete(ComponentModel component)
     {
-        Guard.Against.Null(Curriculum);
-        var response = await componentService.DeleteComponent(courseId, (int)Curriculum, component.ClassId);
+        Guard.Against.Null(curriculum);
+        var response = await componentService.DeleteComponent(courseId, (int)curriculum, component.ClassId);
 
         if (response.IsSuccessStatusCode)
         {
@@ -379,12 +414,40 @@ else
         }
         else
         {
-            var result = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(response);
         }
+    }
+
+    protected async Task OnCreate()
+    {
+        await Task.CompletedTask;
+        CreateCurriculumDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    private async Task OnCurriculumClose(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        if (int.TryParse(text, out curriculum))
+        {
+            await Task.CompletedTask;
+            var model = new CurriculumModel(curriculum);
+            if (curriculumList.FirstOrDefault(o => o.Curriculum == curriculum) is not null)
+            {
+                _toasterService?.AddToastWarning($"O currículo {curriculum} já existe.");
+            }
+            else
+            {
+                curriculumList.Add(new CurriculumModel(curriculum));
+                seasons = new();
+                for (int season = 0; season < courseModel.NumberOfSeasons; season++)
+                    seasons.Add(new SeasonModel() { Order = season });
+            }
+        }
+
+        CreateCurriculumDialogIsOpen = false;
     }
 
     private async Task OnEditClose(ComponentModel? component)
@@ -400,7 +463,7 @@ else
                 response = await componentService.CreateComponent(
                     new CreateComponentRequest(
                         courseId,
-                        Curriculum ?? 0,
+                        curriculum,
                         component.Season,
                         component.ClassId,
                         component.AxisTypeId,
@@ -413,7 +476,7 @@ else
                 response = await componentService.UpdateComponent(
                     new UpdateComponentRequest(
                         courseId,
-                        Curriculum ?? 0,
+                        curriculum,
                         component.Season,
                         component.ClassId,
                         component.AxisTypeId,
@@ -450,11 +513,7 @@ else
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
             }
 
             waiting = false;

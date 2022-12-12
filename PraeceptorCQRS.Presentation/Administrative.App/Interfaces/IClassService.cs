@@ -2,10 +2,14 @@
 
 using PraeceptorCQRS.Contracts.Entities.Class;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces;
 
 public interface IClassService
 {
+    HttpResponseMessage? GetHttpResponseMessage();
+
     Task<int> GetClassCount(Guid instituteId);
 
     Task<HttpResponseMessage> PostPage(GetClassPageRequest request);

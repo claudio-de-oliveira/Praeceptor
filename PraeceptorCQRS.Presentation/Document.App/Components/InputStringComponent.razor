@@ -1,9 +1,9 @@
 ﻿@using System.Diagnostics.CodeAnalysis;
 
-<input type="text" class="form-control"
+<input type="text" 
+       class="form-control"
        @onchange="@OnChange"
-       @onkeypress="@KeyPressHandler"
-       @onkeypress:preventDefault
+       @onkeypress="@KeyPressHandler" @onkeypress:preventDefault
        style="background-color:aliceblue; border:none" />
 
 @code {

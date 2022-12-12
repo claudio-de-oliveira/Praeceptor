@@ -1,10 +1,11 @@
 ﻿@using Administrative.App.Models
 
 <div class="input-group input-group-sm mb-3">
-
-    <input class="form-control form-control-sm" type="text" value="@ComponentFilter"
-           bind-value:event="onchange"
+    <input class="form-control form-control-sm" 
+           type="text" 
+           value="@ComponentFilter"
            @onchange="@OnChange"
+           @onkeydown="KeyWasPressed" @onkeypress:preventDefault="preventDefault"
            style="font-size:small; background-color:aliceblue;">
     <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
             type="button"
@@ -42,8 +43,18 @@
     [Parameter]
     public string ComponentFilter { get; set; } = default!;
 
+    bool preventDefault = false;
+
     private void OnChange(ChangeEventArgs args)
     {
         OnFilterChange.InvokeAsync(args);
+    }
+
+    private void KeyWasPressed(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+            preventDefault = true;
+        else
+            preventDefault = false;
     }
 }

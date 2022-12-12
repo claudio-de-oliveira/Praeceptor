@@ -27,6 +27,7 @@ namespace PraeceptorCQRS.Application.Entities.ClassType.Commands
 
             var entity = Domain.Entities.ClassType.Create(
                 request.Code,
+                request.Code3,
                 request.InstituteId,
                 request.IsRemote,
                 request.DurationInMinutes,

@@ -373,6 +373,7 @@
             {
                 var result = await response.Content.ReadAsStringAsync();
                 _toasterService?.AddToastError(result);
+
                 entitySelected.UserName = previousUserName;
                 entitySelected.Email = previousEmail;
                 entitySelected.PasswordHash = previousPasswordHash;

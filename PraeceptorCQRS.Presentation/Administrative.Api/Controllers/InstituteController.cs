@@ -48,25 +48,11 @@ namespace PraeceptorCQRS.Presentation.Administrative.Api.Controllers
         public async Task<IActionResult> GetInstitutePage([FromBody] GetInstitutePageRequest request)
         {
             var query = _mapper.Map<GetInstitutePageQuery>(request);
-            // var query = new GetInstitutePageQuery(
-            //     request.HoldingId,
-            //     request.Start,
-            //     request.Count,
-            //     request.Sort,
-            //     request.Ascending,
-            //     request.AcronymFilter,
-            //     request.NameFilter,
-            //     request.AddressFilter,
-            //     request.CreatedByFilter,
-            //     request.CreatedFilter,
-            //     request.LastModifiedFilter,
-            //     request.LastModifiedByFilter
-            //     );
 
             ErrorOr<InstitutePageResult> result = await _mediator.Send(query);
 
             return result.Match(
-                result => Ok(_mapper.Map<PageResponse<InstituteResponse>>(result/*.Page*/)),
+                result => Ok(_mapper.Map<PageResponse<InstituteResponse>>(result)),
                 errors => Problem(errors)
                 );
         }

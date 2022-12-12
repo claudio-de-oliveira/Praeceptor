@@ -15,6 +15,7 @@ namespace PraeceptorCQRS.Domain.Entities
 
         public static ClassType Create(
             string code,
+            string code3,
             Guid instituteId,
             bool isRemote,
             int durationInMinutes,
@@ -24,6 +25,7 @@ namespace PraeceptorCQRS.Domain.Entities
             => new(Guid.Empty)
             {
                 Code = code,
+                Code3 = code3,
                 InstituteId = instituteId,
                 IsRemote = isRemote,
                 DurationInMinutes = durationInMinutes,
@@ -42,6 +44,8 @@ namespace PraeceptorCQRS.Domain.Entities
 
         [Required, MaxLength(20)]
         public string Code { get; set; } = null!;
+        [Required, MaxLength(3)]
+        public string Code3 { get; set; } = null!;
 
         public bool IsRemote { get; set; }
         public bool IsTCC { get; set; }

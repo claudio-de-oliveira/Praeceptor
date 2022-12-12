@@ -24,7 +24,6 @@ namespace Document.App.SeedData.Variables
             GroupValueModel? mecGroupValue;
             VariableModel? address;
             VariableModel? phone;
-            VariableModel? ceo;
 
             if (!exist)
             {
@@ -34,20 +33,16 @@ namespace Document.App.SeedData.Variables
                 Guard.Against.Null(address);
                 phone = await CreateVariable(variableService, group.Id, "TELEFONE");
                 Guard.Against.Null(phone);
-                ceo = await CreateVariable(variableService, group.Id, "CEO");
-                Guard.Against.Null(ceo);
 
                 setGroupValue = await CreateGroupValue(groupValueService, group.Id, "SET");
                 Guard.Against.Null(setGroupValue);
                 await CreateVariableValue(variableValueService, setGroupValue.Id, phone.Id, "+55 (79) 3218 2226");
                 await CreateVariableValue(variableValueService, setGroupValue.Id, address.Id, "Av. Murilo Dantas, 300 - Farolândia 49032-490 Aracaju - Sergipe - Brasil");
-                await CreateVariableValue(variableValueService, setGroupValue.Id, ceo.Id, "Claudio de Oliveira");
 
                 mecGroupValue = await CreateGroupValue(groupValueService, group.Id, "MEC");
                 Guard.Against.Null(mecGroupValue);
                 await CreateVariableValue(variableValueService, mecGroupValue.Id, phone.Id, "");
                 await CreateVariableValue(variableValueService, mecGroupValue.Id, address.Id, "Esplanada dos Ministérios Ed. Sede e Anexos, BL L - Brasília, DF, 70047-900");
-                await CreateVariableValue(variableValueService, mecGroupValue.Id, ceo.Id, "Victor Godoy");
             }
         }
 

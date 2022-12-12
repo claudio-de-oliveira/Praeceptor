@@ -15,6 +15,7 @@ namespace PraeceptorCQRS.Domain.Entities
 
         public static PreceptorDegreeType Create(
             string code,
+            string code3,
             bool latoSensu,
             bool strictoSensu,
             Guid instituteId,
@@ -24,6 +25,7 @@ namespace PraeceptorCQRS.Domain.Entities
             => new(Guid.Empty)
             {
                 Code = code,
+                Code3 = code3,
                 StrictoSensu = strictoSensu,
                 LatoSensu = latoSensu,
                 InstituteId = instituteId,
@@ -42,6 +44,8 @@ namespace PraeceptorCQRS.Domain.Entities
 
         [Required, MaxLength(20)]
         public string Code { get; set; } = null!;
+        [Required, MaxLength(3)]
+        public string Code3 { get; set; } = null!;
 
         public bool StrictoSensu { get; set; }
         public bool LatoSensu { get; set; }

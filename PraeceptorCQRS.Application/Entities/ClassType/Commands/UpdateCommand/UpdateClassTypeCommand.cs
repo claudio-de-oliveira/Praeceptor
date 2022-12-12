@@ -7,7 +7,9 @@ using PraeceptorCQRS.Application.Entities.ClassType.Common;
 namespace PraeceptorCQRS.Application.Entities.ClassType.Commands
 {
     public record UpdateClassTypeCommand(
-        Guid Id
+        Guid Id,
+        string Code,
+        string Code3
         ) : IRequest<ErrorOr<ClassTypeResult>>;
 }
 

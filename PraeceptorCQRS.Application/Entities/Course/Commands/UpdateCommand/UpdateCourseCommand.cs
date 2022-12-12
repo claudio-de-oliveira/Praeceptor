@@ -9,7 +9,6 @@ namespace PraeceptorCQRS.Application.Entities.Course.Commands
     public record UpdateCourseCommand(
         Guid Id,
         string Name,
-        Guid? CEO,
         int AC,
         int NumberOfSeasons,
         int MinimumWorkload,

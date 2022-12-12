@@ -13,7 +13,7 @@
 <!-- Modal: Editar entidade -->
 @if (EditDialogIsOpen)
 {
-    <EditClassTypeDialog Code="@previousCode" OnClose="@OnEditDialogClose" />
+    <EditClassTypeDialog Code="@previousCode" Code3="@previousCode3" OnClose="@OnEditDialogClose" />
 }
 
 <section class="p-1">
@@ -23,7 +23,7 @@
                 @foreach (var entity in typeList)
                 {
                     <tr>
-                        <td><div style="font-size: smaller">@entity.Code</div></td>
+                        <td><div style="font-size: smaller">@entity.Code (@entity.Code3)</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
                                     class="btn btn-sm btn-warning"
@@ -32,7 +32,7 @@
                                     data-bs-toggle="modal"
                                     data-bs-target="#editClassTypeModal"
                                     title="Editar"
-                                    disabled="@(CanEdit(entity))"
+                                    disabled="@(!CanEdit(entity))"
                                     @onclick="@(() => Edit(entity))"
                                     style="border: none;">
                                 Editar
@@ -72,6 +72,7 @@
     protected List<ClassTypeModel> typeList = new();
     protected ClassTypeModel entitySelected = new();
     protected string previousCode = string.Empty;
+    protected string previousCode3 = string.Empty;
 
     private Guid instituteId;
     private InstituteModel? institute;
@@ -145,11 +146,7 @@
         }
         else
         {
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
         }
         waiting = false;
 
@@ -160,6 +157,7 @@
     {
         entitySelected = entity;
         previousCode = entitySelected.Code;
+        previousCode3 = entitySelected.Code3;
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -170,6 +168,7 @@
 
         entitySelected = new ClassTypeModel() { InstituteId = instituteId };
         previousCode = "";
+        previousCode3 = "";
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -182,6 +181,7 @@
 
             Guard.Against.Null(entitySelected);
             entitySelected.Code = modifiednewEntity.Code;
+            entitySelected.Code3 = modifiednewEntity.Code3;
             HttpResponseMessage response;
 
             if (created)
@@ -189,6 +189,7 @@
                 response = await typeService.CreateClassType(
                     new CreateClassTypeRequest(
                         entitySelected.Code,
+                        entitySelected.Code3,
                         instituteId,
                         entitySelected.IsRemote,
                         entitySelected.DurationInMinutes
@@ -200,6 +201,8 @@
                 response = await typeService.UpdateClassType(
                     new UpdateClassTypeRequest(
                         entitySelected.Id,
+                        entitySelected.Code,
+                        entitySelected.Code3,
                         entitySelected.IsRemote,
                         entitySelected.DurationInMinutes
                         )
@@ -211,18 +214,16 @@
                 var result = await response.Content.ReadAsStringAsync();
                 _toasterService?.AddToastSuccess("As modificações foram salvas.");
                 previousCode = entitySelected.Code;
+                previousCode3 = entitySelected.Code3;
 
                 await PageRequest();
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 entitySelected.Code = previousCode;
+                entitySelected.Code3 = previousCode3;
             }
 
             waiting = false;

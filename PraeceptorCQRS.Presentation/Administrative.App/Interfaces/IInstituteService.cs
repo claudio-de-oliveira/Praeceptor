@@ -2,10 +2,14 @@
 
 using PraeceptorCQRS.Contracts.Entities.Institute;
 
+using System.Net;
+
 namespace Administrative.App.Interfaces;
 
 public interface IInstituteService
 {
+    HttpResponseMessage? GetHttpResponseMessage();
+
     Task<int> GetInstituteCount(Guid holdingId);
     Task<HttpResponseMessage> PostPage(GetInstitutePageRequest request);
     Task<InstituteModel?> GetInstituteById(Guid id);

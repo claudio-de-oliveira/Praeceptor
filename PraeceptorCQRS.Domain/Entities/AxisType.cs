@@ -1,5 +1,4 @@
 ﻿using PraeceptorCQRS.Domain.Base;
-using PraeceptorCQRS.Domain.Values;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,7 +11,6 @@ namespace PraeceptorCQRS.Domain.Entities
             : base(id)
         {
             Components = new HashSet<Component>();
-            /* Nothing more todo */
         }
 
         public static AxisType Create(

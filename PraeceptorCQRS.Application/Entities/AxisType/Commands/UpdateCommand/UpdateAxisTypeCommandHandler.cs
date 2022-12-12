@@ -28,11 +28,10 @@ namespace PraeceptorCQRS.Application.Entities.AxisType.Commands.UpdateCommand
 
             var updated = new Domain.Entities.AxisType(request.Id)
             {
-                Code = entity.Code,
-                Code3 = entity.Code3,
+                Code = request.Code,
+                Code3 = request.Code3,
                 // don't change institute!
                 InstituteId = entity.InstituteId,
-                // ...
                 Created = entity.Created,
                 CreatedBy = entity.CreatedBy,
                 LastModified = _dateTimeProvider.UtcNow,

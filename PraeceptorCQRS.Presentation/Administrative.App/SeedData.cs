@@ -157,8 +157,7 @@ namespace Administrative.App
                 new CreateCourseRequest(
                     "MECATRONICA",
                     "Engenharia Mecatrônica",
-                    null,
-                    200,
+                    12,
                     10,
                     3600,
                     null,
@@ -175,8 +174,7 @@ namespace Administrative.App
                 new CreateCourseRequest(
                     "MECANICA",
                     "Engenharia Mecânica",
-                    null,
-                    200,
+                    12,
                     10,
                     3600,
                     null,
@@ -193,8 +191,7 @@ namespace Administrative.App
                 new CreateCourseRequest(
                     "ELETRICA",
                     "Engenharia Elétrica",
-                    null,
-                    200,
+                    12,
                     10,
                     3600,
                     null,
@@ -212,7 +209,7 @@ namespace Administrative.App
             if (holding is null)
                 return;
 
-            string[] codes = { "NORMAL", "ONLINE", "HIBRIDO", "TCC", "ESTAGIO", "UNDEFINED" };
+            string[] codes = { "NORMAL", "ONLINE", "HIBRIDO", "TCC", "ESTAGIO", "INDEFINIDO" };
 
             foreach (var s in codes)
             {
@@ -224,6 +221,7 @@ namespace Administrative.App
                         service,
                         new CreateClassTypeRequest(
                             s,
+                            "ONL",
                             institutes["UNIT/SE"].Id,
                             true, // IsRemote
                             60 // DurationInMinutes
@@ -233,6 +231,7 @@ namespace Administrative.App
                         service,
                         new CreateClassTypeRequest(
                             s,
+                            "NOR",
                             institutes["UNIT/SE"].Id,
                             false, // IsRemote
                             50 // DurationInMinutes
@@ -242,6 +241,7 @@ namespace Administrative.App
                         service,
                         new CreateClassTypeRequest(
                             s,
+                            "HBR",
                             institutes["UNIT/SE"].Id,
                             false, // IsRemote
                             50 // DurationInMinutes
@@ -251,6 +251,7 @@ namespace Administrative.App
                         service,
                         new CreateClassTypeRequest(
                             s,
+                            "TCC",
                             institutes["UNIT/SE"].Id,
                             false, // IsRemote
                             60 // DurationInMinutes
@@ -260,6 +261,7 @@ namespace Administrative.App
                         service,
                         new CreateClassTypeRequest(
                             s,
+                            "EST",
                             institutes["UNIT/SE"].Id,
                             false, // IsRemote
                             60 // DurationInMinutes
@@ -269,6 +271,7 @@ namespace Administrative.App
                         service,
                         new CreateClassTypeRequest(
                             s,
+                            "IND",
                             institutes["UNIT/SE"].Id,
                             false, // IsRemote
                             60 // DurationInMinutes
@@ -536,6 +539,7 @@ namespace Administrative.App
                     service,
                     new CreatePreceptorDegreeTypeRequest(
                         "GRADUADO",
+                        "GRD",
                         false,
                         false,
                         institutes["UNIT/SE"].Id
@@ -548,6 +552,7 @@ namespace Administrative.App
                     service,
                     new CreatePreceptorDegreeTypeRequest(
                         "ESPECIALISTA",
+                        "ESP",
                         true,
                         false,
                         institutes["UNIT/SE"].Id
@@ -560,6 +565,7 @@ namespace Administrative.App
                     service,
                     new CreatePreceptorDegreeTypeRequest(
                         "MESTRE",
+                        "MST",
                         false,
                         true,
                         institutes["UNIT/SE"].Id
@@ -572,6 +578,7 @@ namespace Administrative.App
                     service,
                     new CreatePreceptorDegreeTypeRequest(
                         "DOUTOR",
+                        "DTR",
                         false,
                         true,
                         institutes["UNIT/SE"].Id
@@ -586,7 +593,7 @@ namespace Administrative.App
             if (holding is null)
                 return;
 
-            string[] codes = { "HORISTA", "PARCIAL", "INTEGRAL", "UNDEFINED" };
+            string[] codes = { "HORISTA", "PARCIAL", "INTEGRAL", "INDEFINIDO" };
 
             foreach (var s in codes)
             {
@@ -596,6 +603,7 @@ namespace Administrative.App
                         service,
                         new CreatePreceptorRegimeTypeRequest(
                             s,
+                            s[..3],
                             institutes["UNIT/SE"].Id
                             )
                         );
@@ -620,6 +628,7 @@ namespace Administrative.App
                         service,
                         new CreatePreceptorRoleTypeRequest(
                             s,
+                            s[..3],
                             institutes["UNIT/SE"].Id
                             )
                         );

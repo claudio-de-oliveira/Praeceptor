@@ -1,0 +1,56 @@
+﻿<div class="modal t-modal primary fade show"
+     data-backdrop="static"
+     aria-labelledby="staticBackdropLabel"
+     aria-hidden="true"
+     aria-modal="true"
+     role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            @*
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Forneça um currículo novo</h5>
+            </div>
+            *@
+            <div class="modal-body">
+                <div class="container">
+                    <div class="form-group purple-border">
+                        <div class="mb-3">
+                            <label for="recipient-curriculum" class="col-form-label">Currículo novo</label>
+                            <input type="text" class="form-control-sm" @bind-value="@_curriculum" id="recipient-curriculum" contenteditable="false" style="background-color:aliceblue;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-dismiss="modal"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editCurriculumModal"
+                        @onclick="@(() => Cancel())">
+                    Ignorar
+                </button>
+                <button type="button" class="btn btn-outline-primary" disabled="@(string.IsNullOrWhiteSpace(_curriculum))" @onclick="@(async () => await Ok())">Salvar currículo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string?> OnClose { get; set; }
+
+    private string _curriculum = default!;
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(null);
+    }
+
+    private Task Ok()
+    {
+        return OnClose.InvokeAsync(_curriculum);
+    }
+}

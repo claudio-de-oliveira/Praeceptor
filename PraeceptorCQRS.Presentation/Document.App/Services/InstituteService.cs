@@ -5,6 +5,8 @@ using IdentityModel.Client;
 
 using PraeceptorCQRS.Utilities;
 
+using System.Net;
+
 using static IdentityModel.OidcConstants;
 
 namespace Document.App.Services

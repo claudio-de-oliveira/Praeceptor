@@ -35,182 +35,184 @@
     <CreateVariableDialog Code="@previousVariableCode" OnClose="@OnCreateVariableDialogClose" />
 }
 
-<section class="p-1">
+@if (institute is not null)
+{
+    <section class="p-1">
 
-    <PageHeaderComponent Institute="@institute" Text="VARIÁVEIS" />
+        <PageHeaderComponent Institute="@institute" Text="VARIÁVEIS" />
 
-    <article class="content px-4">
-        <div>
-            <ClearableInputTextComponent Placeholder="Filtrar por Grupo de variáveis" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
-        </div>
+        <article class="content px-4">
+            <div>
+                <ClearableInputTextComponent Placeholder="Filtrar por Grupo de variáveis" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
+            </div>
 
-        @foreach (var group in entityList)
-        {
-            <ConfirmDialog Title="Atenção"
+            @foreach (var group in entityList)
+            {
+                <ConfirmDialog Title="Atenção"
                        Message=@($"Tem certeza que deseja excluir o grupo de variáveis {group.Code}, seus valores, todas as suas variáveis e valores?")
                        OnConfirmEvent="@OnDeleteGroup"
                        ParameterId="group.Id" />
-            @foreach (var groupValue in group.GroupValues)
-            {
-                <ConfirmDialog Title="Atenção"
+                @foreach (var groupValue in group.GroupValues)
+                {
+                    <ConfirmDialog Title="Atenção"
                        Message=@($"Tem certeza que deseja excluir o valor '{groupValue.Value}' e os valores das variáveis correspondentes?")
                        OnConfirmEvent="@OnDeleteGroupValue"
                        ParameterId="groupValue.Key" />
-            }
-            @foreach (var variable in group.Variables)
-            {
-                <ConfirmDialog Title="Atenção"
+                }
+                @foreach (var variable in group.Variables)
+                {
+                    <ConfirmDialog Title="Atenção"
                        Message=@($"Tem certeza que deseja excluir a variável {variable.Code} e todos os seus valores?")
                        OnConfirmEvent="@OnDeleteVariable"
                        ParameterId="@variable.Id" />
+                }
             }
-        }
 
-        <table class="table table-borderless table-sm" cellpadding="1" cellspacing="1">
-            <thead>
-                <!---->
-                <tr>
-                    <td colspan="6"></td>
-                </tr>
-                <tr>
-                    <th>
-                        <ButtonSortComponent Waiting="@waiting" Text="Código do grupo" SortBy="Code" OnClick="@SortBy" />
-                    </th>
-                    <th class="text-primary" style="font-weight:normal!important;">
-                        Valores do grupo
-                    </th>
-                    <th class="text-primary" style="font-weight:normal!important;">
-                        Variáveis do grupo
-                    </th>
-                    <th class="text-primary" style="font-weight:normal!important;">
-                        Valores das variáveis do grupo
-                    </th>
-                    <th class="text-primary" style="font-weight:normal!important;">
-                        Editar
-                    </th>
-                    <th class="text-primary" style="font-weight:normal!important;">
-                        Excluir
-                    </th>
-                </tr>
-                <tr>
-                    <td colspan="6"></td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var group in entityList)
-                {
-                    <tr style="background-color:darkmagenta">
+            <table class="table table-borderless table-sm" cellpadding="1" cellspacing="1">
+                <thead>
+                    <!---->
+                    <tr>
                         <td colspan="6"></td>
                     </tr>
+                    <tr>
+                        <th>
+                            <ButtonSortComponent Waiting="@waiting" Text="Código do grupo" SortBy="Code" OnClick="@SortBy" />
+                        </th>
+                        <th class="text-primary" style="font-weight:normal!important;">
+                            Valores do grupo
+                        </th>
+                        <th class="text-primary" style="font-weight:normal!important;">
+                            Variáveis do grupo
+                        </th>
+                        <th class="text-primary" style="font-weight:normal!important;">
+                            Valores das variáveis do grupo
+                        </th>
+                        <th class="text-primary" style="font-weight:normal!important;">
+                            Editar
+                        </th>
+                        <th class="text-primary" style="font-weight:normal!important;">
+                            Excluir
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="6"></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var group in entityList)
+                    {
+                        <tr style="background-color:darkmagenta">
+                            <td colspan="6"></td>
+                        </tr>
 
-                    <tr style="background-color:aliceblue">
+                        <tr style="background-color:aliceblue">
 
-                        <td>
-                            <div style="font-weight:600">
-                                @group.Code
-                            </div>
-                        </td>
+                            <td>
+                                <div style="font-weight:600">
+                                    @group.Code
+                                </div>
+                            </td>
 
-                        <td align="left">
-                            <select bind="@group.GroupValueSelectedId" class="form-select form-select-sm" aria-label=".form-select-sm example" @onchange="@((args) => OnGroupValueChange(args))">
-                                @if (group.GroupValueSelectedId == Guid.Empty)
-                                {
-                                    <option value=@Guid.Empty selected>Selecione um valor para o grupo...</option>
-                                }
-                                else
-                                {
-                                    <option value=@Guid.Empty>Selecione um valor para o grupo...</option>
-                                }
-                                @foreach (var pair in group.GroupValues)
-                                {
-                                    @if (group.GroupValueSelectedId == pair.Key)
+                            <td align="left">
+                                <select bind="@group.GroupValueSelectedId" class="form-select form-select-sm" aria-label=".form-select-sm example" @onchange="@((args) => OnGroupValueChange(args))">
+                                    @if (group.GroupValueSelectedId == Guid.Empty)
                                     {
-                                        <option value=@pair.Key selected>@pair.Value</option>
+                                        <option value=@Guid.Empty selected>Selecione um valor para o grupo...</option>
                                     }
                                     else
                                     {
-                                        <option value=@pair.Key>@pair.Value</option>
+                                        <option value=@Guid.Empty>Selecione um valor para o grupo...</option>
                                     }
-                                }
-                            </select>
-                        </td>
-
-                        <td align="left" colspan="2">
-                            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-                                <div class="btn-group" role="group" aria-label="First group">
-                                    <button type="button"
-                                            class="btn btn-sm btn-success"
-                                            data-toggle="tooltip"
-                                            data-placement="top"
-                                            title="Criar novo grupo"
-                                            style="margin:0;"
-                                            @onclick="@(() => OnCreateGroupValue(group))">
-                                        Novo Valor
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-sm btn-info"
-                                            data-toggle="tooltip"
-                                            data-placement="top"
-                                            title="Criar nova variável"
-                                            style="margin:0;"
-                                            @onclick="@(() => OnCreateVariable(group))">
-                                        Nova Variável
-                                    </button>
-                                </div>
-                                <div class="input-group">
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger"
-                                            data-toggle="tooltip"
-                                            data-placement="top"
-                                            title="Excluir valor selecionado"
-                                            style="margin:0;"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
-                                            disabled=@(group.GroupValueSelectedId == Guid.Empty)>
-                                        Excluir Valor
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-
-                        <td>
-                            <!-- Coluna EDITAR -->
-                        </td>
-
-                        <td align="center">
-                            <button type="button"
-                                    class="btn btn-outline-danger"
-                                    data-toggle="tooltip"
-                                    data-placement="top"
-                                    title="Excluir grupo"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#@($"A{group.Id.ToString("N")}")"
-                                    style="border: none;">
-                                <i class="bi small bi-x-lg"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    @foreach (var variable in group.Variables)
-                    {
-                        <tr>
-                            <td colspan="2">
-                                <!-- Célula vazia -->
+                                    @foreach (var pair in group.GroupValues)
+                                    {
+                                        @if (group.GroupValueSelectedId == pair.Key)
+                                        {
+                                            <option value=@pair.Key selected>@pair.Value</option>
+                                        }
+                                        else
+                                        {
+                                            <option value=@pair.Key>@pair.Value</option>
+                                        }
+                                    }
+                                </select>
                             </td>
 
-                            <td>
-                                <div style="font-size: smaller">
-                                    @variable.Code
+                            <td align="left" colspan="2">
+                                <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group" role="group" aria-label="First group">
+                                        <button type="button"
+                                        class="btn btn-sm btn-success"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Criar novo grupo"
+                                        style="margin:0;"
+                                        @onclick="@(() => OnCreateGroupValue(group))">
+                                            Novo Valor
+                                        </button>
+                                        <button type="button"
+                                        class="btn btn-sm btn-info"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Criar nova variável"
+                                        style="margin:0;"
+                                        @onclick="@(() => OnCreateVariable(group))">
+                                            Nova Variável
+                                        </button>
+                                    </div>
+                                    <div class="input-group">
+                                        <button type="button"
+                                        class="btn btn-sm btn-danger"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Excluir valor selecionado"
+                                        style="margin:0;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
+                                        disabled=@(group.GroupValueSelectedId == Guid.Empty)>
+                                            Excluir Valor
+                                        </button>
+                                    </div>
                                 </div>
                             </td>
 
                             <td>
-                                <div style="font-size: smaller">
-                                    <i>@VariableValueOf(group, variable)</i>
-                                </div>
+                                <!-- Coluna EDITAR -->
                             </td>
 
-                            <td align="right" style="width: 80px;">
+                            <td align="center">
                                 <button type="button"
+                                class="btn btn-outline-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Excluir grupo"
+                                data-bs-toggle="modal"
+                                data-bs-target="#@($"A{group.Id.ToString("N")}")"
+                                style="border: none;">
+                                    <i class="bi small bi-x-lg"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @foreach (var variable in group.Variables)
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    <!-- Célula vazia -->
+                                </td>
+
+                                <td>
+                                    <div style="font-size: smaller">
+                                        @variable.Code
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div style="font-size: smaller">
+                                        <i>@VariableValueOf(group, variable)</i>
+                                    </div>
+                                </td>
+
+                                <td align="right" style="width: 80px;">
+                                    <button type="button"
                                 class="btn btn-sm btn-warning"
                                 data-toggle="tooltip"
                                 data-placement="top"
@@ -218,12 +220,12 @@
                                 disabled=@(group.GroupValueSelectedId == Guid.Empty)
                                 @onclick="@(() => OnEditVariableValue(group, variable))"
                                 style="border: none;">
-                                    Editar
-                                </button>
-                            </td>
+                                        Editar
+                                    </button>
+                                </td>
 
-                            <td align="right" style="width: 80px;">
-                                <button type="button"
+                                <td align="right" style="width: 80px;">
+                                    <button type="button"
                                 class="btn btn-sm btn-danger"
                                 data-toggle="tooltip"
                                 data-placement="top"
@@ -231,17 +233,17 @@
                                 data-bs-target="#@($"A{variable.Id.ToString("N")}")"
                                 title="Excluir variável"
                                 style="border: none;">
-                                    Excluir
-                                </button>
-                            </td>
-                        </tr>
+                                        Excluir
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     }
-                }
-            </tbody>
-        </table>
-        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group" role="group" aria-label="First group">
-                <button type="button"
+                </tbody>
+            </table>
+            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                    <button type="button"
                         class="btn btn-outline-primary"
                         data-toggle="tooltip"
                         data-placement="top"
@@ -249,16 +251,17 @@
                         disabled="@waiting"
                         title="Criar um novo grupo de variáveis"
                         @onclick="() => OnCreateGroupDialog()">
-                    <i class="bi bi-plus-lg"></i>
-                    Criar um novo grupo de variáveis
-                </button>
+                        <i class="bi bi-plus-lg"></i>
+                        Criar um novo grupo de variáveis
+                    </button>
+                </div>
+
+                <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+
             </div>
-
-            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
-
-        </div>
-    </article>
-</section>
+        </article>
+    </section>
+}
 
 @code {
     [Inject]
@@ -306,18 +309,27 @@
 
     private InstituteModel? institute;
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             institute = await InstituteService.GetInstituteById(_userInstituteId);
-            Guard.Against.Null(institute);
-            await PageRequest(currentPage);
+
+            if (institute is null)
+            {
+                var responseMessage = InstituteService.GetHttpResponseMessage();
+
+                _toasterService?.AddToastError(responseMessage?.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => "Você não está autorizado a acessar as informações sobre este instituto",
+                    HttpStatusCode.NotFound => "O instituto em que você foi alocado não foi encontrado",
+                    _ => "Não foi possível acessar as informações sobre o instituto."
+                });
+            }
+            else
+            {
+                await PageRequest(currentPage);
+            }
         }
     }
 
@@ -401,9 +413,12 @@
                 {
                     var result = await response1.Content.ReadAsStringAsync();
                     var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                    Guard.Against.Null(error);
-                    Guard.Against.Null(error.Title);
-                    _toasterService?.AddToastError(error.Title);
+                    if (error is not null)
+                    {
+                        Guard.Against.Null(error);
+                        Guard.Against.Null(error.Title);
+                        _toasterService?.AddToastError(error.Title);
+                    }
                 }
 
                 var list = await GroupValueService.GetGroupValuesByGroup(group.Id);
@@ -430,12 +445,8 @@
             entityList = newEntityList;
         }
         else
-        { 
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+        {
+            await OnHttpErrorMessage(message);
         }
         waiting = false;
 
@@ -504,11 +515,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 groupSelected.Code = previousGroupCode;
             }
@@ -576,11 +583,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 variableSelected.Code = previousVariableCode;
             }
@@ -609,11 +612,7 @@
         }
         else
         {
-            var result = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(response);
         }
     }
     #endregion
@@ -649,11 +648,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
             }
         }
 
@@ -733,11 +728,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
             }
         }
 

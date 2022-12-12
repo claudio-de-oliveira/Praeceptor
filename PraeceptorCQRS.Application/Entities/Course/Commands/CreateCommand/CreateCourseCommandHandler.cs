@@ -23,7 +23,6 @@ namespace PraeceptorCQRS.Application.Entities.Course.Commands
             var entity = Domain.Entities.Course.Create(
                 request.Code,
                 request.Name,
-                request.CEO,
                 request.AC,
                 request.NumberOfSeasons,
                 request.MinimumWorkload,

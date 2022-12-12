@@ -7,6 +7,7 @@
 @using Newtonsoft.Json
 @using PraeceptorCQRS.Contracts.Entities.AxisType
 @using Administrative.App.Components
+@using System.Runtime.CompilerServices;
 
 @inherits AuthenticatedPage
 
@@ -23,8 +24,7 @@
                 @foreach (var entity in typeList)
                 {
                     <tr>
-                        <td><div style="font-size: smaller">@entity.Code</div></td>
-                        <td><div style="font-size: smaller">@entity.Code3</div></td>
+                        <td><div style="font-size: smaller">@entity.Code (@entity.Code3)</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
                                     class="btn btn-sm btn-warning"
@@ -140,17 +140,14 @@
 
         if (message.IsSuccessStatusCode)
         {
-            var tmp = JsonConvert.DeserializeObject<PageOfAxisTypeModel>(await message.Content.ReadAsStringAsync());
+            var content = await message.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfAxisTypeModel>(content);
             Guard.Against.Null(tmp);
             typeList = tmp.Entities;
         }
         else 
         { 
-            var result = await message.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-            Guard.Against.Null(error);
-            Guard.Against.Null(error.Title);
-            _toasterService?.AddToastError(error.Title);
+            await OnHttpErrorMessage(message);
 
             typeList = new();
         }
@@ -187,6 +184,7 @@
 
             Guard.Against.Null(entitySelected);
             entitySelected.Code = modifiednewEntity.Code;
+            entitySelected.Code3 = modifiednewEntity.Code3;
             HttpResponseMessage response;
 
             if (created)
@@ -203,7 +201,9 @@
             {
                 response = await axisService.UpdateAxisType(
                     new UpdateAxisTypeRequest(
-                        entitySelected.Id
+                        entitySelected.Id,
+                        entitySelected.Code,
+                        entitySelected.Code3
                         )
                     );
             }
@@ -219,11 +219,7 @@
             }
             else
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var error = JsonConvert.DeserializeObject<ProblemDetails>(result);
-                Guard.Against.Null(error);
-                Guard.Against.Null(error.Title);
-                _toasterService?.AddToastError(error.Title);
+                await OnHttpErrorMessage(response);
 
                 entitySelected.Code = previousCode;
                 entitySelected.Code3 = previousCode3;

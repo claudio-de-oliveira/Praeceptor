@@ -8,6 +8,7 @@ namespace PraeceptorCQRS.Application.Entities.PreceptorDegreeType.Commands
 {
     public record CreatePreceptorDegreeTypeCommand(
         string Code,
+        string Code3,
         bool LatoSensu,
         bool StrictoSensu,
         Guid InstituteId

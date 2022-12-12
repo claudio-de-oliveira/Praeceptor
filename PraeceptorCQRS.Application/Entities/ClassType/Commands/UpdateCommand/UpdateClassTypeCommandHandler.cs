@@ -30,7 +30,8 @@ namespace PraeceptorCQRS.Application.Entities.ClassType.Commands
 
             var updated = new Domain.Entities.ClassType(request.Id)
             {
-                Code = entity.Code,
+                Code = request.Code,
+                Code3 = request.Code3,
                 // don't change institute!
                 InstituteId = entity.InstituteId,
                 // ...
