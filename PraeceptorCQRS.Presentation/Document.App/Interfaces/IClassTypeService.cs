@@ -1,7 +1,5 @@
 ﻿using PraeceptorCQRS.Contracts.Entities.ClassType;
 
-using System.Net;
-
 namespace Document.App.Interfaces;
 
 public interface IClassTypeService

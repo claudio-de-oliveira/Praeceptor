@@ -23,7 +23,7 @@
 {
     <section class="p-1">
 
-        <PageHeaderComponent Institute="@institute" Text="Documentos Word" />
+        <PageHeaderComponent Institute="@institute" Text="DOCUMENTOS WORD" />
 
         <article class="content px-4">
             <table class="table table-sm" cellpadding="1" cellspacing="1">
@@ -90,7 +90,7 @@
                             </td>
                             <td>
                                 <button type="button"
-                                class="btn btn-outline-primary"
+                                class="btn btn-sm btn-primary"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
@@ -98,11 +98,12 @@
                                 title="Baixar o documento"
                                 @onclick="() => OnDownload(entity.Id)">
                                     <i class="bi bi-cloud-download"></i>
+                                    Baixar
                                 </button>
                             </td>
                             <td>
                                 <button type="button"
-                                class="btn btn-outline-danger"
+                                class="btn btn-sm btn-danger"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
@@ -110,7 +111,8 @@
                                 disabled="@waiting"
                                 title="Excluir"
                                 @onclick="() => OnDelete(entity.Id)">
-                                    <i class="bi bi-x-lg"></i>
+                                    <i class="bi bi-x"></i>
+                                    Excluir
                                 </button>
                             </td>
                         </tr>

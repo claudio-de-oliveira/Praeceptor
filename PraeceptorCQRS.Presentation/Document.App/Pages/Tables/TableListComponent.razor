@@ -10,6 +10,7 @@
 @using PraeceptorCQRS.Contracts.Entities.SqlFileStream
 @using PraeceptorCQRS.Utilities
 @using Document.App.Dialogs
+@using System.Net;
 
 @attribute [Authorize]
 
@@ -26,64 +27,69 @@
     </CreateSimpleTableDialog>
 }
 
-<section class="p-1">
-    <article class="content px-4">
-        <table class="table table-sm" cellpadding="1" cellspacing="1">
-            <thead>
-                <tr>
-                    <td align="center">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Código" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td align="center">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td align="center">
-                        <ClearableInputTextComponent Placeholder="Filtrar por Colunas" Filter="@headerFilter" Waiting="@waiting" OnTextChange="@OnHeaderChanged"></ClearableInputTextComponent>
-                    </td>
-                    <td align="center"></td>
-                    <td align="center"></td>
-                </tr>
-                <!---->
-                <tr>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Código" SortBy="Code" OnClick="@SortBy" />
-                    </td>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
-                    </td>
-                    <td align="center">
-                        <ButtonSortComponent Waiting="@waiting" Text="Colunas" SortBy="Columns" OnClick="@SortBy" />
-                    </td>
-                    <th></th>
-                    <th></th>
-                </tr>
-                <!---->
-            </thead>
-            <tbody>
-                @foreach (var entity in tables)
-                {
-                    <ConfirmDialog Title="Atenção"
+@if (institute is not null)
+{
+    <section class="p-1">
+
+        <PageHeaderComponent Institute="@institute" Text="DOCUMENTOS WORD" />
+
+        <article class="content px-4">
+            <table class="table table-sm" cellpadding="1" cellspacing="1">
+                <thead>
+                    <tr>
+                        <td align="center">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Código" Filter="@codeFilter" Waiting="@waiting" OnTextChange="@OnCodeChanged"></ClearableInputTextComponent>
+                        </td>
+                        <td align="center">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Título" Filter="@titleFilter" Waiting="@waiting" OnTextChange="@OnTitleChanged"></ClearableInputTextComponent>
+                        </td>
+                        <td align="center">
+                            <ClearableInputTextComponent Placeholder="Filtrar por Colunas" Filter="@headerFilter" Waiting="@waiting" OnTextChange="@OnHeaderChanged"></ClearableInputTextComponent>
+                        </td>
+                        <td align="center"></td>
+                        <td align="center"></td>
+                    </tr>
+                    <!---->
+                    <tr>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Código" SortBy="Code" OnClick="@SortBy" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
+                        </td>
+                        <td align="center">
+                            <ButtonSortComponent Waiting="@waiting" Text="Colunas" SortBy="Columns" OnClick="@SortBy" />
+                        </td>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <!---->
+                </thead>
+                <tbody>
+                    @foreach (var entity in tables)
+                    {
+                        <ConfirmDialog Title="Atenção"
                                Message=@($"Tem certeza que deseja excluir a tabela \"{entity.Code}\" ?")
                                OnConfirmEvent="@Delete"
                                ParameterId="@entity.Id" />
 
-                    <tr>
-                        <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
-                        <td><div style="font-size: smaller">@entity.Title</div></td>
-                        <td><div style="font-size: smaller">@entity.Header</div></td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
+                        <tr>
+                            <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
+                            <td><div style="font-size: smaller">@entity.Title</div></td>
+                            <td><div style="font-size: smaller">@entity.Header</div></td>
+                            <td align="right" style="width: 80px;">
+                                <button type="button"
                                 class="btn btn-sm btn-success"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Ver detalhes"
                                 @onclick="@(() => Details(entity))"
                                 style="border: none;">
-                                Detalhes
-                            </button>
-                        </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
+                                    Detalhes
+                                </button>
+                            </td>
+                            <td align="right" style="width: 80px;">
+                                <button type="button"
                                 class="btn btn-sm btn-danger"
                                 data-toggle="tooltip"
                                 data-placement="top"
@@ -92,17 +98,18 @@
                                 data-bs-target="#@($"A{entity.Id.ToString("N")}")"
                                 title="Excluir"
                                 style="border: none;">
-                                Excluir
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <br />
-        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group" role="group" aria-label="First group">
-                <button type="button"
+                                    <i class="bi bi-x"></i>
+                                    Excluir
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                    <button type="button"
                         class="btn btn-outline-primary"
                         data-toggle="tooltip"
                         data-placement="top"
@@ -110,18 +117,21 @@
                         disabled="@(waiting || !CanCreate())"
                         title="Criar um novo componente curricular"
                         @onclick="() => OnCreate()">
-                    <i class="bi bi-plus-slash-minus"></i>
-                    Criar um novo componente curricular
-                </button>
+                        <i class="bi bi-plus-slash-minus"></i>
+                        Criar um novo componente curricular
+                    </button>
+                </div>
+                <!--
+                <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+                -->
             </div>
-            <!--
-            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
-            -->
-        </div>
-    </article>
-</section>
+        </article>
+    </section>
+}
 
 @code {
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
     [Inject]
     private ISimpleTableService simpleTableService { get; set; } = default!;
 
@@ -147,20 +157,32 @@
     protected string? lastModifiedFilter = "";
     protected string? lastModifiedByFilter = "";
 
-    // private InstituteModel? institute;
-
     private bool editEntityDialogIsOpen = false;
     protected bool create = false;
+
+    private InstituteModel? institute;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // institute = await InstituteService.GetInstituteById(_userInstituteId);
-            // Guard.Against.Null(institute);
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
 
-            // EditEntityDialogIsOpen = false;
-            await PageRequest(currentPage);
+            if (institute is null)
+            {
+                var responseMessage = InstituteService.GetHttpResponseMessage();
+
+                _toasterService?.AddToastError(responseMessage?.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => "Você não está autorizado a acessar as informações sobre este instituto",
+                    HttpStatusCode.NotFound => "O instituto em que você foi alocado não foi encontrado",
+                    _ => "Não foi possível acessar as informações sobre o instituto."
+                });
+            }
+            else
+            {
+                await PageRequest(currentPage);
+            }
         }
     }
 

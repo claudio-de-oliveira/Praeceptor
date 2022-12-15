@@ -2,8 +2,6 @@
 
 using PraeceptorCQRS.Contracts.Entities.Component;
 
-using System.Net;
-
 namespace Administrative.App.Interfaces
 {
     public interface IComponentService

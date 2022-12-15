@@ -53,7 +53,7 @@ namespace Document.App.Services
         public async Task<VariableModel?> GetVariableByCode(Guid instituteId, string code)
             => await base.GetOne<VariableModel>("get", "code", instituteId, code);
         public async Task<int> GetVariableCountByGroup(Guid groupId)
-            => await base.Count("get", "cout", groupId);
+            => await base.Count("get", "count", groupId);
         public async Task<HttpResponseMessage> GetVariablePage(GetVariablePageRequest request)
             => await base.Create<GetVariablePageRequest>(request, "get", "page");
         public async Task<HttpResponseMessage> DeleteVariable(Guid id)

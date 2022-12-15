@@ -3,7 +3,6 @@
 using MediatR;
 
 using PraeceptorCQRS.Application.Entities.Component.Common;
-using PraeceptorCQRS.Domain.Values;
 
 namespace PraeceptorCQRS.Application.Entities.Component.Commands.CreateCommand
 {
@@ -12,7 +11,7 @@ namespace PraeceptorCQRS.Application.Entities.Component.Commands.CreateCommand
         int Curriculum,
         int Season,
         Guid ClassId,
-        bool Optative,
-        Guid AxisTypeId
+        Guid AxisTypeId,
+        bool Optative
         ) : IRequest<ErrorOr<ComponentResult>>;
 }

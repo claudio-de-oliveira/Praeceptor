@@ -3,7 +3,8 @@ using PraeceptorCQRS.Application.Persistence;
 
 namespace PraeceptorCQRS.Application.Entities.Variable.Commands.CreateCommand
 {
-    public class CreateVariableCommandValidator : AbstractValidator<CreateVariableCommand>
+    public class CreateVariableCommandValidator 
+        : AbstractValidator<CreateVariableCommand>
     {
         public CreateVariableCommandValidator(IGroupRepository groupRepository)
         {

@@ -1,0 +1,88 @@
+﻿# Require https://github.com/madskristensen/RestClientVS
+# ---------------------------------------------------------------
+@hostname=localhost
+@port=7001
+@host=https://{{hostname}}:{{port}}
+@contentType=application/json
+
+@holdingId=b18234fe-34b0-4d28-e03a-08dad959e6f2
+@instituteId=758c52be-159d-402d-767e-08dad959e72f
+@courseId=d05da447-8a33-4c39-1fd7-08dad959e7c8
+
+## G E T #################################################
+GET {{host}}/variableX/get/holding/{{holdingId}}
+Content-Type: {{contentType}}
+
+## G E T #################################################
+GET {{host}}/variableX/get/institute/{{instituteId}}
+Content-Type: {{contentType}}
+
+## G E T #################################################
+GET {{host}}/variableX/get/course/{{courseId}}
+Content-Type: {{contentType}}
+
+## C R E A T E ###########################################
+POST {{host}}/variableX/create/holding
+Content-Type: {{contentType}}
+
+{
+	"groupname": "@Holding",
+	"groupid": "b18234fe-34b0-4d28-e03a-08dad959e6f2",
+	"variablename": "@portaria",
+	"value": "portaria de 2012"
+}
+
+## C R E A T E ###########################################
+POST {{host}}/variableX/update/holding
+Content-Type: {{contentType}}
+
+{
+	"id": "9bcdb769-3412-4ba1-b70b-0d5915d0493b",
+	"value": "portaria de 2014"
+}
+
+## D E L E T E ###########################################
+DELETE {{host}}/variableX/delete/88354c8a-1a9e-4fb3-9892-8e8ccec53445
+Content-Type: {{contentType}}
+
+
+## C R E A T E ###########################################
+POST {{host}}/variableX/create/institute
+Content-Type: {{contentType}}
+
+{
+	"groupname": "@Institute",
+	"groupid": "758c52be-159d-402d-767e-08dad959e72f",
+	"variablename": "@portaria",
+	"value": "portaria de 2012"
+}
+
+## C R E A T E ###########################################
+POST {{host}}/variableX/update/institute
+Content-Type: {{contentType}}
+
+{
+	"id": "3da31e19-39b4-4de9-9c0d-dabaa8b3cb18",
+	"value": "portaria de 2014"
+}
+
+## C R E A T E ###########################################
+POST {{host}}/variableX/create/course
+Content-Type: {{contentType}}
+
+{
+	"groupname": "@curso",
+	"groupid": "d05da447-8a33-4c39-1fd7-08dad959e7c8",
+	"variablename": "@AC",
+	"value": "portaria de 2012"
+}
+
+## C R E A T E ###########################################
+POST {{host}}/variableX/update/institute
+Content-Type: {{contentType}}
+
+{
+	"id": "0b5fa87a-99db-482e-bb3a-689f87f4c8c4",
+	"value": "ATUALIZADO COM SUCESSO"
+}
+

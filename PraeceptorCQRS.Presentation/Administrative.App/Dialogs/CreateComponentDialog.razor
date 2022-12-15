@@ -68,7 +68,11 @@
                             <label for="recipient-axis" class="col-form-label">Eixo</label>
                             <div class="col-9">
                                 <div class="input-group mb-3">
-                                    <select id="recipient-axis" class="form-select" aria-label="Default select example" @onchange="OnAxisTypeChanged">
+                                    <select id="recipient-axis" 
+
+                                            class="form-select" 
+                                            aria-label="Default select example" 
+                                            @onchange="OnAxisTypeChanged">
                                         <option value=""><i>* Selecione *</i></option>
                                         @foreach (var axis in axisTypeList)
                                         {
@@ -81,7 +85,12 @@
                             </div>
                             <div class="col-2">
                                 <div class="form-check">
-                                    <input class="form-check-input" value="@optative" type="checkbox" id="flexCheckChecked" @onchange="@OnChangeOptative" checked=@optative>
+                                    <input class="form-check-input" 
+                                           value="@optative" 
+                                           type="checkbox" 
+                                           id="flexCheckChecked" 
+                                           @onchange="@OnChangeOptative" 
+                                           checked=@optative>
                                     <label class="form-check-label" for="flexCheckChecked">
                                         Optativa
                                     </label>
@@ -180,6 +189,7 @@
         );
         if (message.IsSuccessStatusCode)
         {
+            var content = await message.Content.ReadAsStringAsync();
             var response = JsonConvert.DeserializeObject<PageOfAxisTypeModel>(await message.Content.ReadAsStringAsync());
             Guard.Against.Null(response);
             axisTypeList = response.Entities.Select(o => (AxisTypeModel)o).ToList();

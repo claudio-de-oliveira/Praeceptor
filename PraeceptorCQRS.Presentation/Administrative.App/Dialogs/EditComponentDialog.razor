@@ -11,69 +11,70 @@
 @using PraeceptorCQRS.Contracts.Entities.Class
 @using System.Runtime.CompilerServices;
 
-<div class="modal t-modal primary fade show"
+    <div class="modal t-modal primary fade show"
      data-backdrop="static"
      aria-labelledby="staticBackdropLabel"
      aria-hidden="true"
      aria-modal="true"
      role="dialog">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="form-group purple-border">
-                        <form class="row g-3">
-                            <!-- Não editável -->
-                            <div class="col-12">
-                                <label for="recipient-class" class="col-form-label">Componente curricular</label>
-                                <input id="recipient-class"
+        <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Edite os campos desejáveis</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="form-group purple-border">
+                            <form class="row g-3">
+                                <!-- Não editável -->
+                                <div class="col-12">
+                                    <label for="recipient-class" class="col-form-label">Componente curricular</label>
+                                    <input id="recipient-class"
                                        type="text"
                                        class="form-control"
                                        value="@ComponentName(Component)"
                                        disabled="@true"
                                        contenteditable="@false"
                                        style="background-color:aliceblue;">
-                            </div>
-                            <!-- Editáveis -->
-                            <label for="recipient-axis" class="col-form-label">Eixo</label>
-                            <div class="col-9">
-                                <div class="input-group mb-3">
-                                    <select id="recipient-axis"
+                                </div>
+                                <!-- Editáveis -->
+                                <label for="recipient-axis" class="col-form-label">Eixo</label>
+                                <div class="col-9">
+                                    <div class="input-group mb-3">
+                                        <select id="recipient-axis"
                                             value="@Component?.Axis.Code"
                                             class="form-select"
                                             aria-label="Default select example"
                                             @onchange="OnAxisTypeChanged">
-                                        @foreach (var axis in axisTypeList)
-                                        {
-                                            <option value="@axis.Code">@axis.Code</option>
-                                        }
-                                    </select>
+
+                                            @foreach (var axis in axisTypeList)
+                                            {
+                                                <option value="@axis.Code">@axis.Code</option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-1">
-                            </div>
-                            <div class="col-2">
-                                <div class="form-check">
-                                    <input class="form-check-input"
+                                <div class="col-1">
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input"
                                            value="@Component?.Optative"
                                            type="checkbox" 
                                            id="optativeCheckChecked"
                                            @onchange="OnChangeOptative"
                                            checked=@Component?.Optative>
-                                    <label class="form-check-label" for="optativeCheckChecked">
-                                        Optativa
-                                    </label>
+                                        <label class="form-check-label" for="optativeCheckChecked">
+                                            Optativa
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button"
+                <div class="modal-footer">
+                    <button type="button"
                         class="btn btn-outline-danger"
                         data-bs-dismiss="modal"
                         data-toggle="tooltip"
@@ -82,16 +83,16 @@
                         data-bs-target="#editChapterModal"
                         title="Cuidado: As modificações serão perdidas"
                         @onclick="@(() => Cancel())">
-                    Ignorar
-                </button>
-                <button type="button" class="btn btn-outline-primary"
+                        Ignorar
+                    </button>
+                    <button type="button" class="btn btn-outline-primary"
                         @onclick="@(async () => await Ok())">
-                    Salvar alterações
-                </button>
+                        Salvar alterações
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 @code {
     [Inject]
@@ -130,9 +131,10 @@
         );
         if (message.IsSuccessStatusCode)
         {
-            var list = JsonConvert.DeserializeObject<List<AxisTypeModel>>(await message.Content.ReadAsStringAsync());
-            Guard.Against.Null(list);
-            axisTypeList = list.ToList();
+            var content = await message.Content.ReadAsStringAsync();
+            var response = JsonConvert.DeserializeObject<PageOfAxisTypeModel>(content);
+            Guard.Against.Null(response);
+            axisTypeList = response.Entities.Select(o => (AxisTypeModel)o).ToList();
         }
         else
         {

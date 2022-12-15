@@ -258,7 +258,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
         [Authorize("ReadPolice")]
         public async Task<IActionResult> GetFirstChapterPosition(Guid documentId)
         {
-            var result = await base.GetFirstNodePosition(documentId, documentId);
+            var result = await base.GetFirstNodePosition(documentId);
             return result.Match(
                 result => Ok(_mapper.Map<NodeResponse>(result)),
                 errors => Problem(errors)
@@ -280,7 +280,7 @@ namespace PraeceptorCQRS.Presentation.Document.Api.Controllers
         [Authorize("ReadPolice")]
         public async Task<IActionResult> GetLastChapterPosition(Guid documentId)
         {
-            var result = await base.GetLastNodePosition(documentId, documentId);
+            var result = await base.GetLastNodePosition(documentId);
             return result.Match(
                 result => Ok(_mapper.Map<NodeResponse>(result)),
                 errors => Problem(errors)

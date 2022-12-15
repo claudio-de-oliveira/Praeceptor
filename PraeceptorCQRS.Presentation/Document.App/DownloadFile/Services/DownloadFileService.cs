@@ -1,5 +1,4 @@
-﻿using Document.App.Download;
-using Document.App.DownloadFile.Interfaces;
+﻿using Document.App.DownloadFile.Interfaces;
 using Document.App.DownloadFile.JavaScript;
 using Document.App.DownloadFile.Utils;
 

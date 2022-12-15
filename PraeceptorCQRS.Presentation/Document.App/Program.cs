@@ -13,6 +13,7 @@ using Document.App.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.DependencyInjection;
 
 using PraeceptorCQRS.Utilities;
 
@@ -86,6 +87,10 @@ SimpleTableService simpleTableService = new(builder.Configuration);
 builder.Services.AddSingleton<ISimpleTableService>(simpleTableService);
 CourseService courseService = new(builder.Configuration);
 builder.Services.AddSingleton<ICourseService>(courseService);
+ComponentService componentService = new(builder.Configuration);
+builder.Services.AddSingleton<IComponentService>(componentService);
+VariableXService variableXService = new(builder.Configuration);
+builder.Services.AddSingleton<IVariableXService>(variableXService);
 
 var classService = new ClassService(builder.Configuration);
 builder.Services.AddSingleton<IClassService>(classService);

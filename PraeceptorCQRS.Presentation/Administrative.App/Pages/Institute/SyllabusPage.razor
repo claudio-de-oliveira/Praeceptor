@@ -427,23 +427,23 @@ else
 
     private async Task OnCurriculumClose(string? text)
     {
-        if (string.IsNullOrWhiteSpace(text))
-            return;
-
-        if (int.TryParse(text, out curriculum))
+        if (!string.IsNullOrWhiteSpace(text))
         {
-            await Task.CompletedTask;
-            var model = new CurriculumModel(curriculum);
-            if (curriculumList.FirstOrDefault(o => o.Curriculum == curriculum) is not null)
+            if (int.TryParse(text, out curriculum))
             {
-                _toasterService?.AddToastWarning($"O currículo {curriculum} já existe.");
-            }
-            else
-            {
-                curriculumList.Add(new CurriculumModel(curriculum));
-                seasons = new();
-                for (int season = 0; season < courseModel.NumberOfSeasons; season++)
-                    seasons.Add(new SeasonModel() { Order = season });
+                await Task.CompletedTask;
+                var model = new CurriculumModel(curriculum);
+                if (curriculumList.FirstOrDefault(o => o.Curriculum == curriculum) is not null)
+                {
+                    _toasterService?.AddToastWarning($"O currículo {curriculum} já existe.");
+                }
+                else
+                {
+                    curriculumList.Add(new CurriculumModel(curriculum));
+                    seasons = new();
+                    for (int season = 0; season < courseModel.NumberOfSeasons; season++)
+                        seasons.Add(new SeasonModel() { Order = season });
+                }
             }
         }
 

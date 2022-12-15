@@ -23,6 +23,7 @@
         public const string Groups = "GroupTable";
         public const string GroupValues = "GroupValueTable";
         public const string Variables = "VariableTable";
+        public const string VariablesX = "VariableXTable";
         public const string VariableValues = "VariableValueTable";
         public const string PreceptorRoleTypes = "PreceptorRoleTypeTable";
         public const string CourseSocialBodyEntries = "CourseSocialBodyTable";

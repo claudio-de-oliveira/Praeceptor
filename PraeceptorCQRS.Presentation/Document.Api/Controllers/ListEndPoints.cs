@@ -13,8 +13,6 @@ using PraeceptorCQRS.Application.Entities.Node.Queries;
 using PraeceptorCQRS.Contracts.Entities.Node;
 using PraeceptorCQRS.Presentation.Document.Api.Controllers;
 
-using Serilog;
-
 namespace Document.Api.Controllers
 {
     public class ListEndPoints : ApiController
@@ -54,19 +52,13 @@ namespace Document.Api.Controllers
         protected async Task<ErrorOr<bool>> MoveBackward(Guid parentId, Guid nodeId)
             => await _mediator.Send(new MoveBackwardCommand(parentId, nodeId));
 
-        protected async Task<ErrorOr<NodeResult>> GetFirstNodePosition(Guid documentId, Guid nodeId)
-        {
-            Log.Warning("==========> O PARÂMETRO documentId NÃO É USADO");
-            return await _mediator.Send(new GetFirstNodeQuery(nodeId));
-        }
+        protected async Task<ErrorOr<NodeResult>> GetFirstNodePosition(Guid nodeId)
+            => await _mediator.Send(new GetFirstNodeQuery(nodeId));
         // => await _mediator.Send(new GetFirstNodeQuery(nodeId));
         protected async Task<ErrorOr<NodeResult>> GetNextNodePosition(Guid id)
             => await _mediator.Send(new GetNextNodeQuery(id));
-        protected async Task<ErrorOr<NodeResult>> GetLastNodePosition(Guid documentId, Guid nodeId)
-        {
-            Log.Warning("==========> O PARÂMETRO documentId NÃO É USADO");
-            return await _mediator.Send(new GetLastNodeQuery(nodeId));
-        }
+        protected async Task<ErrorOr<NodeResult>> GetLastNodePosition(Guid nodeId)
+            => await _mediator.Send(new GetLastNodeQuery(nodeId));
         // => await _mediator.Send(new GetLastNodeQuery(nodeId));
         protected async Task<ErrorOr<NodeResult>> GetPreviousNodePosition(Guid id)
             => await _mediator.Send(new GetPreviousNodeQuery(id));

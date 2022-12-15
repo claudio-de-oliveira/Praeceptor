@@ -2,15 +2,9 @@ using FluentValidation;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 
-using NETCore.MailKit.Core;
-
 using PraeceptorCQRS.Application.Behaviors;
-using PraeceptorCQRS.Application.Email;
-using PraeceptorCQRS.Application.Entities.Institute.Events;
-using PraeceptorCQRS.Domain.Email;
 
 using System.Reflection;
 

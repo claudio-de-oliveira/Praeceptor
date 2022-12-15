@@ -1,0 +1,388 @@
+﻿@page "/group/list"
+
+@using Ardalis.GuardClauses;
+@using Document.App.Components;
+@using Document.App.Dialogs;
+
+@using Newtonsoft.Json;
+@using PraeceptorCQRS.Contracts.Entities.Course
+@using PraeceptorCQRS.Contracts.Entities.Variable
+@using System.Net;
+
+@inherits AuthenticatedPage
+
+<!-- Modal: Editar entidade -->
+@if (editEntityDialogIsOpen)
+{
+    <CreateOrEditVariableDialog OnClose="@OnEditVariableDialogClose" Create="@create" Variable="@currentVariable"></CreateOrEditVariableDialog>
+}
+
+<section class="p-1">
+
+    <PageHeaderComponent Institute="@institute" Text="VARIÁVEIS" />
+
+    <article class="content px-4">
+
+        <form class="row g-3">
+            <div class="col-md-6">
+                <label for="selectCourse" class="form-label">Curso</label>
+                <select id="selectCourse" class="form-select form-select-sm" aria-label=".form-select-sm example" @onchange="@((args) => OnCourseChange(args))" style="font-size:small; background-color:aliceblue;">
+                    @foreach (var pair in courseName)
+                    {
+                        <option value=@pair.Key>@pair.Value</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="selectCurriculum" class="form-label">Currículo</label>
+                <select id="selectCurriculum" class="form-select form-select-sm" aria-label=".form-select-sm example" @onchange="@((args) => OnCurriculumChange(args))" style="font-size:small; background-color:aliceblue;">
+                    @if (curricula.Keys.Contains(selectedCourse))
+                    {
+                        @foreach (var curriculum in curricula[selectedCourse])
+                        {
+                            <option value=@curriculum>@curriculum</option>
+                        }
+                    }
+                </select>
+            </div>
+        </form>
+
+        <table class="table table-sm" cellpadding="1" cellspacing="1">
+            <thead>
+                <tr>
+                    <td>Variável</td>
+                    <td>Valor</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var variable in variables)
+                {
+                    <ConfirmDialog Title="Atenção"
+                               Message=@($"Tem certeza que deseja excluir a tabela \"{variable.GroupName}.{variable.VariableName}\" ?")
+                               OnConfirmEvent="@OnDelete"
+                               ParameterId="@variable.Id" />
+
+                    <tr>
+                        <td>
+                            <div style="font-size: smaller">
+                                @(variable.GroupName).@(variable.VariableName)
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: smaller">
+                                @variable.Value
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button"
+                                class="btn btn-sm btn-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editSectionModal"
+                                title="Editar"
+                                disabled="@(!variable.IsDeletable)"
+                                @onclick="@(() => OnEdit(variable))"
+                                style="border: none;">
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button"
+                                class="btn btn-sm btn-danger"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                disabled="@(!variable.IsDeletable)"
+                                data-bs-target="#@($"A{variable.Id.ToString("N")}")"
+                                title="Excluir"
+                                style="border: none;">
+                                <i class="bi bi-x"></i>
+                                Excluir
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        data-bs-toggle="modal"
+                        disabled="@(waiting || !CanCreate())"
+                        title="Criar uma nova variável"
+                        @onclick="() => OnCreate()">
+                    <i class="bi bi-plus"></i>
+                    Criar uma nova variável
+                </button>
+            </div>
+            <!--
+            <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
+            -->
+        </div>
+    </article>
+</section>
+
+
+@code {
+    [Inject]
+    protected IInstituteService InstituteService { get; set; } = default!;
+    [Inject]
+    private ICourseService courseService { get; set; } = default!;
+    [Inject]
+    private IComponentService componentService { get; set; } = default!;
+    [Inject]
+    protected IVariableXService variableService { get; set; } = default!;
+
+    private bool waiting = false;
+
+    private Dictionary<Guid, string> courseName = new();
+    private Dictionary<Guid, List<int>> curricula = new();
+    private List<VariableXModel> variables = new();
+    private List<VariableXModel> courseVariables = default!;
+    private List<VariableXModel> holdingVariables = default!;
+    private List<VariableXModel> instituteVariables = default!;
+
+    private VariableXModel? currentVariable;
+
+    private InstituteModel? institute;
+
+    private Guid selectedCourse = Guid.Empty;
+    private int selectedCurriculum = -1;
+
+    private bool editEntityDialogIsOpen = false;
+    private bool create = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            waiting = true;
+            institute = await InstituteService.GetInstituteById(_userInstituteId);
+
+            if (institute is null)
+            {
+                var responseMessage = InstituteService.GetHttpResponseMessage();
+
+                _toasterService?.AddToastError(responseMessage?.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => "Você não está autorizado a acessar as informações sobre este instituto",
+                    HttpStatusCode.NotFound => "O instituto em que você foi alocado não foi encontrado",
+                    _ => "Não foi possível acessar as informações sobre o instituto."
+                });
+            }
+            else
+            {
+                var message = await courseService.PostPage(new GetCoursePageRequest(
+                    _userInstituteId,
+                    0,
+                    int.MaxValue,
+                    "Name",
+                    true,
+                    null,
+                    null,
+                    -1,
+                    -1,
+                    -1,
+                    null,
+                    null,
+                    null,
+                    null
+                ));
+
+                if (message.IsSuccessStatusCode)
+                {
+                    var content = await message.Content.ReadAsStringAsync();
+                    var tmp = JsonConvert.DeserializeObject<PageOfCourse>(content);
+                    Guard.Against.Null(tmp);
+                    var courseList = tmp.Entities.Select(o => (CourseModel)o).ToList();
+                    courseList.ForEach(o => courseName.Add(o.Id, o.Name));
+
+                    foreach (var course in courseList)
+                        curricula.Add(course.Id, await ReadCurricula(course.Id));
+
+                    if (courseList.Any())
+                    {
+                        selectedCourse = courseList[0].Id;
+                        if (curricula.Any())
+                            if (curricula[selectedCourse].Any())
+                                selectedCurriculum = curricula[selectedCourse][0];
+                    }
+
+                }
+                else
+                {
+                    await OnHttpErrorMessage(message);
+                }
+            }
+            waiting = false;
+
+            ReadVariablesByHolding();
+            ReadVariablesByInstitute();
+            ReadVariablesByCourseAndCurriculum();
+
+            StateHasChanged();
+        }
+    }
+
+    private bool CanCreate()
+    {
+
+        return true;
+    }
+
+    private async void OnDelete(object? source, Guid id)
+    {
+        var message = await variableService.DeleteVariable(id);
+        if (message.IsSuccessStatusCode)
+        {
+            _toasterService?.AddToastSuccess("A variável foi excluída com sucesso");
+            variables.Remove(variables.Find(o => o.Id == id)!);
+            StateHasChanged();
+        }
+        else
+        {
+            await OnHttpErrorMessage(message);
+        }
+    }
+
+    private void OnEdit(VariableXModel variable)
+    {
+        currentVariable = variable;
+        create = false;
+        editEntityDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    private void OnCreate()
+    {
+        currentVariable = new VariableXModel
+        {
+            Id = Guid.NewGuid(),
+            GroupId = selectedCourse,
+            GroupName = "",
+            Curriculum = selectedCurriculum.ToString(),
+            VariableName = "",
+            Value = ""
+        };
+        create = true;
+        editEntityDialogIsOpen = true;
+        StateHasChanged();
+    }
+
+    private async Task OnEditVariableDialogClose(VariableXModel? variable)
+    {
+        if (variable is not null)
+        {
+            if (create)
+            {
+                var message = await variableService.CreateVariableByCourse(
+                    new CreateVariableXRequest(
+                        variable.GroupName,
+                        selectedCourse,
+                        selectedCurriculum.ToString(),
+                        variable.VariableName,
+                        variable.Value
+                    ));
+
+                if (message.IsSuccessStatusCode)
+                {
+                    var content = await message.Content.ReadAsStringAsync();
+                    var created = JsonConvert.DeserializeObject<VariableXModel>(content);
+                    Guard.Against.Null(created);
+                    variables.Add(created);
+                }
+                else
+                {
+                    await OnHttpErrorMessage(message);
+                }
+            }
+            else
+            {
+                var message = await variableService.UpdateVariableByCourse(
+                    new UpdateVariableXRequest(
+                        variable.Id,
+                        variable.Value
+                    ));
+
+                if (message.IsSuccessStatusCode)
+                {
+                    var tmp = variables.Find(o => o.Id == variable.Id);
+                    Guard.Against.Null(tmp);
+                    tmp.Value = variable.Value;
+                }
+                else
+                { 
+                    await OnHttpErrorMessage(message);
+                }
+            }
+        }
+
+        editEntityDialogIsOpen = false;
+        StateHasChanged();
+    }
+
+    private async void ReadVariablesByHolding()
+    {
+        var result = await variableService.GetVariablesByHolding(_userHoldingId);
+        holdingVariables = (result is not null)
+            ? result
+            : new();
+    }
+
+    private async void ReadVariablesByInstitute()
+    {
+        var result = await variableService.GetVariablesByInstitute(_userInstituteId);
+        instituteVariables = (result is not null)
+            ? result
+            : new();
+    }
+
+    private async void ReadVariablesByCourseAndCurriculum()
+    {
+        var result = await variableService.GetVariablesByCourseAndCurriculum(selectedCourse, selectedCurriculum);
+        courseVariables = (result is not null)
+            ? result
+            : new();
+        variables = courseVariables;
+        variables.AddRange(instituteVariables);
+        variables.AddRange(holdingVariables);
+
+        StateHasChanged();
+    }
+
+    private async Task<List<int>> ReadCurricula(Guid courseId)
+    {
+        var result = await componentService.GetCurriculumsByCourseId(courseId);
+
+        return (result is not null)
+            ? result.Select(o => o.Curriculum).ToList()
+            : new() { -1 };
+    }
+
+    private void OnCourseChange(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        selectedCourse = new Guid((string)args.Value);
+        if (curricula.Any())
+            if (curricula[selectedCourse].Any())
+                selectedCurriculum = curricula[selectedCourse][0];
+
+        ReadVariablesByCourseAndCurriculum();
+    }
+
+    private void OnCurriculumChange(ChangeEventArgs args)
+    {
+        Guard.Against.Null(args.Value);
+        selectedCurriculum = int.Parse((string)args.Value);
+
+        ReadVariablesByCourseAndCurriculum();
+    }
+}

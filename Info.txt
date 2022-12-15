@@ -1,0 +1,11 @@
+﻿@Holding
+    @Acronimo
+    @Endereço
+    @Nome
+@IES
+    @Acronimo
+    @Endereço
+    @Nome
+@Curso
+    @Acronimo
+    @Nome

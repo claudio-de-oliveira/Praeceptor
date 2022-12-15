@@ -69,6 +69,7 @@ namespace PraeceptorCQRS.Infrastructure
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<IGroupValueRepository, GroupValueRepository>();
             services.AddScoped<IVariableRepository, VariableRepository>();
+            services.AddScoped<IVariableXRepository, VariableXRepository>();
             services.AddScoped<IVariableValueRepository, VariableValueRepository>();
 
             services.AddScoped<IAxisTypeRepository, AxisTypeRepository>();

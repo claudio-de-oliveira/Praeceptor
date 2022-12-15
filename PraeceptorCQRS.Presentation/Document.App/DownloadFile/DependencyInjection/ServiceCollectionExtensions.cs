@@ -1,5 +1,4 @@
-﻿using Document.App.Download;
-using Document.App.DownloadFile.Interfaces;
+﻿using Document.App.DownloadFile.Interfaces;
 using Document.App.DownloadFile.Services;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;

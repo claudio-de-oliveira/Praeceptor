@@ -23,8 +23,8 @@ namespace PraeceptorCQRS.Application.Entities.Component.Commands.UpdateCommand
                 Curriculum = request.Curriculum,
                 Season = request.Season,
                 ClassId = request.ClassId,
-                Optative = request.Optative,
-                AxisTypeId = request.AxisTypeId
+                AxisTypeId = request.AxisTypeId,
+                Optative = request.Optative
             };
 
             if (cancellationToken.IsCancellationRequested)

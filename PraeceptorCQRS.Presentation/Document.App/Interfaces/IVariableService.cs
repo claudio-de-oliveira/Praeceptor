@@ -2,8 +2,6 @@
 
 using PraeceptorCQRS.Contracts.Entities.Variable;
 
-using System.Net;
-
 namespace Document.App.Interfaces
 {
     public interface IVariableService

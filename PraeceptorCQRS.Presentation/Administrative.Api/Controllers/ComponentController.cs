@@ -40,8 +40,8 @@ namespace Administrative.Api.Controllers
                 request.Curriculum,
                 request.Season,
                 request.ClassId,
-                request.Optative,
-                request.AxisTypeId
+                request.AxisTypeId,
+                request.Optative
                 );
 
             ErrorOr<ComponentResult> result = await _mediator.Send(command);

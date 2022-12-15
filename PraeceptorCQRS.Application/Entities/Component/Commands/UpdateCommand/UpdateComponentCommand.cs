@@ -11,7 +11,7 @@ namespace PraeceptorCQRS.Application.Entities.Component.Commands.UpdateCommand
         int Curriculum,
         int Season,
         Guid ClassId,
-        bool Optative,
-        Guid AxisTypeId
+        Guid AxisTypeId,
+        bool Optative
         ) : IRequest<ErrorOr<ComponentResult>>;
 }

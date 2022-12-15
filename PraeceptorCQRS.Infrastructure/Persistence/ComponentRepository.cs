@@ -16,6 +16,18 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             : base(dbContext)
         { /* Nothing more todo */ }
 
+        public async Task<int[]> GetCurriculums(Guid courseId)
+        {
+            var table = _context.Set<Component>();
+
+            // ToArray() is needed here
+            var result = await Task.Run(
+                () => table.Where(o => o.CourseId == courseId).Select(o => o.Curriculum).Distinct().ToArray()
+                );
+
+            return result;
+        }
+
         public async Task<IEnumerable<Component>> GetComponentListByCourseAndCurriculum(Guid courseId, int curriculum)
         {
             var table = _context.Set<Component>();
