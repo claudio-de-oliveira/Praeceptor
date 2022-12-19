@@ -22,13 +22,13 @@
                 <td align="right" style="width: 160px;">
                     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                         <button type="button"
-                            class="btn btn-sm btn-danger"
+                            class="btn btn-sm btn-delete"
                             data-toggle="tooltip"
                             data-placement="top"
                             data-bs-toggle="modal"
                             data-bs-target="#@($"A{row.Key.ToString("N")}")"
-                            title="Excluir"
-                            style="border: none;">
+                            title="Excluir linha"
+                            >
                             <i class="bi bi-x-lg"></i>
                             Excluir
                         </button>
@@ -36,18 +36,18 @@
                             class="btn btn-sm btn-warning"
                             data-toggle="tooltip"
                             data-placement="top"
-                            title="Mover para cima"
+                            title="Mover linha para cima"
                             @onclick="@((args) => MoveToUp(args, row.Key))"
-                            style="border: none;">
+                            >
                             <i class="bi bi-arrow-bar-up"></i>
                         </button>
                         <button type="button"
                             class="btn btn-sm btn-warning"
                             data-toggle="tooltip"
                             data-placement="top"
-                            title="Mover para baixo"
+                            title="Mover linha para baixo"
                             @onclick="@((args) => MoveToDown(args, row.Key))"
-                            style="border: none;">
+                            >
                             <i class="bi bi-arrow-bar-down"></i>
                         </button>
                     </div>
@@ -137,7 +137,8 @@
         string str = "";
         for (int i = 0; i < listOfRows.Count - 1; i++)
             str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
-        str += ConvertRowToString(listOfRows[^1].Values.ToList());
+        if (listOfRows.Count > 0)
+            str += ConvertRowToString(listOfRows[^1].Values.ToList());
         OnCellChanged.Invoke(str, false);
         StateHasChanged();
     }
@@ -166,7 +167,8 @@
         string str = "";
         for (int i = 0; i < listOfRows.Count - 1; i++)
             str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
-        str += ConvertRowToString(listOfRows[^1].Values.ToList());
+        if (listOfRows.Count > 0)
+            str += ConvertRowToString(listOfRows[^1].Values.ToList());
         OnCellChanged.Invoke(str, true);
     }
 
@@ -178,7 +180,8 @@
         string str = "";
         for (int i = 0; i < listOfRows.Count - 1; i++)
             str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
-        str += ConvertRowToString(listOfRows[^1].Values.ToList());
+        if (listOfRows.Count > 0)
+            str += ConvertRowToString(listOfRows[^1].Values.ToList());
         OnCellChanged.Invoke(str, true);
     }
 
@@ -203,7 +206,8 @@
             string str = "";
             for (int i = 0; i < listOfRows.Count - 1; i++)
                 str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
-            str += ConvertRowToString(listOfRows[^1].Values.ToList());
+            if (listOfRows.Count > 0)
+                str += ConvertRowToString(listOfRows[^1].Values.ToList());
             OnCellChanged.Invoke(str, true);
 
             StateHasChanged();
@@ -228,7 +232,8 @@
                     string str = "";
                     for (int i = 0; i < listOfRows.Count - 1; i++)
                         str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
-                    str += ConvertRowToString(listOfRows[^1].Values.ToList());
+                    if (listOfRows.Count > 0)
+                        str += ConvertRowToString(listOfRows[^1].Values.ToList());
                     OnCellChanged.Invoke(str, true);
 
                     StateHasChanged();
@@ -265,7 +270,8 @@
             string str = "";
             for (int i = 0; i < listOfRows.Count - 1; i++)
                 str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
-            str += ConvertRowToString(listOfRows[^1].Values.ToList());
+            if (listOfRows.Count > 0)
+                str += ConvertRowToString(listOfRows[^1].Values.ToList());
             OnCellChanged.Invoke(str, false);
         }
     }
@@ -302,7 +308,8 @@
             string str = "";
             for (int i = 0; i < listOfRows.Count - 1; i++)
                 str += ConvertRowToString(listOfRows[i].Values.ToList()) + "&&";
-            str += ConvertRowToString(listOfRows[^1].Values.ToList());
+            if (listOfRows.Count > 0)
+                str += ConvertRowToString(listOfRows[^1].Values.ToList());
             OnCellChanged.Invoke(str, false);
         }
     }

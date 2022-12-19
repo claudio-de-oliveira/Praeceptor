@@ -1,15 +1,15 @@
 ﻿@if (Waiting)
 {
-    <button type="button" class="btn btn-outline-primary" disabled style="border: none;">
+    <button type="button" class="btn btn-sort" disabled >
         <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
         @Text
     </button>
 }
 else
 {
-    <button type="button" class="btn btn-outline-primary"
+    <button type="button" class="btn btn-sort"
         @onclick="@(async () => await OnClick.InvokeAsync(SortBy))"
-        style="border: none;">
+        >
         <i class="bi bi-arrow-down-up"></i>
         @Text
     </button>

@@ -12,7 +12,7 @@
             <tr>
                 <td>
                     <textarea type="text"
-                              class="form-control border-0"
+                              class="form-control border-0 input-editable"
                               wrap="soft"
                               id=@($"A{entity.Key}")
                               rows="2"
@@ -23,13 +23,14 @@
                 </td>
                 <td align="center" style="width: 90px;">
                     <button type="button"
-                            class="btn btn-sm btn-danger"
+                        class="btn btn-sm btn-delete"
                             data-toggle="tooltip"
                             data-placement="top"
                             data-bs-toggle="modal"
                             data-bs-target="#@($"A{entity.Key.ToString("N")}")"
                             title="Excluir"
-                            style="border: none;">
+                            >
+                        <i class="bi bi-trash"></i>
                         Excluir
                     </button>
                 </td>

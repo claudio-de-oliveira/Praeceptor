@@ -18,6 +18,54 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
+.btn-details {
+    color: #fff0ff;
+    background-color: #007500;
+    border-color: darkgreen;
+    width: 100px;
+}
+
+.btn-edit {
+    color: #fff0ff;
+    background-color: #0000b5;
+    border-color: darkorange;
+    width: 100px;
+}
+
+.btn-delete {
+    color: #fff0ff;
+    background-color: #b50000;
+    border-color: darkred;
+    width: 100px;
+}
+
+.btn-default {
+    color: #fff0ff;
+    background-color:blueviolet;
+    border-color:darkviolet;
+    width: 100px;
+}
+
+.btn-sort {
+    color: deepskyblue;
+    outline: none;
+    background: none;
+    width: 200px;
+}
+    .btn-sort:hover {
+        color: blue;
+        outline: none;
+        background: none;
+        width: 200px;
+    }
+
+.btn-doc-part {
+    color: #fff0ff;
+    background-color: #406080;
+    border-color: darkblue;
+    width: 150px;
+}
+
 .content {
     padding-top: 1.1rem;
 }

@@ -7,13 +7,11 @@ using Document.App.SeedData.Documents;
 using Document.App.SeedData.Images;
 using Document.App.SeedData.Planners;
 using Document.App.SeedData.SimpleTables;
-using Document.App.SeedData.Variables;
 using Document.App.Services;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Extensions.DependencyInjection;
 
 using PraeceptorCQRS.Utilities;
 
@@ -75,14 +73,6 @@ SubSectionListService subSectionService = new(builder.Configuration);
 builder.Services.AddSingleton<ISubSectionListService>(subSectionService);
 SubSubSectionListService subSubSectionService = new(builder.Configuration);
 builder.Services.AddSingleton<ISubSubSectionListService>(subSubSectionService);
-GroupService groupService = new(builder.Configuration);
-builder.Services.AddSingleton<IGroupService>(groupService);
-GroupValueService groupValueService = new(builder.Configuration);
-builder.Services.AddSingleton<IGroupValueService>(groupValueService);
-VariableService variableService = new(builder.Configuration);
-builder.Services.AddSingleton<IVariableService>(variableService);
-VariableValueService variableValueService = new(builder.Configuration);
-builder.Services.AddSingleton<IVariableValueService>(variableValueService);
 SimpleTableService simpleTableService = new(builder.Configuration);
 builder.Services.AddSingleton<ISimpleTableService>(simpleTableService);
 CourseService courseService = new(builder.Configuration);
@@ -234,11 +224,7 @@ static async Task Initialize(
     ChapterListService chapterService,
     SectionListService sectionService,
     SubSectionListService subSectionService,
-    SubSubSectionListService subSubSectionService,
-    GroupService groupService,
-    GroupValueService groupValueService,
-    VariableService variableService,
-    VariableValueService variableValueService
+    SubSubSectionListService subSubSectionService
     )
 {
     await InitializeAdministationTable.Initialize(instituteId, simpleTableService);
@@ -256,14 +242,6 @@ static async Task Initialize(
         sectionService,
         subSectionService,
         subSubSectionService
-        );
-
-    await InitializeVariableTables.Initialize(
-        instituteId,
-        groupService,
-        groupValueService,
-        variableService,
-        variableValueService
         );
 }
 #pragma warning restore CS8321 // A função local foi declarada, mas nunca usada

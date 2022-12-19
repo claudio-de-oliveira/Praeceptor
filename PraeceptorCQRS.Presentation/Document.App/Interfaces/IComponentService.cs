@@ -4,6 +4,6 @@ namespace Document.App.Interfaces
 {
     public interface IComponentService
     {
-        Task<List<CurriculumModel>?> GetCurriculumsByCourseId(Guid courseId);
+        Task<List<CurriculumModel>?> GetCurriculaByCourseId(Guid courseId);
     }
 }

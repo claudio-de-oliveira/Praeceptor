@@ -29,8 +29,8 @@ namespace PraeceptorCQRS.Application.Entities.SimpleTable.Commands.CreateCommand
                 .NotEmpty()
                 .MaximumLength(250);
 
-            RuleFor(x => x.Header)
-                .NotEmpty();
+            // RuleFor(x => x.Header)
+            //     .NotEmpty();
 
             // institute must exist
             RuleFor(x => x.InstituteId)

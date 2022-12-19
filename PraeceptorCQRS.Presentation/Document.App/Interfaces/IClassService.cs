@@ -2,8 +2,6 @@
 
 using PraeceptorCQRS.Contracts.Entities.Class;
 
-using System.Net;
-
 namespace Document.App.Interfaces;
 
 public interface IClassService
@@ -14,5 +12,6 @@ public interface IClassService
 
     Task<HttpResponseMessage> PostPage(GetClassPageRequest request);
 
+    Task<ClassModel?> GetClassById(Guid id);
     Task<ClassModel?> GetClassByCode(string code);
 }

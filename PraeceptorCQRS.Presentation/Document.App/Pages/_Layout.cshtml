@@ -58,28 +58,30 @@
         })
     </script>
 
-    <script>
-        document.getElementById("ConceptForm").onkeypress = function (e) {
-            var key = e.charCode || e.keyCode || 0;
-            if (key == 13) {
-                e.preventDefault();
-            }
-        }
-    </script>
-
-    <script src="scripts/blazorDownloadFile.js"></script>
-
-    <script>
-        $(function () {
-            $('#table').bootstrapTable()
-
-            $('#button').click(function () {
-                alert(JSON.stringify($('#table').bootstrapTable('getData').map(function (row) {
-                    return row.id
-                })))
-            })
-        })
-    </script>
-
 </body>
 </html>
+
+<!--
+<script>
+    document.getElementById("ConceptForm").onkeypress = function (e) {
+        var key = e.charCode || e.keyCode || 0;
+        if (key == 13) {
+            e.preventDefault();
+        }
+    }
+</script>
+
+<script src="scripts/blazorDownloadFile.js"></script>
+
+<script>
+    $(function () {
+        $('#table').bootstrapTable()
+
+        $('#button').click(function () {
+            alert(JSON.stringify($('#table').bootstrapTable('getData').map(function (row) {
+                return row.id
+            })))
+        })
+    })
+</script>
+-->

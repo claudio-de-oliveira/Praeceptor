@@ -1,6 +1,4 @@
-﻿using Org.BouncyCastle.Bcpg.OpenPgp;
-
-using PraeceptorCQRS.Domain.Base;
+﻿using PraeceptorCQRS.Domain.Base;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,7 +19,7 @@ public class SimpleTable : BaseAuditableEntity
         string code,
         string title,
         string? header,
-        string rows,
+        string? rows,
         string? footer,
         Guid instituteId,
         string? createdBy
@@ -44,10 +42,10 @@ public class SimpleTable : BaseAuditableEntity
     [Required, MaxLength(250)]
     public string Title { get; set; } = default!;
 
-    public string? Header { get; set; } = default!;
+    public string? Header { get; set; }
 
-    public string Rows { get; set; } = default!;
-    public string? Footer { get; set; } = default!;
+    public string? Rows { get; set; }
+    public string? Footer { get; set; }
 
     public Guid InstituteId { get; set; }
 
@@ -119,9 +117,12 @@ public class SimpleTable : BaseAuditableEntity
         if (Header is not null)
             text += ConvertToRow(Header);
 
-        string[] rows = Rows.Split("&&");
-        foreach (var row in rows)
-            text += ConvertToRow(row);
+        if (Rows is not null)
+        {
+            string[] rows = Rows.Split("&&");
+            foreach (var row in rows)
+                text += ConvertToRow(row);
+        }
 
         if (Footer is not null)
             text += ConvertToRow(Footer);

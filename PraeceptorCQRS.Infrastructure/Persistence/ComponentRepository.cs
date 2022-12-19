@@ -16,7 +16,7 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             : base(dbContext)
         { /* Nothing more todo */ }
 
-        public async Task<int[]> GetCurriculums(Guid courseId)
+        public async Task<int[]> GetCurricula(Guid courseId)
         {
             var table = _context.Set<Component>();
 
@@ -68,7 +68,7 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             return await UpdateDefault(entityToUpdate);
         }
 
-        public async Task<IEnumerable<CurriculumResult>> GetCurriculumsByCourseId(Guid courseId)
+        public async Task<IEnumerable<CurriculumResult>> GetCurriculaByCourseId(Guid courseId)
         {
             var list = await base.ListDefault(o => o.CourseId == courseId);
             return list.Select(o => new CurriculumResult(o.Curriculum)).Distinct().ToList();

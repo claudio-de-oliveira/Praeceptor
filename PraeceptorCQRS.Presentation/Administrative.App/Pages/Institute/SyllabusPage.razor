@@ -137,27 +137,29 @@ else
 
                                 <td align="right" style="width: 80px;">
                                     <button type="button"
-                                            class="btn btn-sm btn-warning"
+                                class="btn btn-sm btn-edit"
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title="Editar"
                                             disabled="@(!CanEdit(courseModel))"
                                             @onclick="@(() => Edit(component))"
-                                            style="border: none;">
+                                            >
+                                        <i class="bi bi-pencil"></i>
                                         Editar
                                     </button>
                                 </td>
 
                                 <td align="right" style="width: 80px;">
                                     <button type="button"
-                                            class="btn btn-sm btn-danger"
+                                            class="btn btn-sm btn-delete"
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             data-bs-toggle="modal"
-                                            title="Editar"
+                                            title="Excluir"
                                             disabled="@(!CanEdit(courseModel))"
                                             @onclick="@(() => Delete(component))"
-                                            style="border: none;">
+                                            >
+                                        <i class="bi bi-trash"></i>
                                         Excluir
                                     </button>
                                 </td>
@@ -166,7 +168,7 @@ else
                         <tr style="background-color:aliceblue">
                             <td style="text-align:left; font-weight:normal!important;" colspan="4">
                                 <button type="button"
-                                class="btn btn-sm btn-primary"
+                                class="btn btn-sm btn-part"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
@@ -304,7 +306,7 @@ else
             Guard.Against.Null(result);
             courseModel = result;
 
-            var curList = await componentService.GetCurriculumsByCourseId(courseId);
+            var curList = await componentService.GetCurriculaByCourseId(courseId);
             if (curList is null)
                 curriculumList = new();
             else
@@ -402,7 +404,7 @@ else
     private async Task Delete(ComponentModel component)
     {
         Guard.Against.Null(curriculum);
-        var response = await componentService.DeleteComponent(courseId, (int)curriculum, component.ClassId);
+        var response = await componentService.DeleteComponent(courseId, curriculum, component.ClassId);
 
         if (response.IsSuccessStatusCode)
         {

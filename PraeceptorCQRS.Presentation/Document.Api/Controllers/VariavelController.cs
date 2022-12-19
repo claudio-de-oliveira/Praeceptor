@@ -11,6 +11,7 @@ using PraeceptorCQRS.Application.Entities.Variable.Commands.CreateCommand;
 using PraeceptorCQRS.Contracts.Entities.Variable;
 using PraeceptorCQRS.Application.Entities.Variable.Commands.DeleteCommand;
 using PraeceptorCQRS.Application.Entities.Variable.Commands.UpdateCommand;
+using PraeceptorCQRS.Contracts.Entities.Page;
 
 namespace Document.Api.Controllers
 {
@@ -31,7 +32,7 @@ namespace Document.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreateVariableByHolding([FromBody] CreateVariableXRequest request)
         {
-            var command = _mapper.Map<CreateHoldingVariableXCommand>(request);
+            var command = _mapper.Map<CreateVariableXByHoldingCommand>(request);
 
             ErrorOr<VariableResultX> result = await _mediator.Send(command);
 
@@ -47,7 +48,7 @@ namespace Document.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreateVariableByInstitute([FromBody] CreateVariableXRequest request)
         {
-            var command = _mapper.Map<CreateInstituteVariableXCommand>(request);
+            var command = _mapper.Map<CreateVariableXByInstituteCommand>(request);
 
             ErrorOr<VariableResultX> result = await _mediator.Send(command);
 
@@ -63,7 +64,7 @@ namespace Document.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreateVariableByCourse([FromBody] CreateVariableXRequest request)
         {
-            var command = _mapper.Map<CreateCourseVariableXCommand>(request);
+            var command = _mapper.Map<CreateVariableXByCourseCommand>(request);
 
             ErrorOr<VariableResultX> result = await _mediator.Send(command);
 
@@ -139,7 +140,7 @@ namespace Document.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetVariablesByHolding(Guid holdingId)
         {
-            var query = new GetVariablesByHoldingQueryX(holdingId);
+            var query = new GetVariableXByHoldingQuery(holdingId);
 
             ErrorOr<VariableXListResult> result = await _mediator.Send(query);
 
@@ -154,7 +155,7 @@ namespace Document.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetVariablesByInstitute(Guid instituteId)
         {
-            var query = new GetVariablesByInstituteQueryX(instituteId);
+            var query = new GetVariableXByInstituteQuery(instituteId);
 
             ErrorOr<VariableXListResult> result = await _mediator.Send(query);
 
@@ -169,7 +170,7 @@ namespace Document.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetVariablesByCourseAndCurriculum(Guid courseId, int curriculum)
         {
-            var query = new GetVariablesByCourseAndCurriculumQueryX(courseId, curriculum.ToString());
+            var query = new GetVariableXByCourseAndCurriculumQuery(courseId, curriculum);
 
             ErrorOr<VariableXListResult> result = await _mediator.Send(query);
 
@@ -178,5 +179,32 @@ namespace Document.Api.Controllers
                 errors => Problem(errors)
                 );
         }
+
+        [HttpPost("get/page")]
+        // [Authorize("ReadPolice")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetVariablePage([FromBody] GetVariableXPageRequest request)
+        {
+            var query = new GetVariableXPageQuery(
+                request.HoldingId,
+                request.InstituteId,
+                request.CourseId,
+                request.Curriculum,
+                request.Start,
+                request.Count,
+                request.Sort,
+                request.Ascending,
+                request.NameFilter,
+                request.ValueFilter
+                );
+
+            ErrorOr<VariableXPageResult> result = await _mediator.Send(query);
+
+            return result.Match(
+                result => Ok(_mapper.Map<PageResponse<VariableXResponse>>(result)),
+                errors => Problem(errors)
+                );
+        }
+
     }
 }

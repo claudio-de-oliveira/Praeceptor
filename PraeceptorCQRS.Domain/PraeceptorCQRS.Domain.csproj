@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\PraeceptorCQRS.Utilities\PraeceptorCQRS.Utilities.csproj" />
+	  <ProjectReference Include="..\PraeceptorCQRS.Utilities\Utilities.csproj" />
 	</ItemGroup>
 
 </Project>

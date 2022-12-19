@@ -18,36 +18,36 @@
                     <div class="form-group purple-border">
                         <form>
                             <div class="mb-3">
-                                <label for="recipient-code" class="col-form-label">Code</label>
-                                <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="false" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-code" class="col-form-label">Code</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@_code" id="course-code" contenteditable="false" disabled="@(!Create)" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-name" class="col-form-label">Nome</label>
-                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="false" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-name" class="col-form-label">Nome</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@name" id="course-name" contenteditable="false" disabled="@(!Create)" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-ac" class="col-form-label">Atividades Complementares</label>
-                                <input type="text" class="form-control" @bind-value="@ac" id="recipient-ac" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-ac" class="col-form-label">Atividades Complementares</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@ac" id="course-ac" contenteditable="true" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-seasons" class="col-form-label">Módulos</label>
-                                <input type="text" class="form-control" @bind-value="@seasons" id="recipient-seasons" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-seasons" class="col-form-label">Módulos</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@seasons" id="course-seasons" contenteditable="true" disabled="@(!Create)" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-minimum" class="col-form-label">Carga Horária Mínima</label>
-                                <input type="text" class="form-control" @bind-value="@minimumWorkload" id="recipient-minimum" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-minimum" class="col-form-label">Carga Horária Mínima</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@minimumWorkload" id="course-minimum" contenteditable="true" disabled="@(!Create)" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-telephone" class="col-form-label">Telefone</label>
-                                <input type="text" class="form-control" @bind-value="@telephone" id="recipient-telephone" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-telephone" class="col-form-label">Telefone</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@telephone" id="course-telephone" contenteditable="true" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-email" class="col-form-label">Email</label>
-                                <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-email" class="col-form-label">Email</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@email" id="course-email" contenteditable="true" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-image" class="col-form-label">Imagem</label>
-                                <input type="text" class="form-control" @bind-value="@image" id="recipient-image" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="course-image" class="col-form-label">Imagem</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@image" id="course-image" contenteditable="true" />
                             </div>
                         </form>
                     </div>
@@ -99,14 +99,12 @@
 
     private string _code = default!;
     private string name = default!;
-    private PreceptorModel? ceo;
     public int ac;
     public int seasons;
     public int minimumWorkload;
     public string? telephone;
     public string? email;
     public string? image;
-    private string email_ceo = "";
 
     private bool ceo_changed = false;
 

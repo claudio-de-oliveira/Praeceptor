@@ -42,7 +42,7 @@
                         <td align="center">
                             <ButtonSortComponent Waiting="@waiting" Text="Título" SortBy="Title" OnClick="@SortBy" />
                         </td>
-                        <td align="center" colspan="2">
+                        <td align="center">
                             <ButtonSortComponent Waiting="@waiting" Text="Texto" SortBy="Text" OnClick="@SortBy" />
                         </td>
                         <td></td>
@@ -65,27 +65,29 @@
                             <td>
                                 <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
                             </td>
-                            <td align="right" style="width: 80px;">
+                            <td align="right" >
                                 <button type="button"
-                                class="btn btn-sm btn-success"
+                                class="btn btn-sm btn-details"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Ver detalhes"
                                 @onclick="@(() => Details(entity))"
-                                style="border: none;">
+                                >
+                                    <i class="bi bi-info-circle"></i>
                                     Detalhes
                                 </button>
                             </td>
-                            <td align="right" style="width: 80px;">
+                            <td align="right" >
                                 <button type="button"
-                                class="btn btn-sm btn-warning"
+                                class="btn btn-sm btn-edit"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
                                 data-bs-target="#editSectionModal"
                                 title="Editar"
                                 @onclick="@(() => Edit(entity))"
-                                style="border: none;">
+                                >
+                                    <i class="bi bi-pencil"></i>
                                     Editar
                                 </button>
                             </td>

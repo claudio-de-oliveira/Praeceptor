@@ -13,7 +13,7 @@ namespace Administrative.App.Interfaces
         Task<ComponentModel?> GetComponentByCourseAndCurriculumAndClass(Guid courseId, int curriculum, Guid classId);
         Task<IEnumerable<ComponentModel>?> GetComponentListByCourseAndCurriculum(Guid courseId, int curriculum);
         Task<IEnumerable<ComponentModel>?> GetComponentListByCourseAndCurriculumAndSeason(Guid courseId, int curriculum, int season);
-        Task<List<CurriculumModel>?> GetCurriculumsByCourseId(Guid courseId);
+        Task<List<CurriculumModel>?> GetCurriculaByCourseId(Guid courseId);
         Task<HttpResponseMessage> DeleteComponent(Guid courseId, int curriculum, Guid classId);
     }
 }

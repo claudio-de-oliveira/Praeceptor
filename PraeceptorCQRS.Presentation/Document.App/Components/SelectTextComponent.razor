@@ -4,6 +4,7 @@
            value=@Filter
            @onchange=@OnTextChange
            disabled="@Waiting"
+           placeholder="@(Placeholder ?? "")"
            style="background-color:aliceblue;">
     @if (Waiting)
     {
@@ -36,6 +37,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public string? Placeholder { get; set; }
     [Parameter]
     public bool Waiting { get; set; }
     [Parameter]

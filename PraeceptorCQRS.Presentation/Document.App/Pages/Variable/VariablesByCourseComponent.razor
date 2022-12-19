@@ -47,8 +47,33 @@
             </div>
         </form>
 
+        <br />
+
         <table class="table table-sm" cellpadding="1" cellspacing="1">
             <thead>
+                <tr>
+                    <td align="center">
+                        <ClearableInputTextComponent Filter="@nameFilter" Waiting="@waiting" OnTextChange="@OnNameChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td align="center">
+                        <ClearableInputTextComponent Filter="@valueFilter" Waiting="@waiting" OnTextChange="@OnValueChanged"></ClearableInputTextComponent>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <!---->
+                <tr>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Variável" SortBy="Name" OnClick="@SortBy" />
+                    </td>
+                    <td align="center">
+                        <ButtonSortComponent Waiting="@waiting" Text="Valor" SortBy="Value" OnClick="@SortBy" />
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <!---->
+
                 <tr>
                     <td>Variável</td>
                     <td>Valor</td>
@@ -77,7 +102,7 @@
                         </td>
                         <td>
                             <button type="button"
-                                class="btn btn-sm btn-warning"
+                                class="btn btn-sm btn-edit"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
@@ -85,22 +110,22 @@
                                 title="Editar"
                                 disabled="@(!variable.IsDeletable)"
                                 @onclick="@(() => OnEdit(variable))"
-                                style="border: none;">
+                                >
                                 <i class="bi bi-pencil"></i>
                                 Editar
                             </button>
                         </td>
                         <td>
                             <button type="button"
-                                class="btn btn-sm btn-danger"
+                                class="btn btn-sm btn-delete"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
                                 disabled="@(!variable.IsDeletable)"
                                 data-bs-target="#@($"A{variable.Id.ToString("N")}")"
                                 title="Excluir"
-                                style="border: none;">
-                                <i class="bi bi-x"></i>
+                                >
+                                <i class="bi bi-trash"></i>
                                 Excluir
                             </button>
                         </td>
@@ -123,9 +148,9 @@
                     Criar uma nova variável
                 </button>
             </div>
-            <!--
+
             <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
-            -->
+
         </div>
     </article>
 </section>
@@ -146,9 +171,6 @@
     private Dictionary<Guid, string> courseName = new();
     private Dictionary<Guid, List<int>> curricula = new();
     private List<VariableXModel> variables = new();
-    private List<VariableXModel> courseVariables = default!;
-    private List<VariableXModel> holdingVariables = default!;
-    private List<VariableXModel> instituteVariables = default!;
 
     private VariableXModel? currentVariable;
 
@@ -159,6 +181,17 @@
 
     private bool editEntityDialogIsOpen = false;
     private bool create = false;
+
+    protected string? nameFilter = string.Empty;
+    protected string? valueFilter = string.Empty;
+    protected bool ascendingSort = false;
+    protected string? sort = "Name";
+
+    private readonly int pageSize = 10;
+    protected int currentPage = 0;
+    protected int previousPage = -1;
+    protected int nextPage = -1;
+    protected int numberOfPages = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -224,12 +257,15 @@
             }
             waiting = false;
 
-            ReadVariablesByHolding();
-            ReadVariablesByInstitute();
-            ReadVariablesByCourseAndCurriculum();
+            await PageRequest(0);
 
             StateHasChanged();
         }
+    }
+
+    protected async Task OnPageChange(int page)
+    {
+        await PageRequest(page);
     }
 
     private bool CanCreate()
@@ -253,6 +289,27 @@
         }
     }
 
+#pragma warning disable CS8602
+    protected async Task OnNameChanged(ChangeEventArgs args)
+    {
+        nameFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+    protected async Task OnValueChanged(ChangeEventArgs args)
+    {
+        valueFilter = args.Value.ToString();
+        await PageRequest(0);
+    }
+#pragma warning restore CS8602
+
+    protected async void SortBy(string SortColumn)
+    {
+        ascendingSort = !ascendingSort;
+        sort = SortColumn;
+        await PageRequest(currentPage);
+    }
+
+
     private void OnEdit(VariableXModel variable)
     {
         currentVariable = variable;
@@ -268,7 +325,7 @@
             Id = Guid.NewGuid(),
             GroupId = selectedCourse,
             GroupName = "",
-            Curriculum = selectedCurriculum.ToString(),
+            Curriculum = selectedCurriculum,
             VariableName = "",
             Value = ""
         };
@@ -287,7 +344,7 @@
                     new CreateVariableXRequest(
                         variable.GroupName,
                         selectedCourse,
-                        selectedCurriculum.ToString(),
+                        selectedCurriculum,
                         variable.VariableName,
                         variable.Value
                     ));
@@ -329,45 +386,52 @@
         StateHasChanged();
     }
 
-    private async void ReadVariablesByHolding()
+    private async Task PageRequest(int page)
     {
-        var result = await variableService.GetVariablesByHolding(_userHoldingId);
-        holdingVariables = (result is not null)
-            ? result
-            : new();
-    }
+        var response = await variableService.PostPage(
+            new GetVariableXPageRequest(
+                _userHoldingId,
+                _userInstituteId,
+                selectedCourse, 
+                selectedCurriculum,
+                page,
+                pageSize,
+                sort,
+                ascendingSort,
+                nameFilter,
+                valueFilter
+                )
+            );
 
-    private async void ReadVariablesByInstitute()
-    {
-        var result = await variableService.GetVariablesByInstitute(_userInstituteId);
-        instituteVariables = (result is not null)
-            ? result
-            : new();
-    }
-
-    private async void ReadVariablesByCourseAndCurriculum()
-    {
-        var result = await variableService.GetVariablesByCourseAndCurriculum(selectedCourse, selectedCurriculum);
-        courseVariables = (result is not null)
-            ? result
-            : new();
-        variables = courseVariables;
-        variables.AddRange(instituteVariables);
-        variables.AddRange(holdingVariables);
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            var tmp = JsonConvert.DeserializeObject<PageOfVariableX>(content);
+            Guard.Against.Null(tmp);
+            variables = tmp.Entities;
+            currentPage = tmp.CurrentPage;
+            previousPage = tmp.PreviousPage;
+            nextPage = tmp.NextPage;
+            numberOfPages = tmp.NumberOfPages;
+        }
+        else
+        {
+            await OnHttpErrorMessage(response);
+        }
 
         StateHasChanged();
     }
 
     private async Task<List<int>> ReadCurricula(Guid courseId)
     {
-        var result = await componentService.GetCurriculumsByCourseId(courseId);
+        var result = await componentService.GetCurriculaByCourseId(courseId);
 
         return (result is not null)
             ? result.Select(o => o.Curriculum).ToList()
             : new() { -1 };
     }
 
-    private void OnCourseChange(ChangeEventArgs args)
+    private async void OnCourseChange(ChangeEventArgs args)
     {
         Guard.Against.Null(args.Value);
         selectedCourse = new Guid((string)args.Value);
@@ -375,14 +439,14 @@
             if (curricula[selectedCourse].Any())
                 selectedCurriculum = curricula[selectedCourse][0];
 
-        ReadVariablesByCourseAndCurriculum();
+        await PageRequest(0);
     }
 
-    private void OnCurriculumChange(ChangeEventArgs args)
+    private async void OnCurriculumChange(ChangeEventArgs args)
     {
         Guard.Against.Null(args.Value);
         selectedCurriculum = int.Parse((string)args.Value);
 
-        ReadVariablesByCourseAndCurriculum();
+        await PageRequest(0);
     }
 }

@@ -82,11 +82,6 @@ namespace PraeceptorCQRS.Infrastructure.Configurations
                 .OnDelete(DeleteBehavior.ClientCascade);
             // .OnDelete(DeleteBehavior.NoAction);
             modelBuilder
-                .HasMany(d => d.Groups)
-                .WithOne(p => p.Institute)
-                .OnDelete(DeleteBehavior.ClientCascade);
-            // .OnDelete(DeleteBehavior.NoAction);
-            modelBuilder
                 .HasMany(d => d.AxisTypes)
                 .WithOne(p => p.Institute)
                 .OnDelete(DeleteBehavior.ClientCascade);

@@ -15,14 +15,20 @@
                 <div class="container">
                     <div class="form-group purple-border">
                         <div class="mb-3">
-                            <label for="recipient-code" class="col-form-label">Código</label>
-                            <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="false" style="background-color:aliceblue;">
+                            <label for="class-type-code" class="col-form-label">Código</label>
+                            <input type="text" class="form-control input-editable" @bind-value="@_code" id="class-type-code" contenteditable="false" />
                         </div>
                     </div>
                     <div class="form-group purple-border">
                         <div class="mb-3">
-                            <label for="recipient-code3" class="col-form-label">Código resumido (3 letras)</label>
-                            <input type="text" class="form-control" @bind-value="@_code3" id="recipient-code3" contenteditable="false" style="background-color:aliceblue;">
+                            <label for="class-type-code3" class="col-form-label">Código resumido (3 letras)</label>
+                            <input type="text" class="form-control input-editable" @bind-value="@_code3" id="class-type-code3" contenteditable="false" />
+                        </div>
+                    </div>
+                    <div class="form-group purple-border">
+                        <div class="mb-3">
+                            <label for="class-type-duration" class="col-form-label">Código resumido (3 letras)</label>
+                            <input type="number" class="form-control input-editable" @bind-value="@_duration" id="class-type-duration" contenteditable="false" />
                         </div>
                     </div>
                 </div>
@@ -51,10 +57,13 @@
     [Parameter]
     public string Code3 { get; set; } = default!;
     [Parameter]
+    public int Duration { get; set; }
+    [Parameter]
     public EventCallback<ClassTypeModel?> OnClose { get; set; }
 
     private string _code = default!;
     private string _code3 = default!;
+    private int _duration = 0;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -62,6 +71,7 @@
         {
             _code = Code;
             _code3 = Code3;
+            _duration = Duration;
 
             StateHasChanged();
         }
@@ -76,7 +86,7 @@
     private Task Ok()
     {
         if (string.Compare(_code, Code) != 0 || string.Compare(_code3, Code3) != 0)
-            return OnClose.InvokeAsync(new ClassTypeModel { Code = _code, Code3 = _code3 });
+            return OnClose.InvokeAsync(new ClassTypeModel { Code = _code, Code3 = _code3, DurationInMinutes = _duration });
         else
             return OnClose.InvokeAsync(null);
     }

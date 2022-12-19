@@ -15,7 +15,7 @@
 
 <section class="p-1">
 
-    <PageHeaderComponent Institute="@institute" Text=@($"PLANOS DE ENSINO E APRENDIZAGEM DE {className}")></PageHeaderComponent>
+    <PageHeaderComponent Institute="@institute" Text=@($"PLANOS DE ENSINO E APRENDIZAGEM DE {cls?.Name}")></PageHeaderComponent>
 
     <article class="content px-4">
 
@@ -66,27 +66,26 @@
                         <td>@entity.CreatedBy</td>
                         <td>@entity.LastModified</td>
                         <td>@entity.LastModifiedBy</td>
-                        <td align="right" style="width: 80px;">
+                        <td align="right">
                             <button type="button"
-                                    class="btn btn-sm btn-success"
-                                    data-toggle="tooltip"
-                                    data-placement="top"
-                                    title="Ver detalhes"
-                                    @onclick="@(() => Details(entity))"
-                                    style="border: none;">
+                                class="btn btn-sm btn-details"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Ver detalhes"
+                                @onclick="@(() => Details(entity))">
+                                <i class="bi bi-info-circle"></i>
                                 Detalhes
                             </button>
                         </td>
-                        <td align="right" style="width: 80px;">
+                        <td align="right">
                             <button type="button"
-                                    class="btn btn-sm btn-warning"
-                                    data-toggle="tooltip"
-                                    data-placement="top"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#editChapterModal"
-                                    title="Editar"
-                                    @onclick="@(() => Print(entity))"
-                                    style="border: none;">
+                                class="btn btn-sm btn-warning"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editChapterModal"
+                                title="Editar"
+                                @onclick="@(() => Print(entity))">
                                 Imprimir
                             </button>
                         </td>
@@ -149,12 +148,14 @@
     protected string? lastModifiedFilter = "";
     protected string? lastModifiedByFilter = "";
 
-    private string className = "TESTE";
+    private ClassModel? cls = default;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            cls = await classService.GetClassById(ClassId);
+            Guard.Against.Null(cls);
             institute = await InstituteService.GetInstituteById(_userInstituteId);
             Guard.Against.Null(institute);
             await PageRequest(0);
@@ -210,8 +211,6 @@
             previousPage = tmp.PreviousPage;
             nextPage = tmp.NextPage;
             numberOfPages = tmp.NumberOfPages;
-
-            plannerList.ForEach(o => Console.WriteLine(o.Id));
         }
         else
         {
@@ -234,9 +233,18 @@
         await PageRequest(currentPage);
     }
 
-    protected virtual void OnCreate()
+    protected virtual async void OnCreate()
     {
-        StateHasChanged();
+        var planner = new PlannerModel() { ClassId = ClassId, DisciplinaId = cls!.Code };
+
+        var response = await PlannerService.CreatePlanner(
+            new CreatePeaRequest(
+                ClassId,
+                PlannerModel.Encode(planner),
+                _userName
+            )
+        );
+        await PageRequest(currentPage);
     }
 
     protected void Details(PlannerModel entity)

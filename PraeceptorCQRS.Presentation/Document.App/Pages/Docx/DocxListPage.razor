@@ -90,7 +90,7 @@
                             </td>
                             <td>
                                 <button type="button"
-                                class="btn btn-sm btn-primary"
+                                class="btn btn-sm btn-default"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
@@ -103,15 +103,14 @@
                             </td>
                             <td>
                                 <button type="button"
-                                class="btn btn-sm btn-danger"
+                                class="btn btn-sm btn-delete"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
-
                                 disabled="@waiting"
                                 title="Excluir"
                                 @onclick="() => OnDelete(entity.Id)">
-                                    <i class="bi bi-x"></i>
+                                    <i class="bi bi-trash"></i>
                                     Excluir
                                 </button>
                             </td>
@@ -184,8 +183,6 @@
     protected bool created = false;
 
     protected byte[] Data = default!;
-
-    private bool hidden = true;
 
     protected string TextToDisplay(string? text, int maxLength = 200)
         => text is not null && text.Length < maxLength ? text : text?.Substring(0, maxLength) + "...";
@@ -290,11 +287,9 @@
 
         if (model is not null)
         {
-            hidden = false;
             using var writer = new BinaryWriter(File.OpenWrite($"D:\\Download\\{model.Id}.docx"));
             writer.Write(model.Data);
             writer.Close();
-            hidden = true;
 
             StateHasChanged();
 

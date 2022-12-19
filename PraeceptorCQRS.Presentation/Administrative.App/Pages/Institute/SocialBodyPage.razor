@@ -73,7 +73,7 @@
                     </td>
                     @*
                     <td>
-                        Editar
+                    Editar
                     </td>
                     *@
                     <td>
@@ -90,43 +90,43 @@
                         <td align="center"><div style="font-size: smaller">@entity.Preceptor.RegimeType.Code</div></td>
                         <td align="center"><div style="font-size: smaller">@entity.Role.Code</div></td>
                         @*
-                        <td align="center">
-                            <button type="button"
-                                class="btn btn-sm btn-warning"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Excluir"
-                                disabled="@false"
-                                @onclick="@(() => EditPreceptorRole(entity))"
-                                style="border: none;">
-                                Editar
-                            </button>
-                        </td>
-                                    <button type="button"
-                                        class="btn btn-sm btn-danger"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="Excluir valor selecionado"
-                                        style="margin:0;"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
-                                        disabled=@(group.GroupValueSelectedId == Guid.Empty)>
-                                        Excluir Valor
-                                    </button>
+                    <td align="center">
+                    <button type="button"
+                    class="btn btn-sm btn-warning"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Excluir"
+                    disabled="@false"
+                    @onclick="@(() => EditPreceptorRole(entity))"
+                    style="border: none;">
+                    Editar
+                    </button>
+                    </td>
+                    <button type="button"
+                    class="btn btn-sm btn-danger"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Excluir valor selecionado"
+                    style="margin:0;"
+                    data-bs-toggle="modal"
+                    data-bs-target="#@($"A{group.GroupValueSelectedId.ToString("N")}")"
+                    disabled=@(group.GroupValueSelectedId == Guid.Empty)>
+                    Excluir Valor
+                    </button>
                     *@
 
                         <td align="right" style="width: 80px;">
                             <button type="button"
-                                    class="btn btn-sm btn-danger"
-                                    data-toggle="tooltip"
-                                    data-placement="top"
-                                    title="Excluir docente"
-                                    data-bs-toggle="modal"
-                                    disabled="@(!CanRemove())"
-                                    data-bs-target="#@($"A{entity.Preceptor.Id.ToString("N")}-{entity.Role.Id.ToString("N")}")"
-                                    @onclick="@(() => RemoveRoleFromCourse(entity))"
-                                    style="margin:0; border: none;">
-                                Remover
+                                class="btn btn-sm btn-delete"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Excluir docente"
+                                data-bs-toggle="modal"
+                                disabled="@(!CanRemove())"
+                                data-bs-target="#@($"A{entity.Preceptor.Id.ToString("N")}-{entity.Role.Id.ToString("N")}")"
+                                @onclick="@(() => RemoveRoleFromCourse(entity))">
+                                <i class="bi bi-trash"></i>
+                                Excluir
                             </button>
                         </td>
                     </tr>
@@ -144,7 +144,7 @@
                         disabled="@(waiting || !CanCreate())"
                         title="Incluir docente ao curso"
                         @onclick="() => OnIncludePreceptorOnCourse()">
-                    <i class="bi bi-plus-slash-minus"></i>
+                    <i class="bi bi-plus"></i>
                     Incluir docente ao curso
                 </button>
             </div>
@@ -242,11 +242,12 @@
     private async Task EditPreceptorRole(SocialBodyEntryModel model)
     {
         create = false;
-        selectedEntry = new SocialBodyEntryModel {
-            Course = model.Course,
-            Preceptor = model.Preceptor,
-            Role = model.Role
-        };
+        selectedEntry = new SocialBodyEntryModel
+            {
+                Course = model.Course,
+                Preceptor = model.Preceptor,
+                Role = model.Role
+            };
         EditSocialBodyEntryIsOpen = true;
         await Task.CompletedTask;
         StateHasChanged();
@@ -255,11 +256,12 @@
     private async Task OnIncludePreceptorOnCourse()
     {
         create = true;
-        selectedEntry = new SocialBodyEntryModel {
-            Course = course!,
-            Preceptor = null!,
-            Role = null!
-        };
+        selectedEntry = new SocialBodyEntryModel
+            {
+                Course = course!,
+                Preceptor = null!,
+                Role = null!
+            };
         EditSocialBodyEntryIsOpen = true;
         await Task.CompletedTask;
         StateHasChanged();
@@ -267,37 +269,37 @@
 
     private async Task OnEditOrCreateEndDialog(SocialBodyEntryModel? model)
     {
-        if (model is null)
-            return;
-
-        if (create)
+        if (model is not null)
         {
-            var response = await socialBodyService.CreateSocialBodyEntry(
-                new CreateSocialBodyEntryRequest(
-                    model.Course.Id,
-                    model.Preceptor.Id,
-                    model.Role.Id
-                )
-            );
-
-            if (response.IsSuccessStatusCode)
+            if (create)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var entryCreated = JsonConvert.DeserializeObject<SocialBodyEntryModel>(content);
-                Guard.Against.Null(entryCreated);
-                entryCreated.Course = model.Course;
-                entryCreated.Preceptor = model.Preceptor;
-                entryCreated.Role = model.Role;
-                socialBodyEntryList.Add(entryCreated);
+                var response = await socialBodyService.CreateSocialBodyEntry(
+                    new CreateSocialBodyEntryRequest(
+                        model.Course.Id,
+                        model.Preceptor.Id,
+                        model.Role.Id
+                    )
+                );
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var entryCreated = JsonConvert.DeserializeObject<SocialBodyEntryModel>(content);
+                    Guard.Against.Null(entryCreated);
+                    entryCreated.Course = model.Course;
+                    entryCreated.Preceptor = model.Preceptor;
+                    entryCreated.Role = model.Role;
+                    socialBodyEntryList.Add(entryCreated);
+                }
+                else
+                {
+                    await OnHttpErrorMessage(response);
+                }
             }
             else
-            { 
-                await OnHttpErrorMessage(response);
+            {
+                // NÃO SERÁ IMPLEMENTADO - É NECESSÁRIO EXCLUIR FUNÇÃO ATUAL E INCLUIR FUNÇÃO NOVA
             }
-        }
-        else
-        { 
-            // NÃO SERÁ IMPLEMENTADO - É NECESSÁRIO EXCLUIR FUNÇÃO ATUAL E INCLUIR FUNÇÃO NOVA
         }
 
         EditSocialBodyEntryIsOpen = false;
@@ -497,10 +499,10 @@
 
     protected async Task OnDeleteRole(SocialBodyEntryModel? entry)
     {
-        if(entry is not null)
+        if (entry is not null)
         {
             var response = await socialBodyService.DeleteSocialBodyEntry(courseId, entry.Preceptor.Id, entry.Role.Id);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var index = socialBodyEntryList.FindIndex(o =>

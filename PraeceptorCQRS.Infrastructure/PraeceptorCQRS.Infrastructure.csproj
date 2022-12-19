@@ -38,7 +38,7 @@
 		<ProjectReference Include="..\Parsers\AbstractLL\AbstractLL.csproj" />
 		<ProjectReference Include="..\PraeceptorCQRS.Domain\PraeceptorCQRS.Domain.csproj" />
 		<ProjectReference Include="..\PraeceptorCQRS.Application\PraeceptorCQRS.Application.csproj" />
-		<ProjectReference Include="..\PraeceptorCQRS.Utilities\PraeceptorCQRS.Utilities.csproj" />
+		<ProjectReference Include="..\PraeceptorCQRS.Utilities\Utilities.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

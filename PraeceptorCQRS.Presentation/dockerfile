@@ -7,28 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Administrative.App/Administrative.App.csproj", "Administrative.App/"]
-COPY ["../PraeceptorCQRS.Contracts/PraeceptorCQRS.Contracts.csproj", "Administrative.App/"]
-COPY ["../PraeceptorCQRS.Utilities/PraeceptorCQRS.Utilities.csproj", "Administrative.App/"]
-RUN dotnet restore "Administrative.App/Administrative.App.csproj"
+COPY ["Administrative.Api/Administrative.Api.csproj", "Administrative.Api/"]
+RUN dotnet restore "Administrative.Api/Administrative.Api.csproj"
 COPY . .
-WORKDIR "/src/Administrative.App"
-RUN dotnet build "Administrative.App.csproj" -c Release -o /app/build
+WORKDIR "/src/Administrative.Api"
+RUN dotnet build "Administrative.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Administrative.App.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Administrative.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Administrative.App.dll"]
-
-
-#FROM node:alpine
-#COPY . /app
-#CMD node /app/app.js
-
-#FROM node:alpine
-#COPY . /app
-#WORKDIR /app
-#CMD node app.js
+ENTRYPOINT ["dotnet", "Administrative.Api.dll"]

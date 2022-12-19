@@ -32,11 +32,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Currículo</label>
-                                <input type="number" class="form-control" @bind-value="@curriculum" id="recipient-name" contenteditable="true">
+                                <input type="number" class="form-control" @bind-value="@curriculum" id="recipient-name" contenteditable="true" />
                             </div>
                             <div class="mb-3">
                                 <label for="recipient-description" class="col-form-label">Descrição</label>
-                                <input type="text" class="form-control" @bind-value="@description" id="recipient-description" contenteditable="true">
+                                <input type="text" class="form-control" @bind-value="@description" id="recipient-description" contenteditable="true" />
                             </div>
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Modelo de documento Word (.dotx)</label>
@@ -47,10 +47,12 @@
                                     }
                                 </select>
                             </div>
+                            @*
                             <div class="mb-3">
                                 <label for="message-text" class="col-form-label">Variáveis</label>
                                 <textarea type="text" class="form-control" @bind="@groupValues" wrap="soft" id="message-text" rows="15" contenteditable="true"></textarea>
                             </div>
+                            *@
                         </form>
                     </div>
                 </div>
@@ -84,7 +86,7 @@
     private Guid courseSelected = Guid.Empty;
     private int curriculum = 0;
     private string description = "";
-    private string groupValues = "";
+    // private string groupValues = "";
     private Guid templateSelected = Guid.Empty;
 
     private Task Cancel()
@@ -95,12 +97,12 @@
     private Task Ok()
     {
         var gv = new Dictionary<string, string>();
+        
+        // gv.Add("@Grupo.@Variavel", "Teste");
 
-        gv.Add("@Grupo.@Variavel", "Teste");
-
-        Console.WriteLine($"Curso: {courseSelected}");
-        Console.WriteLine($"Template: {templateSelected}");
-        Console.WriteLine($"Currículo: {curriculum}");
+        // Console.WriteLine($"Curso: {courseSelected}");
+        // Console.WriteLine($"Template: {templateSelected}");
+        // Console.WriteLine($"Currículo: {curriculum}");
 
         ConvertPpcToDocxRequest request = new(
             courseSelected,

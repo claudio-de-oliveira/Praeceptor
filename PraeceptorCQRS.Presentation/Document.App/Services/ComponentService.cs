@@ -38,7 +38,7 @@ namespace Document.App.Services
             return response.AccessToken;
         }
 
-        public async Task<List<CurriculumModel>?> GetCurriculumsByCourseId(Guid courseId)
+        public async Task<List<CurriculumModel>?> GetCurriculaByCourseId(Guid courseId)
             => await base.GetMany<CurriculumModel>("list", "curriculum", courseId);
     }
 }

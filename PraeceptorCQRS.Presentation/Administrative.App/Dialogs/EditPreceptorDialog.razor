@@ -17,24 +17,24 @@
                     <div class="form-group purple-border">
                         <form>
                             <div class="mb-3">
-                                <label for="recipient-code" class="col-form-label">Code</label>
-                                <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="false" style="background-color:aliceblue;">
+                                <label for="preceptor-code" class="col-form-label">Code</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@_code" id="preceptor-code" contenteditable="false" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-name" class="col-form-label">Nome</label>
-                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="false" style="background-color:aliceblue;">
+                                <label for="preceptor-name" class="col-form-label">Nome</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@name" id="preceptor-name" contenteditable="false" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-email" class="col-form-label">Email</label>
-                                <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="true" style="background-color:aliceblue;">
+                                <label for="preceptor-email" class="col-form-label">Email</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@email" id="preceptor-email" contenteditable="true" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-image" class="col-form-label">Imagem</label>
-                                <input type="text" class="form-control" @bind-value="@image" id="recipient-image" contenteditable="true" style="background-color:aliceblue;">
+                                <label for="preceptor-image" class="col-form-label">Imagem</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@image" id="preceptor-image" contenteditable="true" />
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-degree" class="col-form-label">Titulação</label>
-                                <select class="form-select" id="recipient-degree" @bind="@degreeTypeId" style="background-color:aliceblue;">
+                                <label for="preceptor-degree" class="col-form-label">Titulação</label>
+                                <select class="form-select" id="preceptor-degree" @bind="@degreeTypeId" style="background-color:aliceblue;">
                                     @foreach (var option in DegreeOptions)
                                     {
                                         <option value=@option.Key>@option.Value</option>
@@ -42,8 +42,8 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="recipient-regime" class="col-form-label">Regime de trabalho</label>
-                                <select class="form-select" id="recipient-regime" @bind="@regimeTypeId" style="background-color:aliceblue;">
+                                <label for="preceptor-regime" class="col-form-label">Regime de trabalho</label>
+                                <select class="form-select" id="preceptor-regime" @bind="@regimeTypeId" style="background-color:aliceblue;">
                                     @foreach (var option in RegimeOptions)
                                     {
                                         <option value=@option.Key>@option.Value</option>

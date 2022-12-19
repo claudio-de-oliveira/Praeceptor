@@ -34,7 +34,7 @@ namespace PraeceptorCQRS.Application.Entities.Component.Commands.CreateCommand
             RuleFor(o => o.Season)
                 .Must(season => season < seasons);
             RuleFor(o => o.Curriculum)
-                .Must(curriculum => curriculum > 0);
+                .NotEmpty();
         }
     }
 }

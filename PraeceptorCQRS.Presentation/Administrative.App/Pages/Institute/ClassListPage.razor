@@ -46,7 +46,6 @@
                         <SelectTextComponent Waiting="@waiting" Options="@classTypeList" OnSelectedChange="OnTypeChanged" OnTextChange="OnTypeChanged"></SelectTextComponent>
                     </td>
                     <td align="center"></td>
-                    <td align="center"></td>
                 </tr>
                 <!---->
                 <tr>
@@ -69,7 +68,6 @@
                         <ButtonSortComponent Waiting="@waiting" Text="Tipo" SortBy="Type" OnClick="@SortBy" />
                     </td>
                     <th></th>
-                    <th></th>
                 </tr>
                 <!---->
             </thead>
@@ -85,19 +83,7 @@
                         <td align="center"><div style="font-size: smaller">@entity.Type.Code</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
-                                    class="btn btn-sm btn-success"
-                                    data-toggle="tooltip"
-                                    data-placement="top"
-                                    title="Ver detalhes"
-                                    disabled = "@(!CanViewDetails(entity))"
-                                    @onclick="@(() => Details(entity))"
-                                    style="border: none;">
-                                Detalhes
-                            </button>
-                        </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
-                                    class="btn btn-sm btn-warning"
+                                    class="btn btn-sm btn-edit"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     data-bs-toggle="modal"
@@ -105,7 +91,8 @@
                                     title="Editar"
                                     disabled = "@(!CanEdit(entity))"
                                     @onclick="@(() => Edit(entity))"
-                                    style="border: none;">
+                                    >
+                                <i class="bi bi-pencil"></i>
                                 Editar
                             </button>
                         </td>
@@ -471,11 +458,6 @@
         ascendingSort = !ascendingSort;
         sort = SortColumn;
         await PageRequest(currentPage);
-    }
-
-    protected void Details(ClassModel? entity)
-    {
-        // navigationManager.NavigateTo($"/institute/details/{entity.Id}");
     }
 
     public void Dispose()

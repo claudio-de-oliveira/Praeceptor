@@ -9,24 +9,27 @@
             {
                 <tr>
                     <td>
-                        <input class="form-control form-control-sm"
+                        <input class="form-control form-control-sm input-editable"
                                type="text"
                                value="@entity.Value"
                                @onchange="@((args) => ChangeText(entity.Key, (string)args.Value!))"
-                               contenteditable="true"
-                               style="font-size:small; background-color:aliceblue; border:none;">
+                               contenteditable="true">
+                               <!--
+                               style="font-size:small; background-color:aliceblue; border:none;"
+                               -->
                     </td>
 
                     <td align="right" style="width: 80px;">
                         <button type="button"
-                                class="btn btn-sm btn-danger"
+                        class="btn btn-sm btn-delete"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
                                 data-bs-target="#@($"A{entity.Key.ToString("N")}")"
                                 @onclick="@(() => Delete(entity.Key))"
                                 title="Excluir"
-                                style="border: none;">
+                                >
+                            <i class="bi bi-trash"></i>
                             Excluir
                         </button>
                     </td>

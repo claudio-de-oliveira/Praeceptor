@@ -42,7 +42,7 @@
                             <ClearableInputTextComponent Placeholder="Filtrar por Créditos Pré-Requisitos" Filter="@prFilter" Waiting="@waiting" OnTextChange="@OnPRChanged"></ClearableInputTextComponent>
                         </td>
                         <td align="center">
-                            <SelectTextComponent Waiting="@waiting" Options="@classTypeList" OnTextChange="OnTypeChanged"></SelectTextComponent>
+                            <SelectTextComponent Placeholder="Filtrar por Tipo" Waiting="@waiting" Options="@classTypeList" OnTextChange="OnTypeChanged"></SelectTextComponent>
                         </td>
                         <!--
                         <td align="center"></td>
@@ -86,14 +86,15 @@
                             <td align="center"><div style="font-size: smaller">@entity.Theory</div></td>
                             <td align="center"><div style="font-size: smaller">@entity.PR</div></td>
                             <td align="center"><div style="font-size: smaller">@entity.Type.Code</div></td>
-                            <td align="center" style="width: 90px;">
+                            <td align="center" >
                                 <button type="button"
-                                class="btn btn-sm btn-success"
+                                class="btn btn-sm btn-details"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Ver detalhes"
                                 @onclick="@(() => Details(entity))"
-                                style="border: none;">
+                                >
+                                    <i class="bi bi-info-circle"></i>
                                     Detalhes
                                 </button>
                             </td>
@@ -107,8 +108,8 @@
                                         data-bs-target="#editChapterModal"
                                         title="Editar"
                                         disabled="@(!entity.HasPlanner)"
-                            @onclick="@(() => Print(entity))"
-                                        style="border: none;">
+                                        @onclick="@(() => Print(entity))"
+                                        >
                                     Imprimir
                                 </button>
                             </td>
@@ -181,9 +182,12 @@
             else
             {
                 await GetAllClassType();
-                await PageRequest(currentPage);
             }
+
+            await PageRequest(currentPage);
         }
+
+        StateHasChanged();
     }
 
     protected async Task OnPageChange(int page)

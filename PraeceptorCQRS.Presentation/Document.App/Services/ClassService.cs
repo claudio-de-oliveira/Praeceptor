@@ -48,6 +48,14 @@ public class ClassService : HttpAbstractService, IClassService
     public async Task<HttpResponseMessage> PostPage(GetClassPageRequest request)
         => await base.Create<GetClassPageRequest>(request, "get", "page");
 
+    public async Task<ClassModel?> GetClassById(Guid id)
+    {
+        var item = await base.GetOne<ClassModel>("get", "id", id);
+        if (item is null)
+            return null;
+        return item;
+    }
+
     public async Task<ClassModel?> GetClassByCode(string code)
     {
         var item = await base.GetOne<ClassModel>("get", "code", code);

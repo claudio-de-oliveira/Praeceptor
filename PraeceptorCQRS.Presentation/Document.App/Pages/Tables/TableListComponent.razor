@@ -77,28 +77,29 @@
                             <td align="center"><div style="font-size: smaller">@entity.Code</div></td>
                             <td><div style="font-size: smaller">@entity.Title</div></td>
                             <td><div style="font-size: smaller">@entity.Header</div></td>
-                            <td align="right" style="width: 80px;">
+                            <td align="right" style="width:120px">
                                 <button type="button"
-                                class="btn btn-sm btn-success"
+                                class="btn btn-sm btn-details"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Ver detalhes"
                                 @onclick="@(() => Details(entity))"
-                                style="border: none;">
+                                >
+                                    <i class="bi bi-info-circle"></i>
                                     Detalhes
                                 </button>
                             </td>
-                            <td align="right" style="width: 80px;">
+                            <td align="right" style="width:120px" >
                                 <button type="button"
-                                class="btn btn-sm btn-danger"
+                                class="btn btn-sm btn-delete"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
                                 disabled="@(waiting || !CanDelete(entity))"
                                 data-bs-target="#@($"A{entity.Id.ToString("N")}")"
                                 title="Excluir"
-                                style="border: none;">
-                                    <i class="bi bi-x"></i>
+                                >
+                                    <i class="bi bi-trash"></i>
                                     Excluir
                                 </button>
                             </td>
@@ -115,10 +116,10 @@
                         data-placement="top"
                         data-bs-toggle="modal"
                         disabled="@(waiting || !CanCreate())"
-                        title="Criar um novo componente curricular"
+                        title="Criar uma nova tabela"
                         @onclick="() => OnCreate()">
-                        <i class="bi bi-plus-slash-minus"></i>
-                        Criar um novo componente curricular
+                        <i class="bi bi-plus-lg"></i>
+                        Criar uma nova tabela
                     </button>
                 </div>
                 <!--
@@ -308,15 +309,20 @@
                     model.Header,
                     model.Rows,
                     model.Footer,
-                    model.InstituteId
+                    _userInstituteId
                 ));
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    Guard.Against.Null(content);
-                    currentEntity = JsonConvert.DeserializeObject<SimpleTableModel>(content)!;
-                    Guard.Against.Null(currentEntity);
+                    await PageRequest(currentPage);
+                    // var content = await response.Content.ReadAsStringAsync();
+                    // Guard.Against.Null(content);
+                    // currentEntity = JsonConvert.DeserializeObject<SimpleTableModel>(content)!;
+                    // Guard.Against.Null(currentEntity);
+                }
+                else
+                {
+                    await OnHttpErrorMessage(response);
                 }
             }
         }

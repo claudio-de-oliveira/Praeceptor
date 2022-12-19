@@ -62,7 +62,7 @@ public class CourseService : HttpAbstractService, ICourseService
         return item;
     }
 
-    public async Task<List<CurriculumModel>> GetCurriculumsByCourseId(Guid id)
+    public async Task<List<CurriculumModel>> GetCurriculaByCourseId(Guid id)
         => await base.GetMany<CurriculumModel>("list", "curriculum", id) ?? new();
     public async Task<int> GetCourseCount(Guid instituteId)
         => await base.Count("get", "count", instituteId);

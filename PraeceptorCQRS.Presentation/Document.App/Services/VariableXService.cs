@@ -77,5 +77,8 @@ namespace Document.App.Services
                 return null;
             return item;
         }
+
+        public async Task<HttpResponseMessage> PostPage(GetVariableXPageRequest request)
+            => await base.Create<GetVariableXPageRequest>(request, "get", "page");
     }
 }

@@ -4,6 +4,6 @@ using PraeceptorCQRS.Application.Entities.Component.Common;
 
 namespace PraeceptorCQRS.Application.Entities.Component.Queries;
 
-public record GetCurriculumsByCourseIdQuery(
+public record GetCurriculaByCourseIdQuery(
     Guid Id
     ) : IRequest<ErrorOr<CurriculumListResult>>;

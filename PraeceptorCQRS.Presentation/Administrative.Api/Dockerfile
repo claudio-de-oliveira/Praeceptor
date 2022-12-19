@@ -7,14 +7,34 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Administrative.Api/Administrative.Api.csproj", "Administrative.Api/"]
-RUN dotnet restore "Administrative.Api/Administrative.Api.csproj"
+
+COPY ["./Administrative.Api.csproj", "Administrative/"]
+
+#COPY ["../../PraeceptorCQRS.Application/PraeceptorCQRS.Application.csproj", "Application/"]
+COPY ["../../PraeceptorCQRS.Application/*.Application.csproj", "Application/"]
+#
+## #RUN dotnet restore "Application/PraeceptorCQRS.Application.csproj"
+#
+#COPY ["./../../PraeceptorCQRS.Contracts/*.csproj", "Contracts/"]
+#
+## #RUN dotnet restore "Contracts/PraeceptorCQRS.Contracts.csproj"
+#
+#COPY ["./../../PraeceptorCQRS.Infrastructure/*.csproj", "Infrastructure/"]
+#
+## #RUN dotnet restore "Infrastructure/PraeceptorCQRS.Infrastructure.csproj"
+#
+#COPY ["./../../PraeceptorCQRS.Utilities/*.csproj", "Utilities/"]
+#
+## #RUN dotnet restore "Utilities/PraeceptorCQRS.Utilities.csproj"
+
+RUN dotnet restore "Administrative/Administrative.Api.csproj"
+
 COPY . .
-WORKDIR "/src/Administrative.Api"
-RUN dotnet build "Administrative.Api.csproj" -c Release -o /app/build
+WORKDIR "/src/Administrative"
+RUN dotnet build "AdministrativeApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Administrative.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "AdministrativeApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

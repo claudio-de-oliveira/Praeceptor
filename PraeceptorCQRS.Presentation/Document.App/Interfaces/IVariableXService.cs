@@ -1,4 +1,6 @@
 ﻿using Document.App.Models;
+
+using PraeceptorCQRS.Contracts.Entities.Class;
 using PraeceptorCQRS.Contracts.Entities.Variable;
 
 namespace Document.App.Interfaces
@@ -15,5 +17,6 @@ namespace Document.App.Interfaces
         Task<List<VariableXModel>?> GetVariablesByHolding(Guid holdingId);
         Task<List<VariableXModel>?> GetVariablesByInstitute(Guid instituteId);
         Task<List<VariableXModel>?> GetVariablesByCourseAndCurriculum(Guid courseId, int curriculum);
+        Task<HttpResponseMessage> PostPage(GetVariableXPageRequest request);
     }
 }

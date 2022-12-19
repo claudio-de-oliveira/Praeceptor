@@ -52,7 +52,7 @@ namespace Administrative.App.Services
             => await base.GetMany<ComponentModel>("get", "curriculum", courseId, curriculum);
         public async Task<IEnumerable<ComponentModel>?> GetComponentListByCourseAndCurriculumAndSeason(Guid courseId, int curriculum, int season)
             => await base.GetMany<ComponentModel>("get", "season", courseId, curriculum, season);
-        public async Task<List<CurriculumModel>?> GetCurriculumsByCourseId(Guid courseId)
+        public async Task<List<CurriculumModel>?> GetCurriculaByCourseId(Guid courseId)
             => await base.GetMany<CurriculumModel>("list", "curriculum", courseId);
         public async Task<HttpResponseMessage> DeleteComponent(Guid courseId, int curriculum, Guid classId)
             => await base.Delete("delete", courseId, curriculum, classId);

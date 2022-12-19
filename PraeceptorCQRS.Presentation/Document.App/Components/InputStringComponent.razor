@@ -1,10 +1,9 @@
 ﻿@using System.Diagnostics.CodeAnalysis;
 
 <input type="text" 
-       class="form-control"
+       class="form-control input-editable"
        @onchange="@OnChange"
-       @onkeypress="@KeyPressHandler" @onkeypress:preventDefault
-       style="background-color:aliceblue; border:none" />
+       @onkeypress="@KeyPressHandler" @onkeypress:preventDefault />
 
 @code {
     [Parameter]

@@ -16,31 +16,31 @@
                 <div class="container">
                     <div class="form-group purple-border">
                         <form>
-                            <div class="mb-3"> 
+                            <div class="mb-3">
                                 <!-- Não pode ser nulo -->
-                                <label for="recipient-name" class="col-form-label">Acrônimo</label>
-                                <input type="text" class="form-control" @bind-value="@acronym" id="recipient-name" contenteditable="false" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="holding-acronym" class="col-form-label">Acrônimo</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@acronym" id="holding-acronym" contenteditable="false" disabled="@(!Create)">
                             </div>
                             <div class="mb-3">
                                 <!-- Não pode ser nulo -->
-                                <label for="message-text" class="col-form-label">Nome</label>
-                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="holding-name" class="col-form-label">Nome</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@name" id="holding-name" contenteditable="true" disabled="@(!Create)">
                             </div>
                             <div class="mb-3">
-                                <label for="message-text" class="col-form-label">Endereço</label>
-                                <input type="text" class="form-control" @bind-value="@address" id="recipient-name" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="holding-address" class="col-form-label">Endereço</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@address" id="holding-address" contenteditable="true" disabled="@(!Create)">
                             </div>
                             @if (!IsHoldingAdmin)
                             {
                                 <div class="mb-3">
                                     <!-- Não pode ser nulo -->
-                                    <label for="message-admin" class="col-form-label">Administrador</label>
-                                    <input type="text" class="form-control" @bind-value="@administrator" id="recipient-admin" contenteditable="true" style="background-color:aliceblue;">
+                                    <label for="holding-admin" class="col-form-label">Administrador</label>
+                                    <input type="text" class="form-control input-editable" @bind-value="@administrator" id="holding-admin" contenteditable="true">
                                 </div>
                                 <div class="mb-3">
                                     <!-- Tem que ser um endereço válido -->
-                                    <label for="message-email" class="col-form-label">Email do administrador</label>
-                                    <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="true" style="background-color:aliceblue;">
+                                    <label for="holding-email" class="col-form-label">Email do administrador</label>
+                                    <input type="text" class="form-control input-editable" @bind-value="@email" id="holding-email" contenteditable="true">
                                 </div>
                             }
                         </form>
@@ -71,7 +71,7 @@
     [Parameter]
     public string Name { get; set; } = default!;
     [Parameter]
-    public string Address { get; set; } = default!; 
+    public string Address { get; set; } = default!;
     [Parameter]
     public bool Create { get; set; }
     [Parameter]

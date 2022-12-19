@@ -2,6 +2,7 @@
 var $table = $('#table');
 $(function () {
     $('#toolbar').find('select').change(function () {
+        console.log('Cheguei ao módulo table.js');
         $table.bootstrapTable('refreshOptions', {
             exportDataType: $(this).val()
         });

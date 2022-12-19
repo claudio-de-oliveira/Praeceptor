@@ -27,7 +27,7 @@
                         <td><div style="font-size: smaller">@entity.Code (@entity.Code3)</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
-                                    class="btn btn-sm btn-warning"
+                                class="btn btn-sm btn-edit"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     data-bs-toggle="modal"
@@ -35,7 +35,8 @@
                                     title="Editar"
                                     disabled="@(!CanEdit(entity))"
                                     @onclick="@(() => Edit(entity))"
-                                    style="border: none;">
+                                    >
+                                <i class="bi bi-pencil"></i>
                                 Editar
                             </button>
                         </td>

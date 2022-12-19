@@ -16,7 +16,7 @@
 @if (EditDialogIsOpen)
 {
     <EditCourseDialog Code="@previousCode"
-                  Name="@previousName" 
+                  Name="@previousName"
                   AC="@previousAC" NumberOfSeasons="@previousSeasons" MinimumWorkload="@previousMinimumWorkload" Telephone="@previousTelephone"
                   Email="@previousEmail" Image="@previousImage"
                   IsCourseAdmin="@_isCourseAdmin"
@@ -85,38 +85,38 @@
                         <td align="center"><div style="font-size: smaller">@entity.MinimumWorkload</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-primary"
+                                class="btn btn-sm btn-doc-part"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Corpo social"
-                                @onclick="@(() => Administration(entity))"
-                                style="border: none;">
+                                @onclick="@(() => Administration(entity))">
+                                <i class="bi bi-microsoft-teams"></i>
                                 Administração
                             </button>
                         </td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-success"
+                                class="btn btn-sm btn-details"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Estrutura curricular"
                                 disabled="@(!CanViewDetails(entity))"
-                                @onclick="@(() => Details(entity))"
-                                style="border: none;">
+                                @onclick="@(() => Details(entity))">
+                                <i class="bi bi-grid-3x3-gap"></i>
                                 Matriz
                             </button>
                         </td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
-                                class="btn btn-sm btn-warning"
+                                class="btn btn-sm btn-edit"
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 data-bs-toggle="modal"
                                 data-bs-target="#editChapterModal"
                                 title="Editar"
                                 disabled="@(!CanEdit(entity))"
-                                @onclick="@(() => Edit(entity))"
-                                style="border: none;">
+                                @onclick="@(() => Edit(entity))">
+                                <i class="bi bi-pencil"></i>
                                 Editar
                             </button>
                         </td>
@@ -427,7 +427,6 @@
                 await Update(modifiednewEntity);
 
             waiting = false;
-
         }
 
         EditDialogIsOpen = false;

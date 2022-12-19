@@ -8,16 +8,15 @@
     {
         @foreach (var concept in Unidade)
         {
-            <form id="ConceptForm" class="row g-1" onsubmit="@(() => { /* Nothing todo */ })">
+            <form id="KeyConceptForm" class="row g-1" onsubmit="@(() => { /* Nothing todo */ })">
 
                 @if (concept.Key == editConceptKey)
                 {
                     <div class="col-lg-10">
-                        <input type="text" class="form-control"
+                        <input type="text" class="form-control input-editable"
                                value="@text"
                                @onchange="@((args) => OnConceptChanged((string)args.Value!))"
-                               @onfocusout="@FocusOut"
-                               style="background-color:aliceblue; border:none" />
+                               @onfocusout="@FocusOut" />
                     </div>
                 }
                 else
@@ -38,18 +37,20 @@
                     </div>
                     <div class="col-lg-2">
                         <div class="btn-toolbar my-2" role="toolbar" aria-label="Toolbar with button groups">
-                            <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-sm btn-edit" data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
                                     data-bs-target=@($"#editConceptModal-{concept.Key}") title="Editar"
                                     disabled="@(editConceptKey != Guid.Empty)"
                                     @onclick="@(() => Edit(concept.Key))"
-                                    style="border: none;">
+                                    >
+                                <i class="bi bi-pencil"></i>
                                 Editar
                             </button>
-                            <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-sm btn-delete" data-toggle="tooltip" data-placement="top" data-bs-toggle="modal"
                                     title="Excluir variável"
                                     disabled="@(editConceptKey != Guid.Empty)"
                                     @onclick="@(() => Delete(concept.Key))"
-                                    style="border: none;">
+                                    >
+                                <i class="bi bi-x-lg"></i>
                                 Excluir
                             </button>
                         </div>

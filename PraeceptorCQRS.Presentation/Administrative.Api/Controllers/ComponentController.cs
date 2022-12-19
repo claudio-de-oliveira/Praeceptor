@@ -130,15 +130,15 @@ namespace Administrative.Api.Controllers
 
         [HttpGet("list/curriculum/{courseId}")]
         [Authorize("ReadPolice")]
-        public async Task<IActionResult> GetCurriculumsByCourseId(Guid courseId)
+        public async Task<IActionResult> GetCurriculaByCourseId(Guid courseId)
         {
-            var query = new GetCurriculumsByCourseIdQuery(
+            var query = new GetCurriculaByCourseIdQuery(
                 courseId
                 );
 
             ErrorOr<CurriculumListResult> result = await _mediator.Send(query);
 
-            var curriculumList = _mapper.Map<List<CurriculumResponse>>(result.Value.Curriculums);
+            var curriculumList = _mapper.Map<List<CurriculumResponse>>(result.Value.Curricula);
 
             return result.Match(
                 result => Ok(curriculumList),

@@ -73,7 +73,6 @@
     private string _header = "";
     private string _rows = "";
     private string? _footer = default!;
-    // private Guid _instituteId;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -98,17 +97,17 @@
 
     private Task Ok()
     {
-        if (_code != Table.Code || _title != Table.Title /*|| _header != Table.Header || _rows != Table.Rows || _footer != Table.Footer*/)
+        if (_code != Table.Code || _title != Table.Title)
         {
             return OnClose.InvokeAsync(
                 new SimpleTableModel()
                     {
                         Id = Table.Id,
-                        Code = Table.Code,
-                        Title = Table.Title,
-                        Header = "",
-                        Rows = "",
-                        Footer = ""
+                        Code = _code,
+                        Title = _title,
+                        Header = _header,
+                        Rows = _rows,
+                        Footer = _footer
                     }
                 );
         }

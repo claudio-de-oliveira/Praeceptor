@@ -41,6 +41,7 @@
                         <ClearableInputTextComponent Filter="@descriptionFilter" Waiting="@waiting" OnTextChange="@OnDescriptionChanged"></ClearableInputTextComponent>
                     </td>
                     <td align="center"></td>
+                    <td align="center"></td>
                 </tr>
                 <!---->
                 <tr>
@@ -59,12 +60,18 @@
                     <td align="center">
                         <ButtonSortComponent Waiting="@waiting" Text="Criação" SortBy="DateCreated" OnClick="@SortBy" />
                     </td>
+                    <td align="center"></td>
                 </tr>
                 <!---->
             </thead>
             <tbody>
                 @foreach (var entity in entityList)
                 {
+                    <ConfirmDialog Title="Atenção"
+                               Message=@($"Tem certeza que deseja excluir o arquivo \"{entity.Name}\" ?")
+                               OnConfirmEvent="@Delete"
+                               ParameterId="@entity.Id" />
+
                     <tr>
                         <td>
                             <div style="font-size: smaller">@TextToDisplay(entity.Name)</div>
@@ -78,7 +85,22 @@
                         <td>
                             <div style="font-size: smaller">@TextToDisplay(entity.Description)</div>
                         </td>
-                        <td align="center" style="font-size: smaller">@Global.ConvertDateTimeToString(entity.DateCreated)</td>
+                        <td align="center" style="font-size: smaller">
+                            @Global.ConvertDateTimeToString(entity.DateCreated)
+                        </td>
+                        <td align="right" style="width:120px">
+                            <button type="button"
+                                class="btn btn-sm btn-delete"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                data-bs-toggle="modal"
+                                disabled="@(waiting || !CanDelete(entity))"
+                                data-bs-target="#@($"A{entity.Id.ToString("N")}")"
+                                title="Excluir">
+                                <i class="bi bi-trash"></i>
+                                Excluir
+                            </button>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -91,10 +113,10 @@
                         data-placement="top"
                         data-bs-toggle="modal"
                         disabled="@waiting"
-                        title="Criar um novo capítulo"
+                        title="Acrescentar um novo capítulo"
                         @onclick="() => OnCreate()">
                     <i class="bi bi-plus-lg"></i>
-                    Criar um novo arquivo
+                    Acrescentar um novo arquivo
                 </button>
             </div>
             <PageNavigationComponent CurrentPage="@currentPage" NumberOfPages="@numberOfPages" GotoPage="@OnPageChange"></PageNavigationComponent>
@@ -289,4 +311,26 @@
 
         StateHasChanged();
     }
+
+    protected bool CanDelete(FileModel entity)
+    {
+        return true;
+    }
+
+    private async void Delete(object? source, Guid id)
+    {
+        var response = await fileStreamService.DeleteFileStream(id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            entityList.Remove(entityList.Find(o => o.Id == id)!);
+            await PageRequest(currentPage);
+            _toasterService?.AddToastSuccess("O arquivo foi excluído com sucesso.");
+        }
+        else
+        {
+            await OnHttpErrorMessage(response);
+        }
+    }
+
 }

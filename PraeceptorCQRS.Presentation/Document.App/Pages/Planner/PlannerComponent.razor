@@ -10,7 +10,7 @@
 
 <section class="p-1">
 
-    <PageHeaderComponent Institute="@institute" Text=@($"PLANOS DE ENSINO E APRENDIZAGEM DE {className}")></PageHeaderComponent>
+    <PageHeaderComponent Institute="@institute" Text=@($"PLANOS DE ENSINO E APRENDIZAGEM DE {cls?.Name}")></PageHeaderComponent>
 
     <article class="content px-4">
 
@@ -115,10 +115,12 @@
 @code {
     [Inject]
     protected IPlannerService PlannerService { get; set; } = default!;
-    [Parameter]
-    public Guid PlannerId { get; set; }
+    [Inject]
+    private IClassService classService { get; set; } = default!;
     [Inject]
     protected IInstituteService InstituteService { get; set; } = default!;
+    [Parameter]
+    public Guid PlannerId { get; set; }
 
     private InstituteModel? institute;
     private PlannerModel? plannerModel;
@@ -129,7 +131,7 @@
     private Dictionary<Guid, ConceptKeyModel> unidade1 = new();
     private Dictionary<Guid, ConceptKeyModel> unidade2 = new();
 
-    private string className = "TESTE";
+    private ClassModel? cls = default;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -137,7 +139,6 @@
         {
             institute = await InstituteService.GetInstituteById(_userInstituteId);
             Guard.Against.Null(institute);
-            plannerModel = new();
 
             plannerModel = await PlannerService.GetPlannerFromId(PlannerId);
             if (plannerModel is not null)
@@ -147,6 +148,12 @@
                 plannerModel.BibliografiaComplementar.ForEach(o => complementarBibliography.Add(Guid.NewGuid(), o));
                 plannerModel.Unidade1.ForEach(o => unidade1.Add(Guid.NewGuid(), o));
                 plannerModel.Unidade2.ForEach(o => unidade2.Add(Guid.NewGuid(), o));
+
+                cls = await classService.GetClassByCode(plannerModel.DisciplinaId);
+                Guard.Against.Null(cls);
+            }
+            else
+            {
             }
 
             StateHasChanged();

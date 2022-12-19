@@ -13,7 +13,7 @@
 <!-- Modal: Editar entidade -->
 @if (EditDialogIsOpen)
 {
-    <EditClassTypeDialog Code="@previousCode" Code3="@previousCode3" OnClose="@OnEditDialogClose" />
+    <EditClassTypeDialog Code="@previousCode" Code3="@previousCode3" Duration="@previousDuration" OnClose="@OnEditDialogClose" />
 }
 
 <section class="p-1">
@@ -26,7 +26,7 @@
                         <td><div style="font-size: smaller">@entity.Code (@entity.Code3)</div></td>
                         <td align="right" style="width: 80px;">
                             <button type="button"
-                                    class="btn btn-sm btn-warning"
+                                    class="btn btn-sm btn-edit"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     data-bs-toggle="modal"
@@ -34,7 +34,8 @@
                                     title="Editar"
                                     disabled="@(!CanEdit(entity))"
                                     @onclick="@(() => Edit(entity))"
-                                    style="border: none;">
+                                    >
+                                <i class="bi bi-pencil"></i>
                                 Editar
                             </button>
                         </td>
@@ -73,6 +74,7 @@
     protected ClassTypeModel entitySelected = new();
     protected string previousCode = string.Empty;
     protected string previousCode3 = string.Empty;
+    private int previousDuration;
 
     private Guid instituteId;
     private InstituteModel? institute;
@@ -158,6 +160,7 @@
         entitySelected = entity;
         previousCode = entitySelected.Code;
         previousCode3 = entitySelected.Code3;
+        previousDuration = entitySelected.DurationInMinutes;
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -169,6 +172,7 @@
         entitySelected = new ClassTypeModel() { InstituteId = instituteId };
         previousCode = "";
         previousCode3 = "";
+        previousDuration = 0;
         EditDialogIsOpen = true;
         StateHasChanged();
     }
@@ -182,6 +186,7 @@
             Guard.Against.Null(entitySelected);
             entitySelected.Code = modifiednewEntity.Code;
             entitySelected.Code3 = modifiednewEntity.Code3;
+            entitySelected.DurationInMinutes = modifiednewEntity.DurationInMinutes;
             HttpResponseMessage response;
 
             if (created)

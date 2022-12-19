@@ -9,11 +9,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+	</ItemGroup>
+
+	<!--
+	<ItemGroup>
 		<None Include="..\..\.dockerignore" Link=".dockerignore">
 			<DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
 		</None>
 	</ItemGroup>
-
+-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Mapster" Version="7.3.0" />
@@ -25,7 +30,7 @@
 		<ProjectReference Include="..\..\PraeceptorCQRS.Application\PraeceptorCQRS.Application.csproj" />
 		<ProjectReference Include="..\..\PraeceptorCQRS.Contracts\PraeceptorCQRS.Contracts.csproj" />
 		<ProjectReference Include="..\..\PraeceptorCQRS.Infrastructure\PraeceptorCQRS.Infrastructure.csproj" />
-		<ProjectReference Include="..\..\PraeceptorCQRS.Utilities\PraeceptorCQRS.Utilities.csproj" />
+		<ProjectReference Include="..\..\PraeceptorCQRS.Utilities\Utilities.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

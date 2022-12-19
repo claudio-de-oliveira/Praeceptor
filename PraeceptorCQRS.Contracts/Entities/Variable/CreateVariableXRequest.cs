@@ -3,7 +3,7 @@
     public record CreateVariableXRequest(
         string GroupName,
         Guid GroupId,
-        string? Curriculum,
+        int? Curriculum,
         string VariableName,
         string? Value
         );

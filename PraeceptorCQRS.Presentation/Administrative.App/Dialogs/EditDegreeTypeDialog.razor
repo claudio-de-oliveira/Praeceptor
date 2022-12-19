@@ -15,23 +15,23 @@
                 <div class="container">
                     <div class="form-group purple-border">
                         <div class="mb-3">
-                            <label for="recipient-code" class="col-form-label">Código</label>
-                            <input type="text" class="form-control" @bind-value="@_code" id="recipient-code" contenteditable="false" style="background-color:aliceblue;">
+                            <label for="degree-code" class="col-form-label">Código</label>
+                            <input type="text" class="form-control input-editable" @bind-value="@_code" id="degree-code" contenteditable="false" />
                         </div>
                     </div>
                     <div class="form-group purple-border">
                         <div class="mb-3">
-                            <label for="recipient-code3" class="col-form-label">Código resumido (3 letras)</label>
-                            <input type="text" class="form-control" @bind-value="@_code3" id="recipient-code3" contenteditable="false" style="background-color:aliceblue;">
+                            <label for="degree-code3" class="col-form-label">Código resumido (3 letras)</label>
+                            <input type="text" class="form-control input-editable" @bind-value="@_code3" id="degree-code3" contenteditable="false" />
                         </div>
                     </div>
                 </div>
                 <div class="form-check form-switch">
-                    <input class="form-check-input-lato" @bind-value="@_latoSensu" type="checkbox" id="flexSwitchLatoCheckChecked" checked="@_latoSensu">
+                    <input class="form-check-input-lato" @bind-value="@_latoSensu" type="checkbox" id="flexSwitchLatoCheckChecked" checked="@_latoSensu" />
                     <label class="form-check-label" for="flexSwitchLatoCheckChecked">Lato Sensu</label>
                 </div>
                 <div class="form-check form-switch">
-                    <input class="form-check-input-strict" @bind-value="@_strictoSensu" type="checkbox" id="flexSwitchStrictoCheckChecked" checked="@_strictoSensu">
+                    <input class="form-check-input-strict" @bind-value="@_strictoSensu" type="checkbox" id="flexSwitchStrictoCheckChecked" checked="@_strictoSensu" />
                     <label class="form-check-label" for="flexSwitchStrictoCheckChecked">Stricto Sensu</label>
                 </div>
             </div>

@@ -6,12 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using PraeceptorCQRS.Application.Authentication;
 using PraeceptorCQRS.Application.Email;
 using PraeceptorCQRS.Application.Persistence;
 using PraeceptorCQRS.Application.Services;
 using PraeceptorCQRS.Domain.Email;
-using PraeceptorCQRS.Infrastructure.Authentication;
 using PraeceptorCQRS.Infrastructure.BackgroundJobs;
 using PraeceptorCQRS.Infrastructure.Data;
 using PraeceptorCQRS.Infrastructure.Email;
@@ -39,9 +37,6 @@ namespace PraeceptorCQRS.Infrastructure
         {
             InstallSerilog(configuration);
 
-            services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
-
-            services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
@@ -66,11 +61,7 @@ namespace PraeceptorCQRS.Infrastructure
             services.AddScoped<ISocialBodyRepository, SocialBodyRepository>();
             services.AddScoped<ISimpleTableRepository, SimpleTableRepository>();
 
-            services.AddScoped<IGroupRepository, GroupRepository>();
-            services.AddScoped<IGroupValueRepository, GroupValueRepository>();
-            services.AddScoped<IVariableRepository, VariableRepository>();
             services.AddScoped<IVariableXRepository, VariableXRepository>();
-            services.AddScoped<IVariableValueRepository, VariableValueRepository>();
 
             services.AddScoped<IAxisTypeRepository, AxisTypeRepository>();
             services.AddScoped<IComponentRepository, ComponentRepository>();

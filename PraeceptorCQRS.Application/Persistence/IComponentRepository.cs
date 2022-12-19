@@ -9,7 +9,7 @@ namespace PraeceptorCQRS.Application.Persistence
         Task<IEnumerable<Component>> GetComponentListByCourseAndCurriculum(Guid courseId, int curriculum);
         Task<IEnumerable<Component>> GetComponentListByCourseAndCurriculumAndStage(Guid courseId, int curriculum, int season);
         Task<Component?> GetComponentByCourseAndCurriculumAndClass(Guid courseId, int curriculum, Guid classId);
-        Task<IEnumerable<CurriculumResult>> GetCurriculumsByCourseId(Guid courseId);
+        Task<IEnumerable<CurriculumResult>> GetCurriculaByCourseId(Guid courseId);
         Task<Component?> CreateComponent(Component entityToCreate);
         Task<Component?> UpdateComponent(Component entityToUpdate);
         Task<Component?> DeleteComponent(Guid courseId, int curriculum, Guid classId);

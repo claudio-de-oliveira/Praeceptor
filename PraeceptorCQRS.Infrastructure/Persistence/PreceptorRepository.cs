@@ -125,9 +125,8 @@ namespace PraeceptorCQRS.Infrastructure.Persistence
             string? lastModifiedByFilter
             )
         {
-            Console.WriteLine($"Procurando por {nameFilter!}");
-
             var table = _context.Set<Preceptor>();
+
             // ToList() is needed here
             var list = await Task.Run(
                 () => table.Include(p => p.DegreeType).Include(p => p.RegimeType).Where(o => o.InstituteId == instituteId).ToList());

@@ -18,29 +18,29 @@
                         <form>
                             <div class="mb-3">
                                 <!-- Não pode ser nulo -->
-                                <label for="recipient-name" class="col-form-label">Acrônimo</label>
-                                <input type="text" class="form-control" @bind-value="@acronym" id="recipient-name" contenteditable="false" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="institute-acronym" class="col-form-label">Acrônimo</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@acronym" id="institute-acronym" contenteditable="false" disabled="@(!Create)">
                             </div>
                             <div class="mb-3">
                                 <!-- Não pode ser nulo -->
-                                <label for="message-text" class="col-form-label">Nome</label>
-                                <input type="text" class="form-control" @bind-value="@name" id="recipient-name" contenteditable="true" disabled="@(!Create)" style="background-color:aliceblue;">
+                                <label for="institute-name" class="col-form-label">Nome</label>
+                                <input type="text" class="form-control input-editable" @bind-value="@name" id="institute-name" contenteditable="true" disabled="@(!Create)">
                             </div>
                             @if (!IsInstituteAdmin)
                             {
                                 <div class="mb-3">
-                                    <label for="message-text" class="col-form-label">Endereço</label>
-                                    <input type="text" class="form-control" @bind-value="@address" id="recipient-name" contenteditable="true" style="background-color:aliceblue;">
+                                    <label for="institute-address" class="col-form-label">Endereço</label>
+                                    <input type="text" class="form-control input-editable" @bind-value="@address" id="institute-address" contenteditable="true">
                                 </div>
                                 <div class="mb-3">
                                     <!-- Não pode ser nulo -->
-                                    <label for="message-admin" class="col-form-label">Administrador</label>
-                                    <input type="text" class="form-control" @bind-value="@administrator" id="recipient-admin" contenteditable="true" style="background-color:aliceblue;">
+                                    <label for="institute-admin" class="col-form-label">Administrador</label>
+                                    <input type="text" class="form-control input-editable" @bind-value="@administrator" id="institute-admin" contenteditable="true">
                                 </div>
                                 <div class="mb-3">
                                     <!-- Tem que ser um endereço válido -->
-                                    <label for="message-email" class="col-form-label">Email do administrador</label>
-                                    <input type="text" class="form-control" @bind-value="@email" id="recipient-email" contenteditable="true" style="background-color:aliceblue;">
+                                    <label for="institute-email" class="col-form-label">Email do administrador</label>
+                                    <input type="text" class="form-control input-editable" @bind-value="@email" id="institute-email" contenteditable="true">
                                 </div>
                             }
                         </form>

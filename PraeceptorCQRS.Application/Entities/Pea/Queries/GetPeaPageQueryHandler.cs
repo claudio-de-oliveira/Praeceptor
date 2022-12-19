@@ -73,6 +73,7 @@ namespace PraeceptorCQRS.Application.Entities.Pea.Queries
                     entity.LastModified,
                     entity.LastModifiedBy
                     );
+                model.ClassId = request.ClassId;
 
                 modelList.Entities.Add(model);
             }

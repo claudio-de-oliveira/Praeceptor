@@ -19,7 +19,6 @@ namespace PraeceptorCQRS.Domain.Entities
             PreceptorDegreeTypes = new HashSet<PreceptorDegreeType>();
             PreceptorRegimeTypes = new HashSet<PreceptorRegimeType>();
             PreceptorRoleTypes = new HashSet<PreceptorRoleType>();
-            Groups = new HashSet<Group>();
             Documents = new HashSet<Document>();
             Chapters = new HashSet<Chapter>();
             Sections = new HashSet<Section>();
@@ -103,7 +102,6 @@ namespace PraeceptorCQRS.Domain.Entities
         public virtual ICollection<PreceptorDegreeType> PreceptorDegreeTypes { get; set; }
         public virtual ICollection<PreceptorRegimeType> PreceptorRegimeTypes { get; set; }
         public virtual ICollection<PreceptorRoleType> PreceptorRoleTypes { get; set; }
-        public virtual ICollection<Group> Groups { get; set; }
         public virtual ICollection<Document> Documents { get; set; }
         public virtual ICollection<Chapter> Chapters { get; set; }
         public virtual ICollection<Section> Sections { get; set; }

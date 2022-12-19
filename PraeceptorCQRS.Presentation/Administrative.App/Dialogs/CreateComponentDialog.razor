@@ -44,23 +44,23 @@
                                 @*
                                 @if (viewSelectControl)
                                 {
-                                    <ClearableSelectTextComponent OnSelect="@SelectClass"
-                                                              OnFilterChange="@OnFilterChange"
-                                                              OnClear="@OnClear"
-                                                              FilterText="Selecionar"
-                                                              Waiting="@waiting"
-                                                              ComponentFilter="@componentFilter"
-                                                              Options="@Options" />
+                                <ClearableSelectTextComponent OnSelect="@SelectClass"
+                                OnFilterChange="@OnFilterChange"
+                                OnClear="@OnClear"
+                                FilterText="Selecionar"
+                                Waiting="@waiting"
+                                ComponentFilter="@componentFilter"
+                                Options="@Options" />
                                 }
                                 else
                                 {
-                                    <ClearableSelectTextComponent OnSelect="@SelectClass"
-                                                              OnFilterChange="@OnFilterChange"
-                                                              OnClear="@OnClear"
-                                                              FilterText="Selecionar"
-                                                              Waiting="@waiting"
-                                                              ComponentFilter="@componentFilter"
-                                                              Options="@Options" />
+                                <ClearableSelectTextComponent OnSelect="@SelectClass"
+                                OnFilterChange="@OnFilterChange"
+                                OnClear="@OnClear"
+                                FilterText="Selecionar"
+                                Waiting="@waiting"
+                                ComponentFilter="@componentFilter"
+                                Options="@Options" />
                                 }
                                 *@
                             </div>
@@ -68,10 +68,9 @@
                             <label for="recipient-axis" class="col-form-label">Eixo</label>
                             <div class="col-9">
                                 <div class="input-group mb-3">
-                                    <select id="recipient-axis" 
-
-                                            class="form-select" 
-                                            aria-label="Default select example" 
+                                    <select id="recipient-axis"
+                                            class="form-select"
+                                            aria-label="Default select example"
                                             @onchange="OnAxisTypeChanged">
                                         <option value=""><i>* Selecione *</i></option>
                                         @foreach (var axis in axisTypeList)
@@ -85,11 +84,11 @@
                             </div>
                             <div class="col-2">
                                 <div class="form-check">
-                                    <input class="form-check-input" 
-                                           value="@optative" 
-                                           type="checkbox" 
-                                           id="flexCheckChecked" 
-                                           @onchange="@OnChangeOptative" 
+                                    <input class="form-check-input"
+                                           value="@optative"
+                                           type="checkbox"
+                                           id="flexCheckChecked"
+                                           @onchange="@OnChangeOptative"
                                            checked=@optative>
                                     <label class="form-check-label" for="flexCheckChecked">
                                         Optativa
@@ -157,7 +156,6 @@
     private string componentFilter = "";
 
     private bool waiting = false;
-    private bool viewSelectControl = false;
 
     private AxisTypeModel? selectedAxisType;
     private ClassModel? selectedClass;

@@ -325,47 +325,6 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.ToTable("DocumentTable", (string)null);
                 });
 
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Group", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<Guid>("InstituteId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InstituteId");
-
-                    b.ToTable("GroupTable", (string)null);
-                });
-
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.GroupValue", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("GroupValueTable", (string)null);
-                });
-
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Holding", b =>
                 {
                     b.Property<Guid>("Id")
@@ -954,60 +913,14 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.ToTable("SubSubSectionTable", (string)null);
                 });
 
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Variable", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("VariableTable", (string)null);
-                });
-
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.VariableValue", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GroupValueId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("VariableId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupValueId");
-
-                    b.HasIndex("VariableId");
-
-                    b.ToTable("VariableValueTable", (string)null);
-                });
-
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.VariableX", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Curriculum")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Curriculum")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uniqueidentifier");
@@ -1158,28 +1071,6 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Institute");
-                });
-
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Group", b =>
-                {
-                    b.HasOne("PraeceptorCQRS.Domain.Entities.Institute", "Institute")
-                        .WithMany("Groups")
-                        .HasForeignKey("InstituteId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.Navigation("Institute");
-                });
-
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.GroupValue", b =>
-                {
-                    b.HasOne("PraeceptorCQRS.Domain.Entities.Group", "Group")
-                        .WithMany("Values")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Institute", b =>
@@ -1350,36 +1241,6 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Navigation("Institute");
                 });
 
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Variable", b =>
-                {
-                    b.HasOne("PraeceptorCQRS.Domain.Entities.Group", "Group")
-                        .WithMany("Variables")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-                });
-
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.VariableValue", b =>
-                {
-                    b.HasOne("PraeceptorCQRS.Domain.Entities.GroupValue", "GroupValue")
-                        .WithMany("VariableValues")
-                        .HasForeignKey("GroupValueId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("PraeceptorCQRS.Domain.Entities.Variable", "Variable")
-                        .WithMany("Values")
-                        .HasForeignKey("VariableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GroupValue");
-
-                    b.Navigation("Variable");
-                });
-
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.AxisType", b =>
                 {
                     b.Navigation("Components");
@@ -1404,18 +1265,6 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Navigation("CourseSocialBodyEntries");
                 });
 
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Group", b =>
-                {
-                    b.Navigation("Values");
-
-                    b.Navigation("Variables");
-                });
-
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.GroupValue", b =>
-                {
-                    b.Navigation("VariableValues");
-                });
-
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Holding", b =>
                 {
                     b.Navigation("Institutes");
@@ -1434,8 +1283,6 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
                     b.Navigation("Courses");
 
                     b.Navigation("Documents");
-
-                    b.Navigation("Groups");
 
                     b.Navigation("PreceptorDegreeTypes");
 
@@ -1472,11 +1319,6 @@ namespace PraeceptorCQRS.Infrastructure.Migrations
             modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.PreceptorRoleType", b =>
                 {
                     b.Navigation("CourseSocialBodyEntries");
-                });
-
-            modelBuilder.Entity("PraeceptorCQRS.Domain.Entities.Variable", b =>
-                {
-                    b.Navigation("Values");
                 });
 #pragma warning restore 612, 618
         }

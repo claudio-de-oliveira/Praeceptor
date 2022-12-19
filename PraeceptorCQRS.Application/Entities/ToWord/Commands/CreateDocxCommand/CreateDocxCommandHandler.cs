@@ -20,6 +20,8 @@ using PraeceptorCQRS.Application.Entities.ToWord.Common;
 using PraeceptorCQRS.Application.Entities.ToWord.Models;
 using PraeceptorCQRS.Application.Entities.ToWord.Parser.PPC;
 using PraeceptorCQRS.Application.Entities.ToWord.Queries;
+using PraeceptorCQRS.Application.Entities.Variable.Common;
+using PraeceptorCQRS.Application.Entities.Variable.Queries;
 using PraeceptorCQRS.Application.Persistence;
 
 using Serilog;
@@ -44,8 +46,6 @@ namespace PraeceptorCQRS.Application.Entities.ToWord.Commands
 
         public async Task<ErrorOr<SqlDocxInfoResult>> Handle(CreateDocxCommand request, CancellationToken cancellationToken)
         {
-            // Console.WriteLine("Lendo informações sobre o curso...");
-
             var courseResult =
                 await ReadCourse(_mediator, request.CourseId, cancellationToken);
             if (courseResult.IsError)
@@ -74,7 +74,7 @@ namespace PraeceptorCQRS.Application.Entities.ToWord.Commands
             PPCModel ppc = new(holding, institute, course, template, _fileRepository, _tableRepository);
 
             foreach (var v in request.GroupValues)
-                ppc.variables.Add(v.Key, v.Value);
+                ppc.variables.Add(v.Key.ToUpper(), v.Value);
 
             var documentTextResult =
                 await ConvertDocumentToText(_mediator, request.DocumentId, cancellationToken);
@@ -100,13 +100,21 @@ namespace PraeceptorCQRS.Application.Entities.ToWord.Commands
                     return socialBodyResult.Errors;
                 ppc.SocialBody = socialBodyResult.Value.List;
 
-                // var variablesQuery = new GetVariablesByCourseQuery(
-                //     request.CourseId
-                //     );
-                // ErrorOr<VariablesResult> variablesResult = await _mediator.Send(variablesQuery);
-                // if (variablesResult.IsError)
-                //     return variablesResult.Errors;
-                // ppc.variables = variablesResult.Value.Variables;
+                var variablesQuery = new GetVariableXByCourseAndCurriculumQuery(
+                    request.CourseId,
+                    request.Curriculum
+                    );
+
+                ErrorOr<VariableXListResult> variablesResult = await _mediator.Send(variablesQuery);
+                if (variablesResult.IsError)
+                    return variablesResult.Errors;
+                foreach (var variable in variablesResult.Value.List)
+                {
+                    var key = $"{variable.GroupName}.{variable.VariableName}".ToUpper();
+
+                    if (!ppc.variables.ContainsKey(key))
+                        ppc.variables.Add(key, variable.Value ?? "");
+                }
 
                 ppc.InitializeTables();
             }

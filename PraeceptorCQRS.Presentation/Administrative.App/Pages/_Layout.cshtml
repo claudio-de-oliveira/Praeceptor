@@ -18,8 +18,6 @@
     <link href="Administrative.App.styles.css" rel="stylesheet" />
     <link href="css/site.css" rel="stylesheet" />
 
-    <script src="_content/BlazorAnimate/blazorAnimateInterop.js"></script>
-
     <title>Administrative App</title>
 
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
@@ -37,12 +35,17 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-
+    <!--
+    <script src="_content/BlazorAnimate/blazorAnimateInterop.js"></script>
+    -->
+    
     <script src="_framework/blazor.server.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous">
+    </script>
 
+    <!--
     <script>
         init({
             title: 'Filter Control',
@@ -56,6 +59,6 @@
             ]
         })
     </script>
-
+    -->
 </body>
 </html>

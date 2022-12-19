@@ -32,105 +32,108 @@
 
 <DocumentNavigationComponent></DocumentNavigationComponent>
 
-@if (waiting)
-{
-    <button class="btn btn-primary" type="button" disabled>
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Carregando...
-    </button>
-}
-else
-{
-    <div>
-        <table class='table'>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th>Título</th>
-                    <th></th>
-                    <th>Texto</th>
-                    <th></th>
-                    <th>Atualização</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var entity in previousSelectedEntities)
-                {
-                    <tr>
-                        <td align="center">
-                            <button type="button"
-                                    class="btn btn-outline-primary"
+<section class="p-1">
+    <article class="content px-4">
+
+        @if (waiting)
+        {
+            <button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Carregando...
+            </button>
+        }
+        else
+        {
+            <div>
+                <table class='table'>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>Título</th>
+                            <th></th>
+                            <th>Texto</th>
+                            <th></th>
+                            <th>Atualização</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var entity in previousSelectedEntities)
+                        {
+                            <tr>
+                                <td align="center">
+                                    <button type="button"
+                                    class="btn btn-outline-primary border-0"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     title="Mover para cima"
-                                    @onclick="@(() => MoveBackward(entity))"
-                                    style="border: none;">
-                                <i class="bi bi-chevron-double-up"></i>
-                            </button>
-                        </td>
-                        <td align="center">
-                            <button type="button"
-                                    class="btn btn-outline-primary"
+                                    @onclick="@(() => MoveBackward(entity))">
+                                        <i class="bi bi-chevron-double-up"></i>
+                                    </button>
+                                </td>
+                                <td align="center">
+                                    <button type="button"
+                                    class="btn btn-outline-primary border-0"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     title="Mover para baixo"
-                                    @onclick="@(() => MoveForward(entity))"
-                                    style="border: none;">
-                                <i class="bi bi-chevron-double-down"></i>
-                            </button>
-                        </td>
-                        <td>@entity.Title</td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
-                                    class="btn btn-sm btn-success"
+                                    @onclick="@(() => MoveForward(entity))">
+                                        <i class="bi bi-chevron-double-down"></i>
+                                    </button>
+                                </td>
+                                <td>@entity.Title</td>
+                                <td align="right" style="width: 80px;">
+                                    <button type="button"
+                                    class="btn btn-sm btn-details"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     title="Ver detalhes"
-                                    @onclick="@(() => Details(entity))"
-                                    style="border: none;">
-                                Detalhes
-                            </button>
-                        </td>
-                        <td>
-                            <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
-                        </td>
-                        <td align="right" style="width: 80px;">
-                            <button type="button"
-                                    class="btn btn-sm btn-warning"
+                                    @onclick="@(() => Details(entity))">
+                                        <i class="bi bi-info-circle"></i>
+                                        Detalhes
+                                    </button>
+                                </td>
+                                <td>
+                                    <div style="font-size: smaller">@TextToDisplay(entity.Text)</div>
+                                </td>
+                                <td align="right" style="width: 80px;">
+                                    <button type="button"
+                                    class="btn btn-sm btn-edit"
                                     data-toggle="tooltip"
                                     data-placement="top"
                                     data-bs-toggle="modal"
                                     data-bs-target="#editSubSectionModal"
                                     title="Editar"
-                                    @onclick="@(() => Edit(entity))"
-                                    style="border: none;">
-                                Editar
-                            </button>
-                        </td>
-                        <td align="center">
-                            <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <br />
-    <div>
-        <!-- Button trigger modal -->
-        <button type="button"
-            class="btn btn-outline-primary"
-            data-toggle="tooltip"
-            data-placement="top"
-            data-bs-toggle="modal"
-            title="Inserir ou remover sub-subseções"
-            @onclick="() => OpenSelectEntitiesDialog()">
-            <i class="bi bi-plus-slash-minus"></i>
-            Inserir ou remover sub-subseções
-        </button>
-    </div>
-}
+                                    @onclick="@(() => Edit(entity))">
+                                        <i class="bi bi-pencil"></i>
+                                        Editar
+                                    </button>
+                                </td>
+                                <td align="center">
+                                    <div style="font-size: smaller">@Global.ConvertDateTimeToString(entity.LastModified)</div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div>
+                <!-- Button trigger modal -->
+                <button type="button"
+                    class="btn btn-outline-primary"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    data-bs-toggle="modal"
+                    title="Inserir ou remover sub-subseções"
+                    @onclick="() => OpenSelectEntitiesDialog()">
+                    <i class="bi bi-plus-slash-minus"></i>
+                    Inserir ou remover sub-subseções
+                </button>
+            </div>
+        }
+    </article>
+</section>
 
 @code {
     protected override void Details(BookEntity entity)
